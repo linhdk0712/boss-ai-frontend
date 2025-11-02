@@ -41,16 +41,15 @@ const handleLogout = async () => {
               </div>
             </VCardText>
             <VCardActions>
-              <VBtn
-                color="error"
-                @click="handleLogout"
-              >
+              <VBtn color="error" @click="handleLogout">
                 Logout
               </VBtn>
             </VCardActions>
           </VCard>
         </VCol>
       </VRow>
+
+
     </VContainer>
   </div>
 </template>

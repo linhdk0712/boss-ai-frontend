@@ -12,8 +12,8 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
   app: {
     title: 'vuexy',
     logo: h('div', { innerHTML: logo, style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }),
-    contentWidth: ContentWidth.Boxed,
-    contentLayoutNav: AppContentLayoutNav.Vertical,
+    contentWidth: ContentWidth.Fluid, // ✅ Changed to Wide (Fluid)
+    contentLayoutNav: AppContentLayoutNav.Horizontal, // ✅ Changed to Horizontal
     overlayNavFromBreakpoint: breakpointsVuetifyV3.lg - 1, // 1 for matching with vuetify breakpoint. Docs: https://next.vuetifyjs.com/en/features/display-and-platform/
     i18n: {
       enable: true,
@@ -37,7 +37,7 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
       ],
     },
     theme: 'system',
-    skin: Skins.Default,
+    skin: Skins.Bordered, // ✅ Changed to Bordered
     iconRenderer: VIcon,
   },
   navbar: {

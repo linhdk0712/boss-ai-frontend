@@ -1,4 +1,4 @@
-import apiClient from '@/plugins/axios'
+import { apiClient } from '@/plugins/axios'
 import { AUTH } from '@/constants/apiEndpoints'
 import type {
     BaseResponse,

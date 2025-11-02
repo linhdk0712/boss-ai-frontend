@@ -1,6 +1,32 @@
 export default [
   { heading: 'Apps & Pages' },
   {
+    title: 'AI Content Generation',
+    icon: { icon: 'tabler-wand' },
+    action: 'read',
+    subject: 'Content',
+    children: [
+      { title: 'Generate Content', to: 'content-index', action: 'manage', subject: 'Content' },
+      { title: 'My Content', to: 'content-list', action: 'read', subject: 'Content' },
+      { title: 'Debug Content', to: 'content-debug', action: 'read', subject: 'Content' },
+      { title: 'Axios Test', to: 'axios-test', action: 'read', subject: 'Content' },
+    ],
+  },
+  {
+    title: 'Settings',
+    icon: { icon: 'tabler-settings' },
+    to: 'settings',
+    action: 'read',
+    subject: 'Settings',
+  },
+  {
+    title: 'Settings Test',
+    icon: { icon: 'tabler-test-pipe' },
+    to: 'settings-test',
+    action: 'read',
+    subject: 'Settings',
+  },
+  {
     title: 'Ecommerce',
     icon: { icon: 'tabler-shopping-cart' },
     children: [

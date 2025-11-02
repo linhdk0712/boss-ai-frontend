@@ -1,10 +1,10 @@
-import axios from 'axios'
-import type { AxiosResponse } from 'axios'
 import type { BaseResponse } from '@/types/auth'
+import type { AxiosResponse } from 'axios'
+import axios from 'axios'
 
 const apiClient = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api/v1',
-    timeout: 10000,
+    timeout: 120000, // 2 minutes default timeout (increased for long-running operations like content generation)
     headers: {
         'Content-Type': 'application/json',
     },
@@ -44,7 +44,7 @@ apiClient.interceptors.response.use(
 
                     // Retry original request with new token
                     originalRequest.headers.Authorization = `Bearer ${data.accessToken}`
-                    return apiClient(originalRequest)
+                    return axios(originalRequest)
                 }
             } catch (refreshError) {
                 // Refresh failed, redirect to login
@@ -60,4 +60,11 @@ apiClient.interceptors.response.use(
     }
 )
 
-export default apiClient
+// Export for use in services
+export { apiClient }
+
+// Plugin registration function
+export default function (app: any) {
+    // Make apiClient available globally if needed
+    app.config.globalProperties.$http = apiClient
+}
