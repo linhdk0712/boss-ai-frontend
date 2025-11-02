@@ -1,10 +1,7 @@
 <template>
   <v-card class="generated-content-card" elevation="2">
-    <v-card-title class="d-flex align-center py-3">
+    <v-card-title class="d-flex align-center py-4">
       <span class="text-body-1 font-weight-medium">Generated Content</span>
-
-      <v-spacer />
-
       <!-- Copy Button - only show if content exists -->
       <v-btn v-if="shouldShowContent" variant="text" size="small" prepend-icon="mdi-content-copy"
         @click="copyToClipboard">
@@ -12,7 +9,7 @@
       </v-btn>
     </v-card-title>
 
-    <v-card-text class="pa-0">
+    <v-card-text class="py-4">
       <!-- Error Display for Failed Generation -->
       <div v-if="isContentFailed" class="px-4 py-4">
         <v-alert type="error" variant="tonal" class="mb-4">
@@ -44,71 +41,54 @@
         </div>
 
         <!-- Generation Statistics -->
-        <div class="px-4 pb-4">
-          <v-expansion-panels v-if="hasStatistics" variant="accordion" class="mb-4">
-            <v-expansion-panel>
-              <v-expansion-panel-title>
-                <v-icon class="me-2">mdi-chart-line</v-icon>
-                Generation Statistics
-              </v-expansion-panel-title>
-              <v-expansion-panel-text>
-                <v-row>
-                  <v-col cols="6" md="3">
-                    <v-card variant="tonal" color="primary">
-                      <v-card-text class="text-center">
-                        <div class="text-h6">{{ content.wordCount || 0 }}</div>
-                        <div class="text-caption">Words</div>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
+        <v-row>
+          <v-col cols="6" md="3">
+            <v-card variant="tonal" color="primary">
+              <v-card-text class="text-center">
+                <div class="text-h6">{{ content.wordCount || 0 }}</div>
+                <div class="text-caption">Words</div>
+              </v-card-text>
+            </v-card>
+          </v-col>
 
-                  <v-col cols="6" md="3">
-                    <v-card variant="tonal" color="secondary">
-                      <v-card-text class="text-center">
-                        <div class="text-h6">{{ content.characterCount || 0 }}</div>
-                        <div class="text-caption">Characters</div>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
+          <v-col cols="6" md="3">
+            <v-card variant="tonal" color="secondary">
+              <v-card-text class="text-center">
+                <div class="text-h6">{{ content.characterCount || 0 }}</div>
+                <div class="text-caption">Characters</div>
+              </v-card-text>
+            </v-card>
+          </v-col>
 
-                  <v-col cols="6" md="3">
-                    <v-card variant="tonal" color="info">
-                      <v-card-text class="text-center">
-                        <div class="text-h6">{{ content.tokensUsed || 0 }}</div>
-                        <div class="text-caption">Tokens</div>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
+          <v-col cols="6" md="3">
+            <v-card variant="tonal" color="info">
+              <v-card-text class="text-center">
+                <div class="text-h6">{{ content.tokensUsed || 0 }}</div>
+                <div class="text-caption">Tokens</div>
+              </v-card-text>
+            </v-card>
+          </v-col>
 
-                  <v-col cols="6" md="3">
-                    <v-card variant="tonal" color="warning">
-                      <v-card-text class="text-center">
-                        <div class="text-h6">{{ formatCost(content.generationCost) }}</div>
-                        <div class="text-caption">Cost</div>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
+          <v-col cols="6" md="3">
+            <v-card variant="tonal" color="warning">
+              <v-card-text class="text-center">
+                <div class="text-h6">{{ formatCost(content.generationCost) }}</div>
+                <div class="text-caption">Cost</div>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
 
-                <v-row class="mt-2">
-                  <v-col cols="12">
-                    <v-card variant="tonal" color="success">
-                      <v-card-text class="text-center">
-                        <div class="text-h6">{{ formatProcessingTime(content.processingTimeMs || 0) }}</div>
-                        <div class="text-caption">Processing Time</div>
-                      </v-card-text>
-                    </v-card>
-                  </v-col>
-                </v-row>
-              </v-expansion-panel-text>
-            </v-expansion-panel>
-          </v-expansion-panels>
-
-          <!-- Status Display for Success -->
-          <v-chip color="success" variant="flat" size="small" class="mb-2 status-chip">
-            COMPLETED
-          </v-chip>
-        </div>
+        <v-row class="mt-2">
+          <v-col cols="12">
+            <v-card variant="tonal" color="success">
+              <v-card-text class="text-center">
+                <div class="text-h6">{{ formatProcessingTime(content.processingTimeMs || 0) }}</div>
+                <div class="text-caption">Processing Time</div>
+              </v-card-text>
+            </v-card>
+          </v-col>
+        </v-row>
       </div>
     </v-card-text>
   </v-card>

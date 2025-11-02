@@ -58,9 +58,8 @@
           <div class="content-main">
             <ContentGenerationFormComponent v-model:content="form.content" v-model:title="form.title"
               :generated-content="generatedContent" :loading="generating" :saving="saving"
-              :creating-video="creatingVideo" :can-save="canSave" :can-regenerate="canRegenerate"
-              :can-create-video="canCreateVideo" :error="generateError" :disabled="isAnyOperationRunning"
-              @generate="handleGenerate" @save="handleSave" @regenerate="handleRegenerate"
+              :creating-video="creatingVideo" :can-save="canSave" :can-create-video="canCreateVideo"
+              :error="generateError" :disabled="isAnyOperationRunning" @generate="handleGenerate" @save="handleSave"
               @create-video="handleCreateVideo" />
           </div>
         </v-col>
@@ -114,8 +113,7 @@
               <v-stepper-window-item :value="4">
                 <div class="pa-4">
                   <h3>Step 4: Save and Use</h3>
-                  <p>Save your generated content to your library, regenerate for variations, or create videos from your
-                    content.</p>
+                  <p>Save your generated content to your library or create videos from your content.</p>
                 </div>
               </v-stepper-window-item>
             </v-stepper-window>
@@ -178,11 +176,9 @@ const {
   saveError,
   videoError,
   canSave,
-  canRegenerate,
   canCreateVideo,
   isAnyOperationRunning,
   generateContent,
-  regenerateContent,
   saveContent,
   triggerWorkflow,
   clearErrors
@@ -264,10 +260,7 @@ const handleGenerate = async () => {
   await generateContent(request)
 }
 
-const handleRegenerate = async () => {
-  clearErrors()
-  await regenerateContent()
-}
+
 
 const handleSave = async (title: string) => {
   clearErrors()

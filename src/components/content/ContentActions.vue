@@ -1,6 +1,6 @@
 <template>
   <v-card variant="outlined" class="content-actions-card">
-    <v-card-title class="d-flex align-center">
+    <v-card-title class="d-flex align-center py-4">
       <v-icon class="me-2">mdi-lightning-bolt</v-icon>
       Actions
     </v-card-title>
@@ -13,15 +13,6 @@
             block>
             <v-icon start>mdi-content-save</v-icon>
             Save Content
-          </v-btn>
-        </v-col>
-
-        <!-- Regenerate Button -->
-        <v-col cols="12" md="4">
-          <v-btn class="regenerate-btn" variant="flat" :loading="loading" :disabled="!canRegenerate || loading"
-            @click="handleRegenerate" block>
-            <v-icon start>mdi-refresh</v-icon>
-            Regenerate
           </v-btn>
         </v-col>
 
@@ -40,7 +31,6 @@
         <v-col cols="12">
           <div class="text-caption text-medium-emphasis">
             <strong>Save:</strong> Add to your content library •
-            <strong>Regenerate:</strong> Generate new variation •
             <strong>Video:</strong> Create video from content
           </div>
         </v-col>
@@ -100,7 +90,6 @@ interface Props {
   saving?: boolean
   creatingVideo?: boolean
   canSave?: boolean
-  canRegenerate?: boolean
   canCreateVideo?: boolean
 }
 
@@ -109,14 +98,12 @@ const props = withDefaults(defineProps<Props>(), {
   saving: false,
   creatingVideo: false,
   canSave: false,
-  canRegenerate: false,
   canCreateVideo: false
 })
 
 // Emits
 const emit = defineEmits<{
   save: []
-  regenerate: []
   'create-video': []
 }>()
 
@@ -127,10 +114,6 @@ const videoSuccessDialog = ref(false)
 // Methods
 const handleSave = () => {
   emit('save')
-}
-
-const handleRegenerate = () => {
-  emit('regenerate')
 }
 
 const handleCreateVideo = () => {
@@ -182,15 +165,7 @@ watch(() => props.creatingVideo, (creating, wasCreating) => {
   background-color: #218838 !important;
 }
 
-/* Regenerate Button - Purple */
-.regenerate-btn {
-  background-color: #6f42c1 !important;
-  color: white !important;
-}
 
-.regenerate-btn:hover {
-  background-color: #5a32a3 !important;
-}
 
 /* Video Button - Gray */
 .video-btn {

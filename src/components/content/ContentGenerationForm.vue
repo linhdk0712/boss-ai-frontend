@@ -44,9 +44,8 @@
         <!-- Action Buttons - only show for successful generation -->
         <ContentActions
           v-if="generatedContent && generatedContent.generatedContent && generatedContent.status !== 'FAILED'"
-          :loading="loading" :can-save="canSave" :can-regenerate="canRegenerate" :can-create-video="canCreateVideo"
-          :saving="saving" :creating-video="creatingVideo" @save="handleSave" @regenerate="handleRegenerate"
-          @create-video="handleCreateVideo" />
+          :loading="loading" :can-save="canSave" :can-create-video="canCreateVideo" :saving="saving"
+          :creating-video="creatingVideo" @save="handleSave" @create-video="handleCreateVideo" />
       </v-form>
 
       <!-- Error Display -->
@@ -73,7 +72,6 @@ interface Props {
   saving?: boolean
   creatingVideo?: boolean
   canSave?: boolean
-  canRegenerate?: boolean
   canCreateVideo?: boolean
   error?: string | null
   disabled?: boolean
@@ -84,7 +82,6 @@ const props = withDefaults(defineProps<Props>(), {
   saving: false,
   creatingVideo: false,
   canSave: false,
-  canRegenerate: false,
   canCreateVideo: false,
   disabled: false
 })
@@ -95,7 +92,6 @@ const emit = defineEmits<{
   'update:title': [value: string]
   generate: []
   save: [title: string]
-  regenerate: []
   'create-video': [title?: string]
 }>()
 
@@ -156,9 +152,7 @@ const handleSave = () => {
   emit('save', saveTitle)
 }
 
-const handleRegenerate = () => {
-  emit('regenerate')
-}
+
 
 const handleCreateVideo = () => {
   const videoTitle = title.value || props.generatedContent?.title
