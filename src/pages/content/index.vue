@@ -1,70 +1,57 @@
 <template>
   <div class="content-generation-page">
     <!-- Compact Page Header -->
-    <div class="page-header">
-      <v-container fluid class="py-4 px-6">
-        <div class="d-flex align-center justify-space-between">
-          <div class="d-flex align-center">
-            <v-icon size="32" class="me-3" color="primary">mdi-auto-fix</v-icon>
+    <v-container fluid class="pa-6">
+      <v-row>
+        <v-col cols="12">
+          <div class="d-flex align-center mb-6">
             <div>
-              <h1 class="text-h5 font-weight-bold mb-1">AI Content Generation</h1>
-              <p class="text-body-2 text-medium-emphasis mb-0">
+              <h3 class="text-h4 font-weight-bold">AI Content Generation</h3>
+              <p class="text-subtitle-1 text-medium-emphasis mb-0">
                 Create engaging content with AI-powered assistance
               </p>
             </div>
-          </div>
-
-          <!-- Quick Actions -->
-          <div class="d-flex align-center ga-2">
-            <v-btn variant="outlined" prepend-icon="mdi-history" :to="{ name: 'content-list' }" size="small">
+            <v-spacer />
+            <!-- Quick Actions -->
+            <v-btn color="primary" prepend-icon="mdi-history" :to="{ name: 'content-list' }" class="me-2">
               My Content
             </v-btn>
-            <v-btn variant="text" icon="mdi-help-circle" @click="showHelp = true" size="small" />
           </div>
-        </div>
-      </v-container>
-    </div>
-
-    <!-- Main Content Area -->
-    <v-container fluid class="main-container">
-      <v-row class="fill-height ma-0">
+        </v-col>
+      </v-row>
+      <v-row>
         <!-- Configuration Panel - Left Side -->
         <v-col cols="12" md="4" lg="3" class="pa-3">
-          <div class="configuration-sidebar">
-            <ConfigurationPanel v-model:industry="form.industry" v-model:content-type="form.contentType"
-              v-model:language="form.language" v-model:tone="form.tone" v-model:target-audience="form.targetAudience"
-              :disabled="isAnyOperationRunning" />
+          <ConfigurationPanel v-model:industry="form.industry" v-model:content-type="form.contentType"
+            v-model:language="form.language" v-model:tone="form.tone" v-model:target-audience="form.targetAudience"
+            :disabled="isAnyOperationRunning" />
 
-            <!-- Quick Tips Card -->
-            <v-card class="tips-card mt-4" variant="tonal" color="info">
-              <v-card-title class="d-flex align-center py-3">
-                <v-icon class="me-2" size="20">mdi-lightbulb-outline</v-icon>
-                <span class="text-body-1 font-weight-medium">Quick Tips</span>
-              </v-card-title>
-              <v-card-text class="py-3">
-                <ul class="tips-list text-body-2">
-                  <li>Be specific about your content goals</li>
-                  <li>Include target keywords if needed</li>
-                  <li>Specify the desired length or format</li>
-                  <li>Mention your brand voice or style</li>
-                </ul>
-              </v-card-text>
-            </v-card>
-          </div>
+          <!-- Quick Tips Card -->
+          <v-card class="tips-card mt-4" variant="tonal" color="info">
+            <v-card-title class="d-flex align-center py-3">
+              <v-icon class="me-2" size="20">mdi-lightbulb-outline</v-icon>
+              <span class="text-body-1 font-weight-medium">Quick Tips</span>
+            </v-card-title>
+            <v-card-text class="py-3">
+              <ul class="tips-list text-body-2">
+                <li>Be specific about your content goals</li>
+                <li>Include target keywords if needed</li>
+                <li>Specify the desired length or format</li>
+                <li>Mention your brand voice or style</li>
+              </ul>
+            </v-card-text>
+          </v-card>
         </v-col>
 
         <!-- Content Generation Form - Right Side -->
         <v-col cols="12" md="8" lg="9" class="pa-3">
-          <div class="content-main">
-            <ContentGenerationFormComponent v-model:content="form.content" v-model:title="form.title"
-              :generated-content="generatedContent" :loading="generating" :saving="saving"
-              :creating-video="creatingVideo" :can-save="canSave" :can-create-video="canCreateVideo"
-              :error="generateError" :disabled="isAnyOperationRunning" @generate="handleGenerate" @save="handleSave"
-              @create-video="handleCreateVideo" />
-          </div>
+          <ContentGenerationFormComponent v-model:content="form.content" v-model:title="form.title"
+            :loading="generating" :error="generateError" :disabled="isAnyOperationRunning"
+            :show-success="!!generatedContent && generatedContent.status !== 'FAILED'" @generate="handleGenerate" />
         </v-col>
       </v-row>
     </v-container>
+
 
     <!-- Help Dialog -->
     <v-dialog v-model="showHelp" max-width="600">
@@ -155,6 +142,12 @@
       <v-icon start>mdi-check</v-icon>
       {{ successMessage }}
     </v-snackbar>
+
+    <!-- Generated Content Dialog -->
+    <GeneratedContentDialog v-model="showContentDialog" :content="generatedContent" :loading="generating"
+      :saving="saving" :creating-video="creatingVideo" :can-save="canSave" :can-create-video="canCreateVideo"
+      :persistent="dialogPersistent" @save="handleSave" @create-video="handleCreateVideo"
+      @generate-new="handleGenerateNew" @close="handleDialogClose" @toggle-persistent="handleTogglePersistent" />
   </div>
 </template>
 
@@ -164,6 +157,7 @@ import { useContentGeneration } from '@/composables/useContentGeneration'
 import type { ContentGenerationForm, ContentGenerateRequest } from '@/types/content'
 import ConfigurationPanel from '@/components/content/ConfigurationPanel.vue'
 import ContentGenerationFormComponent from '@/components/content/ContentGenerationForm.vue'
+import GeneratedContentDialog from '@/components/content/GeneratedContentDialog.vue'
 
 // Composables
 const { getDefaultLanguage } = useContentConfig()
@@ -181,7 +175,8 @@ const {
   generateContent,
   saveContent,
   triggerWorkflow,
-  clearErrors
+  clearErrors,
+  clearContent
 } = useContentGeneration()
 
 // Form state
@@ -200,10 +195,18 @@ const showHelp = ref(false)
 const helpStep = ref(1)
 const showError = ref(false)
 const showSuccess = ref(false)
+const showContentDialog = ref(false)
+const dialogPersistent = ref(true) // Control dialog persistent behavior
 const errorMessage = ref('')
 const successMessage = ref('')
 
 // Computed properties
+const persistentTooltipText = computed(() => {
+  return dialogPersistent.value
+    ? 'Dialog Persistent (Click outside won\'t close)'
+    : 'Dialog Non-Persistent (Click outside to close)'
+})
+
 const isFormValid = computed(() => {
   const content = form.value.content || ''
   const contentType = form.value.contentType || ''
@@ -258,6 +261,11 @@ const handleGenerate = async () => {
 
   console.log('Sending generate request:', request)
   await generateContent(request)
+
+  // Show dialog if content was generated successfully
+  if (generatedContent.value && generatedContent.value.status !== 'FAILED') {
+    showContentDialog.value = true
+  }
 }
 
 
@@ -280,6 +288,24 @@ const handleCreateVideo = async (title?: string) => {
     successMessage.value = 'Video creation workflow started!'
     showSuccess.value = true
   }
+}
+
+const handleGenerateNew = () => {
+  // Clear current content and close dialog
+  clearContent()
+  showContentDialog.value = false
+
+  // Reset form if needed
+  form.value.content = ''
+  form.value.title = ''
+}
+
+const handleDialogClose = () => {
+  showContentDialog.value = false
+}
+
+const handleTogglePersistent = () => {
+  dialogPersistent.value = !dialogPersistent.value
 }
 
 // Watch for errors
@@ -313,8 +339,6 @@ definePage({
 .content-generation-page {
   min-height: 100vh;
   background-color: rgb(var(--v-theme-background));
-  display: flex;
-  flex-direction: column;
 }
 
 .page-header {

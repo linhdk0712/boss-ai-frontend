@@ -70,8 +70,8 @@
               <v-form ref="editForm">
                 <v-text-field v-model="editForm.title" label="Title" :rules="[rules.required]" class="mb-4" />
 
-                <v-textarea v-model="editForm.content" label="Original Content" rows="4" :rules="[rules.required]"
-                  class="mb-4" />
+                <v-textarea v-if="currentContent.content" v-model="editForm.content" label="Original Content" rows="4"
+                  :rules="[rules.required]" class="mb-4" />
 
                 <v-textarea v-model="editForm.generatedContent" label="Generated Content" rows="8"
                   :rules="[rules.required]" />
@@ -92,7 +92,7 @@
           <!-- View Mode -->
           <div v-else>
             <!-- Original Content -->
-            <v-card class="mb-4">
+            <v-card v-if="currentContent.content" class="mb-4">
               <v-card-title class="d-flex align-center">
                 <v-icon class="me-2">mdi-text-box</v-icon>
                 Original Input
@@ -142,13 +142,14 @@
                 </v-col>
                 <v-col cols="6">
                   <div class="text-center">
-                    <div class="text-h5 text-info">{{ currentContent.tokensUsed }}</div>
+                    <div class="text-h5 text-info">{{ currentContent.tokensUsed || 'N/A' }}</div>
                     <div class="text-caption">Tokens</div>
                   </div>
                 </v-col>
                 <v-col cols="6">
                   <div class="text-center">
-                    <div class="text-h5 text-warning">${{ currentContent.generationCost.toFixed(4) }}</div>
+                    <div class="text-h5 text-warning">${{ currentContent.generationCost ?
+                      currentContent.generationCost.toFixed(4) : 'N/A' }}</div>
                     <div class="text-caption">Cost</div>
                   </div>
                 </v-col>
@@ -157,7 +158,8 @@
               <v-divider class="my-4" />
 
               <div class="text-center">
-                <div class="text-h6">{{ formatProcessingTime(currentContent.processingTimeMs) }}</div>
+                <div class="text-h6">{{ currentContent.processingTimeMs ?
+                  formatProcessingTime(currentContent.processingTimeMs) : 'N/A' }}</div>
                 <div class="text-caption">Processing Time</div>
               </div>
             </v-card-text>
@@ -181,7 +183,7 @@
                 <v-list-item v-if="currentContent.targetAudience">
                   <v-list-item-title>Target Audience</v-list-item-title>
                   <v-list-item-subtitle>{{ getTargetAudienceLabel(currentContent.targetAudience)
-                  }}</v-list-item-subtitle>
+                    }}</v-list-item-subtitle>
                 </v-list-item>
 
                 <v-list-item>
@@ -365,7 +367,7 @@ const regenerateContent = () => {
   if (!currentContent.value) return
 
   const queryParams = new URLSearchParams({
-    content: currentContent.value.content,
+    content: currentContent.value.content || currentContent.value.generatedContent || '',
     title: currentContent.value.title || '',
     industry: currentContent.value.industry || '',
     contentType: currentContent.value.contentType,
@@ -430,7 +432,9 @@ const formatDateTime = (dateString: string): string => {
   })
 }
 
-const formatProcessingTime = (timeMs: number): string => {
+const formatProcessingTime = (timeMs: number | null): string => {
+  if (!timeMs) return 'N/A'
+
   if (timeMs < 1000) {
     return `${timeMs}ms`
   } else if (timeMs < 60000) {
@@ -533,8 +537,22 @@ watch([error, updateError, deleteError], ([err, updateErr, deleteErr]) => {
   }
 })
 
+// Debug watchers
+watch(currentContent, (newVal) => {
+  console.log('currentContent changed:', newVal)
+})
+
+watch(loadingDetail, (newVal) => {
+  console.log('loadingDetail changed:', newVal)
+})
+
+watch(error, (newVal) => {
+  console.log('error changed:', newVal)
+})
+
 // Load content on mount
 onMounted(() => {
+  console.log('Content detail page mounted, contentId:', contentId.value)
   if (contentId.value) {
     loadContentById(contentId.value)
   }

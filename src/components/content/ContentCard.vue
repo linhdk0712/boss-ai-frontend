@@ -35,7 +35,7 @@
         <!-- Content Preview -->
         <v-card-text>
             <!-- Original Content -->
-            <div class="mb-3">
+            <div v-if="content.content" class="mb-3">
                 <div class="text-caption text-medium-emphasis mb-1">Original Input:</div>
                 <p class="text-body-2 content-preview">
                     {{ truncateText(content.content, 100) }}
@@ -60,7 +60,7 @@
                 </v-col>
                 <v-col cols="6">
                     <div class="text-center">
-                        <div class="text-h6 text-secondary">{{ content.tokensUsed }}</div>
+                        <div class="text-h6 text-secondary">{{ content.tokensUsed || 'N/A' }}</div>
                         <div class="text-caption">Tokens</div>
                     </div>
                 </v-col>

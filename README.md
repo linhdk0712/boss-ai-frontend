@@ -67,8 +67,11 @@ src/
 # Install dependencies (includes automatic icon build)
 pnpm install
 
-# Start development server
+# Start development server (without MSW)
 pnpm dev
+
+# Start development server with MSW for API mocking
+pnpm dev:msw
 
 # Build for production
 pnpm build
@@ -85,14 +88,19 @@ pnpm preview
 # Build icon CSS bundle (manual)
 pnpm build:icons
 
-# Initialize MSW for API mocking
+# Initialize MSW for API mocking (manual)
 pnpm msw:init
 ```
+
+#### Development Server Options ✅ **UPDATED**
+- **Standard Development**: `pnpm dev` - Fast startup without MSW initialization
+- **MSW Development**: `pnpm dev:msw` - Includes Mock Service Worker for API mocking
+- **Flexible Workflow**: Choose the appropriate development mode based on your needs
 
 #### Build Process Details
 - **Automatic Setup**: `pnpm install` automatically runs `build:icons` and `msw:init`
 - **Icon Generation**: Creates `src/plugins/iconify/icons.css` with optimized icon styles
-- **MSW Integration**: Sets up Mock Service Worker for API development
+- **MSW Integration**: Optional Mock Service Worker setup for API development testing
 
 ### TypeScript Configuration
 
@@ -988,7 +996,12 @@ docker-compose -f docker-compose.prod.yml up
 - **Robust Processing**: Handles both "completed" and "incomplete" OpenAI response statuses gracefully
 - **Better User Experience**: Users receive content even when OpenAI response is technically incomplete
 
-### Component Maintenance
+### Component Maintenance ✅ **UPDATED**
+- **Syntax Error Fixes**: Fixed critical template syntax errors across content generation components ✅ **LATEST**
+  - Resolved unterminated string literals in tooltip text
+  - Fixed duplicate function declarations in GeneratedContentDialog.vue
+  - Cleaned up broken multi-line string interpolations
+  - Removed unused computed properties causing TypeScript warnings
 - **GeneratedContent.vue**: Fixed HTML structure issues and removed unused computed properties
 - **Code Quality**: Cleaned up deprecated `document.execCommand` usage with modern clipboard API
 - **TypeScript**: Enhanced type safety across content generation components

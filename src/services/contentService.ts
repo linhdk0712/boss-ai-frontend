@@ -85,15 +85,7 @@ class ContentService {
         search?: string
         contentType?: string
         language?: string
-    }): Promise<BaseResponse<{
-        content: ContentGenerationDto[]
-        pagination: {
-            page: number
-            size: number
-            total: number
-            totalPages: number
-        }
-    }>> {
+    }): Promise<BaseResponse<ContentGenerationDto[]>> {
         const queryParams = new URLSearchParams()
 
         if (params?.page !== undefined) queryParams.append('page', params.page.toString())

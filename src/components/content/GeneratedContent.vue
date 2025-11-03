@@ -126,14 +126,7 @@ const formattedContent = computed(() => {
     .replace(/$/, '</p>')
 })
 
-const hasStatistics = computed(() => {
-  return props.content && (
-    props.content.wordCount !== undefined ||
-    props.content.characterCount !== undefined ||
-    props.content.tokensUsed !== undefined ||
-    props.content.processingTimeMs !== undefined
-  )
-})
+// Removed unused hasStatistics computed property
 
 const isContentFailed = computed(() => {
   return props.content && (

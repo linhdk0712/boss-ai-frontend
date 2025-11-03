@@ -38,14 +38,17 @@
           Please select Content Type and Language in the configuration panel to enable content generation.
         </v-alert>
 
-        <!-- Generated Content Display -->
-        <GeneratedContent v-if="generatedContent" :content="generatedContent" class="mb-4" />
-
-        <!-- Action Buttons - only show for successful generation -->
-        <ContentActions
-          v-if="generatedContent && generatedContent.generatedContent && generatedContent.status !== 'FAILED'"
-          :loading="loading" :can-save="canSave" :can-create-video="canCreateVideo" :saving="saving"
-          :creating-video="creatingVideo" @save="handleSave" @create-video="handleCreateVideo" />
+        <!-- Success message when content is generated -->
+        <v-alert v-if="props.showSuccess && showSuccessMessage" type="success" variant="tonal" class="mb-4" closable
+          @click:close="hideSuccessMessage">
+          <v-alert-title class="d-flex align-center">
+            <v-icon class="me-2">mdi-check-circle</v-icon>
+            Content Generated Successfully!
+          </v-alert-title>
+          <div class="mt-2">
+            Your AI-generated content is ready. Check the dialog for details and actions.
+          </div>
+        </v-alert>
       </v-form>
 
       <!-- Error Display -->
@@ -59,31 +62,21 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
-import type { ContentGenerateResponse } from '@/types/content'
-import GeneratedContent from './GeneratedContent.vue'
-import ContentActions from './ContentActions.vue'
 
 // Props
 interface Props {
   content: string
   title?: string
-  generatedContent?: ContentGenerateResponse | null
   loading?: boolean
-  saving?: boolean
-  creatingVideo?: boolean
-  canSave?: boolean
-  canCreateVideo?: boolean
   error?: string | null
   disabled?: boolean
+  showSuccess?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   loading: false,
-  saving: false,
-  creatingVideo: false,
-  canSave: false,
-  canCreateVideo: false,
-  disabled: false
+  disabled: false,
+  showSuccess: false
 })
 
 // Emits
@@ -91,13 +84,14 @@ const emit = defineEmits<{
   'update:content': [value: string]
   'update:title': [value: string]
   generate: []
-  save: [title: string]
-  'create-video': [title?: string]
 }>()
 
 // Form ref
 const contentForm = ref()
 const textareaRef = ref()
+
+// UI state
+const showSuccessMessage = ref(false)
 
 // Computed properties for v-model
 const content = computed({
@@ -147,20 +141,12 @@ const handleGenerate = async () => {
   }
 }
 
-const handleSave = () => {
-  const saveTitle = title.value || `Generated Content ${new Date().toLocaleDateString()}`
-  emit('save', saveTitle)
-}
-
-
-
-const handleCreateVideo = () => {
-  const videoTitle = title.value || props.generatedContent?.title
-  emit('create-video', videoTitle)
-}
-
 const clearError = () => {
   // Error clearing will be handled by parent component
+}
+
+const hideSuccessMessage = () => {
+  showSuccessMessage.value = false
 }
 
 // Handle input changes for enhanced UX
@@ -177,6 +163,17 @@ watch(() => props.disabled, (disabled) => {
     nextTick(() => {
       textareaRef.value?.focus()
     })
+  }
+})
+
+// Watch for showSuccess prop to display success message
+watch(() => props.showSuccess, (newValue) => {
+  if (newValue) {
+    showSuccessMessage.value = true
+    // Auto-hide after 5 seconds
+    setTimeout(() => {
+      showSuccessMessage.value = false
+    }, 5000)
   }
 })
 

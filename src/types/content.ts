@@ -29,6 +29,14 @@ export interface ContentGenerateResponse {
     processingTimeMs: number
     status: string
     errorMessage?: string
+    // OpenAI incomplete response support
+    isIncomplete?: boolean
+    incompleteDetails?: {
+        reason?: string
+    }
+    // Additional metrics
+    estimatedCost?: number
+    qualityScore?: number
 }
 
 export interface ConfigOption {
@@ -60,26 +68,58 @@ export interface ContentWorkflowRequest {
     contentType: string
 }
 
+// User type for content response
+export interface ContentUser {
+    id: number
+    username: string
+    email: string
+    firstName: string
+    lastName: string
+    language: string
+    isActive: boolean
+    lastLoginAt: string
+    createdAt: string
+    updatedAt: string
+}
+
 // Content Management Types
 export interface ContentGenerationDto {
     id: number
-    title: string
-    content: string
-    generatedContent: string
-    industry?: string
+    user: ContentUser
     contentType: string
-    language: string
-    tone?: string
-    targetAudience?: string
+    status: string
+    aiProvider: string
+    aiModel: string
+    prompt?: string
+    generatedContent: string
+    title: string
     wordCount: number
     characterCount: number
-    tokensUsed: number
-    generationCost: number
-    processingTimeMs: number
-    status: string
+    tokensUsed?: number
+    generationCost?: number
+    processingTimeMs?: number
+    qualityScore?: number
+    readabilityScore?: number
+    sentimentScore?: number
+    templateId?: number
+    industry: string
+    targetAudience: string
+    tone: string
+    language: string
+    errorMessage?: string
+    retryCount: number
+    maxRetries: number
+    startedAt?: string
+    completedAt?: string
+    failedAt?: string
+    isBillable: boolean
+    subscriptionId?: number
     createdAt: string
     updatedAt: string
-    userId: number
+    version?: number
+    currentVersion: number
+    // Legacy field for backward compatibility
+    content?: string
 }
 
 // Generation Statistics
