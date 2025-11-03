@@ -25,6 +25,8 @@
                     <v-list-item prepend-icon="mdi-eye" title="View" @click="$emit('view', content)" />
                     <v-list-item prepend-icon="mdi-pencil" title="Edit" @click="$emit('edit', content)" />
                     <v-list-item prepend-icon="mdi-refresh" title="Regenerate" @click="$emit('regenerate', content)" />
+                    <v-list-item prepend-icon="mdi-video-plus" title="Create Video"
+                        @click="$emit('create-video', content)" />
                     <v-divider />
                     <v-list-item prepend-icon="mdi-delete" title="Delete" class="text-error"
                         @click="$emit('delete', content)" />
@@ -96,6 +98,11 @@
                 Edit
             </v-btn>
 
+            <v-btn variant="text" size="small" prepend-icon="mdi-video-plus" color="secondary"
+                @click="$emit('create-video', content)">
+                Video
+            </v-btn>
+
             <v-spacer />
 
             <v-btn variant="text" size="small" prepend-icon="mdi-refresh" color="primary"
@@ -126,6 +133,7 @@ defineEmits<{
     edit: [content: ContentGenerationDto]
     delete: [content: ContentGenerationDto]
     regenerate: [content: ContentGenerationDto]
+    'create-video': [content: ContentGenerationDto]
 }>()
 
 // Composables

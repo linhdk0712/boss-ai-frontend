@@ -183,7 +183,7 @@
                 <v-list-item v-if="currentContent.targetAudience">
                   <v-list-item-title>Target Audience</v-list-item-title>
                   <v-list-item-subtitle>{{ getTargetAudienceLabel(currentContent.targetAudience)
-                    }}</v-list-item-subtitle>
+                  }}</v-list-item-subtitle>
                 </v-list-item>
 
                 <v-list-item>
@@ -537,22 +537,8 @@ watch([error, updateError, deleteError], ([err, updateErr, deleteErr]) => {
   }
 })
 
-// Debug watchers
-watch(currentContent, (newVal) => {
-  console.log('currentContent changed:', newVal)
-})
-
-watch(loadingDetail, (newVal) => {
-  console.log('loadingDetail changed:', newVal)
-})
-
-watch(error, (newVal) => {
-  console.log('error changed:', newVal)
-})
-
 // Load content on mount
 onMounted(() => {
-  console.log('Content detail page mounted, contentId:', contentId.value)
   if (contentId.value) {
     loadContentById(contentId.value)
   }

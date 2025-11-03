@@ -32,6 +32,9 @@ export const API_ENDPOINTS = {
         WORKFLOW: '/content/workflow',
         LIST: '/content/list',
         USER_CONTENTS: '/content/user',
+        VIDEO_STATUS: (id: number) => `/content/${id}/video-status`,
+        VIDEO_RETRY: (id: number) => `/content/${id}/video-retry`,
+        VIDEO_DOWNLOAD: (id: number) => `/content/${id}/video-download`,
     },
 
     // Settings Management

@@ -11,6 +11,7 @@ import NavbarShortcuts from '@/layouts/components/NavbarShortcuts.vue'
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import UserProfile from '@/layouts/components/UserProfile.vue'
 import NavBarI18n from '@core/components/I18n.vue'
+import VideoProgressNotification from '@/components/content/VideoProgressNotification.vue'
 
 // @layouts plugin
 import { VerticalNavLayout } from '@layouts'
@@ -51,5 +52,8 @@ const { conditionalNavItems } = useConditionalNavigation(navItems)
 
     <!-- 👉 Customizer -->
     <TheCustomizer />
+
+    <!-- 👉 Video Progress Notifications -->
+    <VideoProgressNotification />
   </VerticalNavLayout>
 </template>

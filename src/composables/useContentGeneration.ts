@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { contentService } from '@/services/contentService'
+import { useVideoProgress } from '@/composables/useVideoProgress'
 import type {
     ContentGenerateRequest,
     ContentGenerateResponse,
@@ -14,6 +15,8 @@ import type {
  * Handles AI content generation, saving, and workflow triggers
  */
 export function useContentGeneration() {
+    // Video progress tracking
+    const { addVideoJob } = useVideoProgress()
     // State for generated content
     const generatedContent = ref<ContentGenerateResponse | null>(null)
     const lastGenerateRequest = ref<ContentGenerateRequest | null>(null)
@@ -159,11 +162,44 @@ export function useContentGeneration() {
                 content: generatedContent.value.generatedContent,
                 title: title || generatedContent.value.title,
                 contentType: lastGenerateRequest.value?.contentType || 'general',
+                industry: lastGenerateRequest.value?.industry,
+                language: lastGenerateRequest.value?.language,
+                tone: lastGenerateRequest.value?.tone,
+                targetAudience: lastGenerateRequest.value?.targetAudience,
             }
 
             const response = await contentService.triggerWorkflow(workflowRequest)
 
             if (response.errorCode === 'SUCCESS') {
+                // Create a mock content object for video progress tracking
+                const videoContent: ContentGenerationDto = {
+                    id: Date.now(), // Temporary ID until we get the real one from backend
+                    title: workflowRequest.title || 'Video Content',
+                    generatedContent: workflowRequest.content,
+                    contentType: workflowRequest.contentType,
+                    status: 'WORKFLOW_TRIGGERED',
+                    startedAt: new Date().toISOString(),
+                    // Add other required fields with default values
+                    user: {} as any,
+                    aiProvider: 'OpenAI',
+                    aiModel: 'gpt-3.5-turbo',
+                    wordCount: 0,
+                    characterCount: 0,
+                    industry: workflowRequest.industry || '',
+                    targetAudience: workflowRequest.targetAudience || '',
+                    tone: workflowRequest.tone || '',
+                    language: workflowRequest.language || 'vi',
+                    retryCount: 0,
+                    maxRetries: 3,
+                    isBillable: true,
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString(),
+                    currentVersion: 1
+                }
+
+                // Add to video progress tracking
+                addVideoJob(videoContent)
+
                 return response.data
             } else {
                 videoError.value = response.errorMessage

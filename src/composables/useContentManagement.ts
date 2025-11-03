@@ -84,14 +84,13 @@ export function useContentManagement() {
 
             const response = await contentService.getContentList(params)
 
-            console.log('Content API Response:', response) // Debug log
+
 
             if (response.errorCode === 'SUCCESS' && response.data) {
                 // Backend returns content array directly in data field
                 contentList.value = Array.isArray(response.data) ? response.data : []
 
-                console.log('Content List Set:', contentList.value) // Debug log
-                console.log('Has Content:', contentList.value.length > 0) // Debug log
+
 
                 // Calculate pagination info from response
                 const contentArray = contentList.value
@@ -102,10 +101,10 @@ export function useContentManagement() {
                     totalPages: Math.ceil(contentArray.length / size) || 1,
                 }
 
-                console.log('Pagination Set:', pagination.value) // Debug log
+
             } else {
                 error.value = response.errorMessage || 'Failed to load content'
-                console.error('API Error:', response.errorMessage) // Debug log
+
                 // Ensure contentList is always an array
                 if (!contentList.value) {
                     contentList.value = []

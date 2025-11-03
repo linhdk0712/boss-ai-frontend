@@ -98,6 +98,40 @@ class ContentService {
         const response = await apiClient.get(url)
         return response.data
     }
+
+    /**
+     * Get video generation status for specific content
+     */
+    async getVideoStatus(id: number): Promise<BaseResponse<{ status: string; progress?: number; videoUrl?: string }>> {
+        const response = await apiClient.get(CONTENT.VIDEO_STATUS(id))
+        return response.data
+    }
+
+    /**
+     * Retry video generation for failed content
+     */
+    async retryVideoGeneration(id: number): Promise<BaseResponse<any>> {
+        const response = await apiClient.post(CONTENT.VIDEO_RETRY(id))
+        return response.data
+    }
+
+    /**
+     * Download generated video
+     */
+    async downloadVideo(id: number): Promise<Blob> {
+        const response = await apiClient.get(CONTENT.VIDEO_DOWNLOAD(id), {
+            responseType: 'blob'
+        })
+        return response.data
+    }
+
+    /**
+     * Get video download URL
+     */
+    async getVideoDownloadUrl(id: number): Promise<BaseResponse<{ downloadUrl: string; expiresAt: string }>> {
+        const response = await apiClient.get(`${CONTENT.VIDEO_DOWNLOAD(id)}/url`)
+        return response.data
+    }
 }
 
 export const contentService = new ContentService()

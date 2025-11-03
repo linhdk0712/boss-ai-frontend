@@ -64,8 +64,12 @@ export interface ContentSaveRequest {
 
 export interface ContentWorkflowRequest {
     content: string
-    title: string
+    title?: string
     contentType: string
+    industry?: string
+    language?: string
+    tone?: string
+    targetAudience?: string
 }
 
 // User type for content response

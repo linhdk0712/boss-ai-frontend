@@ -97,7 +97,6 @@ const showSuccessMessage = ref(false)
 const content = computed({
   get: () => props.content || '',
   set: (value) => {
-    console.log('Content input changed:', value) // Debug log
     emit('update:content', value || '')
   }
 })

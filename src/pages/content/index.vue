@@ -221,8 +221,6 @@ const isFormValid = computed(() => {
 
 // Methods
 const handleGenerate = async () => {
-  console.log('Generate clicked, form valid:', isFormValid.value)
-  console.log('Form data:', form.value)
 
   // Check individual requirements and provide specific error messages
   const content = form.value.content || ''
@@ -259,7 +257,7 @@ const handleGenerate = async () => {
     title: form.value.title
   }
 
-  console.log('Sending generate request:', request)
+
   await generateContent(request)
 
   // Show dialog if content was generated successfully

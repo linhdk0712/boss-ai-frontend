@@ -19,20 +19,7 @@ export default [
                 action: 'read',
                 subject: 'Content',
             },
-            {
-                title: 'Debug Content',
-                to: 'content-debug',
-                icon: { icon: 'tabler-bug' },
-                action: 'read',
-                subject: 'Content',
-            },
-            {
-                title: 'Axios Test',
-                to: 'axios-test',
-                icon: { icon: 'tabler-test-pipe' },
-                action: 'read',
-                subject: 'Content',
-            },
+
         ],
     },
 ]

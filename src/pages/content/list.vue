@@ -185,7 +185,7 @@
               <v-row v-if="!loading && hasContent" class="pa-4">
                 <v-col v-for="content in filteredContent" :key="content.id" cols="12" md="6" lg="4">
                   <ContentCard :content="content" @view="viewContent" @edit="editContent" @delete="confirmDelete"
-                    @regenerate="regenerateFromContent" />
+                    @regenerate="regenerateFromContent" @create-video="createVideo" />
                 </v-col>
               </v-row>
 
@@ -265,7 +265,7 @@
       <v-card>
         <v-card-title class="d-flex align-center">
           <v-icon class="me-2">tabler-eye</v-icon>
-          View Content
+          <span>View Content</span>
           <v-spacer />
           <v-btn icon="tabler-x" variant="text" @click="viewDialog = false" />
         </v-card-title>
@@ -337,26 +337,40 @@
           <div>
             <h3 class="text-h6 mb-3">Details</h3>
             <v-list density="compact">
-              <v-list-item v-if="contentToView.industry">
-                <v-list-item-title>Industry</v-list-item-title>
-                <v-list-item-subtitle>{{ contentToView.industry }}</v-list-item-subtitle>
-              </v-list-item>
-              <v-list-item v-if="contentToView.tone">
-                <v-list-item-title>Tone</v-list-item-title>
-                <v-list-item-subtitle>{{ contentToView.tone }}</v-list-item-subtitle>
-              </v-list-item>
-              <v-list-item v-if="contentToView.targetAudience">
-                <v-list-item-title>Target Audience</v-list-item-title>
-                <v-list-item-subtitle>{{ contentToView.targetAudience }}</v-list-item-subtitle>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-title>Created</v-list-item-title>
-                <v-list-item-subtitle>{{ formatDate(contentToView.createdAt) }}</v-list-item-subtitle>
-              </v-list-item>
-              <v-list-item v-if="contentToView.updatedAt !== contentToView.createdAt">
+              <v-row>
+                <v-col cols="3">
+                  <v-list-item v-if="contentToView.industry">
+                    <v-list-item-title>Industry</v-list-item-title>
+                    <v-list-item-subtitle>{{ contentToView.industry }}</v-list-item-subtitle>
+                  </v-list-item>
+                </v-col>
+                <v-col cols="3">
+                  <v-list-item v-if="contentToView.tone">
+                    <v-list-item-title>Tone</v-list-item-title>
+                    <v-list-item-subtitle>{{ contentToView.tone }}</v-list-item-subtitle>
+                  </v-list-item>
+                </v-col>
+                <v-col cols="3">
+                  <v-list-item v-if="contentToView.targetAudience">
+                    <v-list-item-title>Target Audience</v-list-item-title>
+                    <v-list-item-subtitle>{{ contentToView.targetAudience }}</v-list-item-subtitle>
+                  </v-list-item>
+                </v-col>
+                <v-col cols="3">
+                  <v-list-item>
+                    <v-list-item-title>Created</v-list-item-title>
+                    <v-list-item-subtitle>{{ formatDate(contentToView.createdAt) }}</v-list-item-subtitle>
+                  </v-list-item>
+                </v-col>
+              </v-row>
+
+
+
+
+              <!-- <v-list-item v-if="contentToView.updatedAt !== contentToView.createdAt">
                 <v-list-item-title>Updated</v-list-item-title>
                 <v-list-item-subtitle>{{ formatDate(contentToView.updatedAt) }}</v-list-item-subtitle>
-              </v-list-item>
+              </v-list-item> -->
             </v-list>
           </div>
         </v-card-text>
@@ -474,6 +488,8 @@
 import { useDebounceFn } from '@vueuse/core'
 import { useContentManagement } from '@/composables/useContentManagement'
 import { useContentConfig } from '@/composables/useContentConfig'
+import { useVideoProgress } from '@/composables/useVideoProgress'
+import { contentService } from '@/services/contentService'
 import type { ContentGenerationDto } from '@/types/content'
 import ContentCard from '@/components/content/ContentCard.vue'
 
@@ -505,6 +521,8 @@ const {
   activeContentTypeOptions,
   activeLanguageOptions
 } = useContentConfig()
+
+const { addVideoJob } = useVideoProgress()
 
 // UI state
 const deleteDialog = ref(false)
@@ -751,12 +769,49 @@ const copyContent = async (content: ContentGenerationDto) => {
   }
 }
 
-const createVideo = (content: ContentGenerationDto) => {
-  // Navigate to video creation or trigger video workflow
-  console.log('Creating video for content:', content.id)
-  // TODO: Implement video creation workflow
-  successMessage.value = 'Video creation feature coming soon!'
-  showSuccess.value = true
+const createVideo = async (content: ContentGenerationDto) => {
+  try {
+    // Show loading state
+    const loadingMessage = 'Đang khởi tạo video từ nội dung...'
+    successMessage.value = loadingMessage
+    showSuccess.value = true
+
+    // Prepare workflow request
+    const workflowRequest = {
+      content: content.generatedContent || content.content,
+      title: content.title,
+      contentType: content.contentType || 'general',
+      industry: content.industry,
+      language: content.language,
+      tone: content.tone,
+      targetAudience: content.targetAudience
+    }
+
+    // Call the workflow API
+    const response = await contentService.triggerWorkflow(workflowRequest)
+
+    if (response.errorCode === 'SUCCESS') {
+      // Add to video progress tracking
+      const videoContent: ContentGenerationDto = {
+        ...content,
+        status: 'WORKFLOW_TRIGGERED',
+        startedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+
+      addVideoJob(videoContent)
+
+      successMessage.value = 'Đã bắt đầu tạo video! Bạn sẽ được thông báo khi hoàn thành.'
+      showSuccess.value = true
+    } else {
+      errorMessage.value = response.errorMessage || 'Không thể khởi tạo quy trình tạo video'
+      showError.value = true
+    }
+  } catch (error: any) {
+    console.error('Failed to create video:', error)
+    errorMessage.value = error.response?.data?.errorMessage || error.message || 'Không thể tạo video'
+    showError.value = true
+  }
 }
 
 const saveEdit = async () => {
@@ -787,22 +842,8 @@ watch(error, (err) => {
   }
 })
 
-// Debug watchers
-watch(hasContent, (newVal) => {
-  console.log('hasContent changed:', newVal)
-})
-
-watch(filteredContent, (newVal) => {
-  console.log('filteredContent changed:', newVal)
-})
-
-watch(loading, (newVal) => {
-  console.log('loading changed:', newVal)
-})
-
 // Load content on mount
 onMounted(() => {
-  console.log('Mounting content list page')
   loadContentList()
 })
 
@@ -989,5 +1030,13 @@ definePage({
 .v-form .v-select,
 .v-form .v-textarea {
   margin-bottom: 8px;
+}
+
+.v-card-title {
+  background-color: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+  font-size: 0.875rem;
+  font-weight: 500;
+  flex-shrink: 0;
 }
 </style>
