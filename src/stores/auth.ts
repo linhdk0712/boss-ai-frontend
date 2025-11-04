@@ -16,17 +16,29 @@ export const useAuthStore = defineStore('auth', () => {
     // Initialize user from localStorage
     const initializeAuth = () => {
         const storedUser = localStorage.getItem('userData')
-        if (storedUser && authService.isAuthenticated()) {
+        const hasToken = authService.isAuthenticated()
+
+
+
+        if (storedUser && hasToken) {
             try {
                 const user = JSON.parse(storedUser)
+
                 currentUser.value = user
                 updateAbility(user)
             } catch (e) {
                 console.error('Failed to parse stored user data:', e)
                 authService.clearTokens()
+                currentUser.value = null
                 updateAbility(null)
             }
         } else {
+            // Clear any partial data
+            if (storedUser && !hasToken) {
+
+                localStorage.removeItem('userData')
+            }
+            currentUser.value = null
             updateAbility(null)
         }
     }

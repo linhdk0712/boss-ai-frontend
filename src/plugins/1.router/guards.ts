@@ -25,7 +25,16 @@ export const setupGuards = (router: any) => {
      * Check if user is logged in using our new auth system
      * Also fallback to cookie-based check for backward compatibility
      */
-    const isLoggedIn = authStore.isAuthenticated || !!(useCookie('userData').value && useCookie('accessToken').value)
+    const hasValidTokens = authStore.isAuthenticated
+    const hasLegacyCookies = !!(useCookie('userData').value && useCookie('accessToken').value)
+
+    // If we have legacy cookies but no valid auth store session, clear them
+    if (hasLegacyCookies && !hasValidTokens) {
+      useCookie('userData').value = null
+      useCookie('accessToken').value = null
+    }
+
+    const isLoggedIn = hasValidTokens
 
     /*
       If user is logged in and is trying to access login like page, redirect based on role

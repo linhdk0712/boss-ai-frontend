@@ -45,37 +45,41 @@ const error = computed(() => authStore.error)
 
 // Methods
 const handleLogin = async () => {
-  const success = await authStore.login({
-    username: loginForm.value.username,
-    password: loginForm.value.password,
-  })
+  try {
+    const success = await authStore.login({
+      username: loginForm.value.username,
+      password: loginForm.value.password,
+    })
 
-  if (success) {
-    // Wait for auth store to be fully updated
-    await nextTick()
+    if (success) {
+      // Wait for auth store to be fully updated
+      await nextTick()
 
-    // Redirect based on user role or return path
-    let redirectPath = '/dashboard' // Default for regular users
+      // Redirect based on user role or return path
+      let redirectPath = '/dashboards/analytics' // Default for regular users
 
-    if (route.query.to) {
-      redirectPath = String(route.query.to)
-    } else if (authStore.isAdmin) {
-      redirectPath = '/admin/dashboard'
+      if ((route as any).query?.to) {
+        redirectPath = String((route as any).query.to)
+      } else if (authStore.isAdmin) {
+        redirectPath = '/admin/dashboards/analytics'
+      }
+
+      await router.replace(redirectPath)
     }
-
-
-
-    await router.replace(redirectPath)
+  } catch (error) {
+    console.error('Login navigation error:', error)
   }
 }
 
-const onSubmit = () => {
-  refVForm.value?.validate()
-    .then(({ valid: isValid }: { valid: boolean }) => {
-      if (isValid) {
-        handleLogin()
-      }
-    })
+const onSubmit = async () => {
+  try {
+    const validation = await refVForm.value?.validate()
+    if (validation?.valid) {
+      await handleLogin()
+    }
+  } catch (error) {
+    console.error('Form validation error:', error)
+  }
 }
 
 // Clear error when user starts typing
@@ -83,13 +87,13 @@ watch(() => loginForm.value.username, () => {
   if (error.value) {
     authStore.clearError()
   }
-})
+}, { flush: 'post' })
 
 watch(() => loginForm.value.password, () => {
   if (error.value) {
     authStore.clearError()
   }
-})
+}, { flush: 'post' })
 </script>
 
 <template>
@@ -144,14 +148,14 @@ watch(() => loginForm.value.password, () => {
               <!-- username -->
               <VCol cols="12">
                 <AppTextField v-model="loginForm.username" label="Username" placeholder="Enter your username" autofocus
-                  :disabled="isLoading" :rules="[requiredValidator]" />
+                  :disabled="isLoading" :rules="[(v: string) => !!v || 'Username is required']" />
               </VCol>
 
               <!-- password -->
               <VCol cols="12">
                 <AppTextField v-model="loginForm.password" label="Password" placeholder="············"
-                  :rules="[requiredValidator]" :type="isPasswordVisible ? 'text' : 'password'" :disabled="isLoading"
-                  autocomplete="current-password"
+                  :rules="[(v: string) => !!v || 'Password is required']"
+                  :type="isPasswordVisible ? 'text' : 'password'" :disabled="isLoading" autocomplete="current-password"
                   :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
                   @click:append-inner="isPasswordVisible = !isPasswordVisible" />
 
