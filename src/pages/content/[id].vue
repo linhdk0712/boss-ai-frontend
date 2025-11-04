@@ -49,6 +49,7 @@
                 </template>
 
                 <v-list>
+                  <v-list-item prepend-icon="tabler-history" title="Version History" @click="viewVersions" />
                   <v-list-item prepend-icon="mdi-content-copy" title="Copy Content" @click="copyContent" />
                   <v-list-item prepend-icon="mdi-video-plus" title="Create Video" @click="createVideo" />
                   <v-divider />
@@ -316,6 +317,10 @@ const rules = {
 // Methods
 const goBack = () => {
   router.push('/content/list')
+}
+
+const viewVersions = () => {
+  router.push({ name: 'content-versions-id', params: { id: contentId.value } })
 }
 
 const toggleEditMode = () => {

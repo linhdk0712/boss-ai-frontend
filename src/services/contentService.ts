@@ -45,6 +45,44 @@ class ContentService {
     }
 
     /**
+     * Generate content asynchronously with job tracking
+     */
+    async generateContentAsync(request: ContentGenerateRequest & { jobId: string }): Promise<BaseResponse<{ jobId: string }>> {
+        const response = await apiClient.post(CONTENT.GENERATE_ASYNC, request)
+        return response.data
+    }
+
+    /**
+     * Trigger workflow asynchronously with job tracking
+     */
+    async triggerWorkflowAsync(request: ContentWorkflowRequest & { jobId: string }): Promise<BaseResponse<{ jobId: string }>> {
+        const response = await apiClient.post(CONTENT.WORKFLOW_ASYNC, request)
+        return response.data
+    }
+
+    /**
+     * Get job status for async operations
+     */
+    async getJobStatus(jobId: string): Promise<BaseResponse<{
+        status: 'queued' | 'processing' | 'completed' | 'failed'
+        progress: number
+        message: string
+        result?: any
+        error?: string
+    }>> {
+        const response = await apiClient.get(CONTENT.JOB_STATUS(jobId))
+        return response.data
+    }
+
+    /**
+     * Cancel active job
+     */
+    async cancelJob(jobId: string): Promise<BaseResponse<void>> {
+        const response = await apiClient.delete(CONTENT.JOB_CANCEL(jobId))
+        return response.data
+    }
+
+    /**
      * Get all content items for the authenticated user
      */
     async getUserContents(): Promise<BaseResponse<ContentGenerationDto[]>> {

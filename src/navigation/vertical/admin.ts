@@ -17,6 +17,15 @@ export default [
         subject: 'Admin',
     },
 
+    // AI Provider Monitoring
+    {
+        title: 'AI Provider Monitoring',
+        icon: { icon: 'tabler-cpu' },
+        to: 'admin-ai-providers',
+        action: 'manage',
+        subject: 'Admin',
+    },
+
     // Admin Dashboards
     {
         title: 'Admin Dashboards',

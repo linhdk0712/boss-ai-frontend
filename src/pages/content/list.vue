@@ -144,6 +144,7 @@
                       </v-btn>
                     </template>
                     <v-list>
+                      <v-list-item prepend-icon="tabler-history" title="Version History" @click="viewVersions(item)" />
                       <v-list-item prepend-icon="tabler-copy" title="Copy Content" @click="copyContent(item)" />
                       <v-list-item prepend-icon="tabler-video-plus" title="Create Video" @click="createVideo(item)" />
                       <v-divider />
@@ -597,6 +598,10 @@ const debouncedSearch = useDebounceFn(() => {
 const viewContent = (content: ContentGenerationDto) => {
   contentToView.value = content
   viewDialog.value = true
+}
+
+const viewVersions = (content: ContentGenerationDto) => {
+  router.push({ name: 'content-versions-id', params: { id: content.id } })
 }
 
 const editContent = (content: ContentGenerationDto) => {

@@ -164,3 +164,172 @@ export interface PaginatedResponse<T> {
         totalPages: number
     }
 }
+
+// Content Version Management Types
+export interface ContentVersion {
+    id: number
+    contentId: number
+    versionNumber: number
+    content: string
+    title?: string
+
+    // Generation parameters
+    generationParams: Record<string, any>
+    aiProvider: string
+    aiModel: string
+
+    // Metrics
+    tokensUsed?: number
+    generationCost?: number
+    processingTimeMs?: number
+    readabilityScore?: number
+    seoScore?: number
+    qualityScore?: number
+    sentimentScore?: number
+
+    // Content statistics
+    wordCount?: number
+    characterCount?: number
+
+    // Metadata
+    industry?: string
+    targetAudience?: string
+    tone?: string
+    language?: string
+
+    // Version branching and tagging
+    parentVersionId?: number
+    branchName?: string
+    isExperimental?: boolean
+    versionTag?: string
+    annotation?: string
+
+    // Audit fields
+    createdBy: number
+    createdByUsername?: string
+    createdAt: string
+    updatedAt?: string
+
+    // Calculated fields
+    overallScore?: number
+    isLatestVersion?: boolean
+    totalVersions?: number
+}
+
+export interface ContentVersionComparison {
+    contentId: number
+    versionA: ContentVersion
+    versionB: ContentVersion
+
+    // Text comparison results
+    textDifferences: TextDifference[]
+    comparisonSummary: ComparisonSummary
+
+    // Metrics comparison
+    metricsComparison: MetricComparison
+
+    // Performance analysis
+    performanceComparison: PerformanceComparison
+
+    // Recommendation
+    recommendation: VersionRecommendation
+
+    // Comparison metadata
+    comparedBy: number
+    comparedByUsername?: string
+    comparedAt: string
+}
+
+export interface TextDifference {
+    type: 'ADDITION' | 'DELETION' | 'MODIFICATION' | 'UNCHANGED'
+    originalText?: string
+    newText?: string
+    startPosition: number
+    endPosition: number
+    lineNumber: number
+}
+
+export interface ComparisonSummary {
+    totalChanges: number
+    additions: number
+    deletions: number
+    modifications: number
+    similarityPercentage: number
+    wordCountDifference: number
+    characterCountDifference: number
+}
+
+export interface MetricComparison {
+    qualityScore?: ScoreComparison
+    readabilityScore?: ScoreComparison
+    seoScore?: ScoreComparison
+    sentimentScore?: ScoreComparison
+    overallScore?: ScoreComparison
+
+    // Performance metrics
+    processingTimeDifference?: number
+    costDifference?: number
+    tokenUsageDifference?: number
+}
+
+export interface ScoreComparison {
+    versionAScore?: number
+    versionBScore?: number
+    difference: number
+    percentageChange: number
+    winner: 'A' | 'B' | 'TIE'
+    significance: 'MAJOR' | 'MINOR' | 'NEGLIGIBLE'
+}
+
+export interface PerformanceComparison {
+    overallWinner: 'A' | 'B' | 'TIE'
+    performanceGap: number
+    versionAStrengths: string[]
+    versionBStrengths: string[]
+    improvementAreas: string[]
+    detailedAnalysis: Record<string, any>
+}
+
+export interface VersionRecommendation {
+    recommendedVersion: 'A' | 'B'
+    confidenceScore: number
+    reasoning: string
+    keyFactors: string[]
+    considerations: string[]
+    analysisDetails: Record<string, any>
+}
+
+export interface VersionStatistics {
+    totalVersions: number
+    latestVersion: number
+    averageQualityScore?: number
+    averageReadabilityScore?: number
+    averageSeoScore?: number
+    totalTokensUsed: number
+    totalCost: number
+    averageProcessingTime: number
+    branchCount: number
+    tagCount: number
+}
+
+export interface VersionBranch {
+    branchName: string
+    description?: string
+    isExperimental: boolean
+    versionCount: number
+    latestVersion: ContentVersion
+    versions: ContentVersion[]
+    createdAt: string
+}
+
+export interface CreateVersionBranchRequest {
+    parentVersionId: number
+    branchName: string
+    description?: string
+    isExperimental?: boolean
+}
+
+export interface VersionTagRequest {
+    versionTag: string
+    annotation?: string
+}
