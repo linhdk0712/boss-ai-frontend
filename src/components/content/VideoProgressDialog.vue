@@ -1,353 +1,267 @@
 <template>
-    <v-dialog v-model="isOpen" max-width="600" persistent scrollable>
+    <v-dialog :model-value="modelValue" max-width="500" persistent>
         <v-card>
-            <!-- Dialog Header -->
-            <v-card-title class="d-flex align-center justify-space-between py-4 px-6 bg-primary">
-                <div class="d-flex align-center text-white">
-                    <v-icon class="me-3" size="28">mdi-video-plus</v-icon>
-                    <div>
-                        <h2 class="text-h6 font-weight-bold mb-1">Video Generation Progress</h2>
-                        <p class="text-body-2 mb-0 text-white" style="opacity: 0.9;">
-                            Theo dõi tiến trình tạo video từ nội dung AI
-                        </p>
-                    </div>
-                </div>
-
-                <v-btn icon="mdi-close" variant="text" size="small" color="white" @click="handleClose" />
+            <v-card-title class="d-flex align-center">
+                <v-icon class="me-2" color="primary">mdi-video-plus</v-icon>
+                Video Generation in Progress
+                <v-spacer />
+                <v-chip v-if="isTracking" color="success" size="small" variant="tonal">
+                    <v-icon start size="small">mdi-pulse</v-icon>
+                    Live
+                </v-chip>
             </v-card-title>
 
-            <!-- Dialog Content -->
-            <v-card-text class="pa-0">
-                <v-container fluid class="py-4">
-                    <!-- No Jobs Message -->
-                    <div v-if="allJobs.length === 0" class="text-center py-8">
-                        <v-icon size="80" color="grey-lighten-1" class="mb-4">
-                            mdi-video-off-outline
-                        </v-icon>
-                        <h3 class="text-h6 mb-2">Chưa có video nào đang được tạo</h3>
-                        <p class="text-body-2 text-medium-emphasis">
-                            Bắt đầu tạo video từ nội dung AI của bạn
-                        </p>
+            <v-divider />
+
+            <v-card-text class="pa-6">
+                <!-- Progress Information -->
+                <div class="text-center mb-4">
+                    <v-progress-circular :model-value="progress" :size="80" :width="8" color="primary" class="mb-4">
+                        {{ Math.round(progress) }}%
+                    </v-progress-circular>
+
+                    <h4 class="text-h6 mb-2">{{ getProgressMessage() }}</h4>
+                    <p class="text-body-2 text-medium-emphasis">
+                        {{ getProgressDescription() }}
+                    </p>
+                </div>
+
+                <!-- Job Information -->
+                <v-card variant="outlined" class="pa-3 mb-4">
+                    <div class="d-flex align-center justify-space-between mb-2">
+                        <span class="text-body-2 font-weight-medium">Job ID:</span>
+                        <span class="text-body-2">{{ jobId || 'Initializing...' }}</span>
                     </div>
-
-                    <!-- Active Jobs -->
-                    <div v-if="activeJobs.length > 0" class="mb-6">
-                        <h3 class="text-subtitle-1 font-weight-bold mb-3 d-flex align-center">
-                            <v-icon class="me-2" color="warning">mdi-clock-outline</v-icon>
-                            Đang xử lý ({{ activeJobs.length }})
-                        </h3>
-
-                        <v-card v-for="job in activeJobs" :key="job.id" class="mb-3" variant="outlined">
-                            <v-card-text class="pa-4">
-                                <div class="d-flex align-center justify-space-between mb-3">
-                                    <div class="flex-grow-1">
-                                        <h4 class="text-body-1 font-weight-medium mb-1">
-                                            {{ job.title || 'Untitled Content' }}
-                                        </h4>
-                                        <div class="d-flex align-center gap-2">
-                                            <v-chip :color="getStatusColor(job.status)" size="small" variant="tonal">
-                                                <v-icon start size="small">{{ getStatusIcon(job.status) }}</v-icon>
-                                                {{ getStatusText(job.status) }}
-                                            </v-chip>
-                                            <span class="text-caption text-medium-emphasis">
-                                                ID: {{ job.id }}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <v-menu>
-                                        <template #activator="{ props }">
-                                            <v-btn icon="mdi-dots-vertical" variant="text" size="small"
-                                                v-bind="props" />
-                                        </template>
-                                        <v-list>
-                                            <v-list-item prepend-icon="mdi-eye" title="Xem nội dung"
-                                                @click="viewContent(job)" />
-                                            <v-list-item prepend-icon="mdi-refresh" title="Kiểm tra trạng thái"
-                                                @click="checkStatus(job)" />
-                                            <v-divider />
-                                            <v-list-item prepend-icon="mdi-cancel" title="Hủy theo dõi"
-                                                class="text-error" @click="removeJob(job)" />
-                                        </v-list>
-                                    </v-menu>
-                                </div>
-
-                                <!-- Progress Bar -->
-                                <v-progress-linear :model-value="getJobProgress(job)"
-                                    :color="getStatusColor(job.status)" height="8" rounded class="mb-2" />
-
-                                <div class="d-flex justify-space-between text-caption text-medium-emphasis">
-                                    <span>{{ getJobProgress(job) }}% hoàn thành</span>
-                                    <span v-if="job.startedAt">
-                                        Bắt đầu: {{ formatTime(job.startedAt) }}
-                                    </span>
-                                </div>
-
-                                <!-- Content Preview -->
-                                <div class="mt-3">
-                                    <div class="text-caption text-medium-emphasis mb-1">Nội dung:</div>
-                                    <p class="text-body-2 content-preview">
-                                        {{ truncateText(job.generatedContent || job.content || '', 120) }}
-                                    </p>
-                                </div>
-                            </v-card-text>
-                        </v-card>
+                    <div class="d-flex align-center justify-space-between mb-2">
+                        <span class="text-body-2 font-weight-medium">Status:</span>
+                        <v-chip :color="getStatusColor()" size="small" variant="tonal">
+                            {{ status || 'STARTING' }}
+                        </v-chip>
                     </div>
-
-                    <!-- Completed Jobs -->
-                    <div v-if="completedJobs.length > 0" class="mb-6">
-                        <h3 class="text-subtitle-1 font-weight-bold mb-3 d-flex align-center">
-                            <v-icon class="me-2" color="success">mdi-check-circle</v-icon>
-                            Hoàn thành ({{ completedJobs.length }})
-                        </h3>
-
-                        <v-card v-for="job in completedJobs" :key="job.id" class="mb-3" variant="outlined">
-                            <v-card-text class="pa-4">
-                                <div class="d-flex align-center justify-space-between mb-2">
-                                    <div class="flex-grow-1">
-                                        <h4 class="text-body-1 font-weight-medium mb-1">
-                                            {{ job.title || 'Untitled Content' }}
-                                        </h4>
-                                        <div class="d-flex align-center gap-2">
-                                            <v-chip color="success" size="small" variant="tonal">
-                                                <v-icon start size="small">mdi-check-circle</v-icon>
-                                                Hoàn thành
-                                            </v-chip>
-                                            <span class="text-caption text-medium-emphasis">
-                                                {{ formatTime(job.completedAt || job.updatedAt) }}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <div class="d-flex gap-2">
-                                        <v-btn variant="text" size="small" prepend-icon="mdi-play" color="primary"
-                                            @click="playVideo(job)">
-                                            Xem video
-                                        </v-btn>
-                                        <v-btn variant="text" size="small" prepend-icon="mdi-download" color="secondary"
-                                            @click="downloadVideo(job)">
-                                            Tải xuống
-                                        </v-btn>
-                                    </div>
-                                </div>
-                            </v-card-text>
-                        </v-card>
+                    <div v-if="estimatedTimeRemaining" class="d-flex align-center justify-space-between mb-2">
+                        <span class="text-body-2 font-weight-medium">Est. Time Remaining:</span>
+                        <span class="text-body-2">{{ formatTime(estimatedTimeRemaining) }}</span>
                     </div>
-
-                    <!-- Failed Jobs -->
-                    <div v-if="failedJobs.length > 0" class="mb-6">
-                        <h3 class="text-subtitle-1 font-weight-bold mb-3 d-flex align-center">
-                            <v-icon class="me-2" color="error">mdi-alert-circle</v-icon>
-                            Thất bại ({{ failedJobs.length }})
-                        </h3>
-
-                        <v-card v-for="job in failedJobs" :key="job.id" class="mb-3" variant="outlined" color="error">
-                            <v-card-text class="pa-4">
-                                <div class="d-flex align-center justify-space-between mb-2">
-                                    <div class="flex-grow-1">
-                                        <h4 class="text-body-1 font-weight-medium mb-1">
-                                            {{ job.title || 'Untitled Content' }}
-                                        </h4>
-                                        <div class="d-flex align-center gap-2">
-                                            <v-chip color="error" size="small" variant="tonal">
-                                                <v-icon start size="small">mdi-alert-circle</v-icon>
-                                                Thất bại
-                                            </v-chip>
-                                            <span class="text-caption text-medium-emphasis">
-                                                {{ formatTime(job.failedAt || job.updatedAt) }}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    <v-btn variant="text" size="small" prepend-icon="mdi-refresh" color="primary"
-                                        @click="retryJob(job)">
-                                        Thử lại
-                                    </v-btn>
-                                </div>
-
-                                <!-- Error Message -->
-                                <div v-if="job.errorMessage" class="mt-2">
-                                    <div class="text-caption text-error mb-1">Lỗi:</div>
-                                    <p class="text-body-2 text-error">{{ job.errorMessage }}</p>
-                                </div>
-                            </v-card-text>
-                        </v-card>
+                    <div class="d-flex align-center justify-space-between">
+                        <span class="text-body-2 font-weight-medium">Real-time Updates:</span>
+                        <v-chip :color="isTracking ? 'success' : 'warning'" size="x-small" variant="tonal">
+                            <v-icon start size="x-small">
+                                {{ isTracking ? 'mdi-broadcast' : 'mdi-broadcast-off' }}
+                            </v-icon>
+                            {{ isTracking ? 'Connected' : 'Polling' }}
+                        </v-chip>
                     </div>
-                </v-container>
+                </v-card>
+
+                <!-- Progress Steps -->
+                <div class="mb-4">
+                    <h5 class="text-subtitle-2 mb-3">Processing Steps</h5>
+                    <v-timeline density="compact" side="end">
+                        <v-timeline-item v-for="(step, index) in progressSteps" :key="index"
+                            :dot-color="getStepColor(step.status)" size="small">
+                            <template #icon>
+                                <v-icon v-if="step.status === 'completed'" size="16">mdi-check</v-icon>
+                                <v-icon v-else-if="step.status === 'processing'" size="16">mdi-loading</v-icon>
+                                <v-icon v-else size="16">mdi-circle-outline</v-icon>
+                            </template>
+
+                            <div class="d-flex align-center justify-space-between">
+                                <span class="text-body-2">{{ step.name }}</span>
+                                <v-chip v-if="step.status !== 'pending'" :color="getStepColor(step.status)"
+                                    size="x-small" variant="tonal">
+                                    {{ step.status }}
+                                </v-chip>
+                            </div>
+                        </v-timeline-item>
+                    </v-timeline>
+                </div>
+
+                <!-- Error Message -->
+                <v-alert v-if="error" type="error" variant="tonal" class="mb-4">
+                    <v-alert-title>Generation Failed</v-alert-title>
+                    {{ error }}
+                </v-alert>
+
+                <!-- Success Message -->
+                <v-alert v-if="isCompleted && !error" type="success" variant="tonal" class="mb-4">
+                    <v-alert-title>Video Generated Successfully!</v-alert-title>
+                    Your video has been generated and is ready for download.
+                </v-alert>
             </v-card-text>
 
-            <!-- Dialog Footer -->
             <v-divider />
+
             <v-card-actions class="pa-4">
-                <v-btn variant="text" prepend-icon="mdi-refresh" @click="refreshAll">
-                    Làm mới tất cả
-                </v-btn>
-
-                <v-btn v-if="completedJobs.length > 0 || failedJobs.length > 0" variant="text"
-                    prepend-icon="mdi-delete-sweep" @click="clearCompleted">
-                    Xóa đã hoàn thành
-                </v-btn>
-
                 <v-spacer />
 
-                <v-btn variant="text" @click="handleClose">
-                    Đóng
+                <v-btn v-if="!isCompleted && !error" variant="text" @click="$emit('cancel')">
+                    Cancel
+                </v-btn>
+
+                <v-btn v-if="isCompleted || error" variant="text" @click="$emit('close')">
+                    Close
+                </v-btn>
+
+                <v-btn v-if="isCompleted && !error" color="primary" variant="tonal" prepend-icon="mdi-download"
+                    @click="$emit('download')">
+                    Download Video
                 </v-btn>
             </v-card-actions>
         </v-card>
-
-        <!-- Video Player Dialog -->
-        <VideoPlayerDialog v-model="showVideoPlayer" :content="selectedVideoContent" />
     </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useVideoProgress } from '@/composables/useVideoProgress'
-import { contentService } from '@/services/contentService'
-import VideoPlayerDialog from './VideoPlayerDialog.vue'
-import type { ContentGenerationDto } from '@/types/content'
+import { computed } from 'vue'
 
 // Props
 interface Props {
     modelValue: boolean
+    progress: number
+    status?: string
+    jobId?: string
+    error?: string
+    estimatedTimeRemaining?: number
+    currentStage?: string
+    isTracking?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+    progress: 0,
+    status: 'STARTING',
+    jobId: '',
+    error: '',
+    estimatedTimeRemaining: 0,
+    currentStage: '',
+    isTracking: false
+})
 
 // Emits
 const emit = defineEmits<{
     'update:modelValue': [value: boolean]
+    'close': []
+    'cancel': []
+    'download': []
 }>()
 
-// State
-const showVideoPlayer = ref(false)
-const selectedVideoContent = ref<ContentGenerationDto | null>(null)
-
-// Composables
-const {
-    videoJobs,
-    activeVideoJobs,
-    completedVideoJobs,
-    failedVideoJobs,
-    removeVideoJob,
-    clearCompletedJobs,
-    checkVideoJobsStatus,
-    getJobProgress,
-    getStatusColor,
-    getStatusIcon,
-    getStatusText
-} = useVideoProgress()
-
-// Computed
-const isOpen = computed({
-    get: () => props.modelValue,
-    set: (value) => emit('update:modelValue', value)
+// Computed properties
+const isCompleted = computed(() => {
+    return props.progress >= 100 || props.status === 'COMPLETED'
 })
 
-const allJobs = computed(() => videoJobs.value)
-const activeJobs = computed(() => activeVideoJobs.value)
-const completedJobs = computed(() => completedVideoJobs.value)
-const failedJobs = computed(() => failedVideoJobs.value)
+const progressSteps = computed(() => {
+    const steps = [
+        { name: 'Content Analysis', status: 'pending' },
+        { name: 'Script Generation', status: 'pending' },
+        { name: 'Voice Synthesis', status: 'pending' },
+        { name: 'Video Rendering', status: 'pending' },
+        { name: 'Final Processing', status: 'pending' }
+    ]
+
+    // Update step status based on progress
+    const progressPerStep = 100 / steps.length
+
+    steps.forEach((step, index) => {
+        const stepProgress = (index + 1) * progressPerStep
+
+        if (props.progress >= stepProgress) {
+            step.status = 'completed'
+        } else if (props.progress > index * progressPerStep) {
+            step.status = 'processing'
+        }
+    })
+
+    return steps
+})
 
 // Methods
-const handleClose = () => {
-    isOpen.value = false
+const getProgressMessage = () => {
+    if (props.error) return 'Generation Failed'
+    if (isCompleted.value) return 'Video Ready!'
+
+    // Use current stage from WebSocket if available
+    if (props.currentStage) {
+        return `Processing: ${props.currentStage}`
+    }
+
+    const currentStep = progressSteps.value.find(step => step.status === 'processing')
+    return currentStep ? `Processing: ${currentStep.name}` : 'Initializing...'
 }
 
-const viewContent = (job: ContentGenerationDto) => {
-    // TODO: Implement content viewing
-    console.log('View content:', job)
+const getProgressDescription = () => {
+    if (props.error) return 'An error occurred during video generation.'
+    if (isCompleted.value) return 'Your video has been successfully generated.'
+
+    if (props.isTracking) {
+        return 'Receiving real-time updates from the video generation pipeline.'
+    }
+
+    return 'Please wait while we generate your video. This may take a few minutes.'
 }
 
-const checkStatus = async (job: ContentGenerationDto) => {
-    await checkVideoJobsStatus()
-}
-
-const removeJob = (job: ContentGenerationDto) => {
-    removeVideoJob(job.id)
-}
-
-const retryJob = (job: ContentGenerationDto) => {
-    // TODO: Implement retry functionality
-    console.log('Retry job:', job)
-}
-
-const refreshAll = async () => {
-    await checkVideoJobsStatus()
-}
-
-const clearCompleted = () => {
-    clearCompletedJobs()
-}
-
-const playVideo = (job: ContentGenerationDto) => {
-    selectedVideoContent.value = job
-    showVideoPlayer.value = true
-}
-
-const downloadVideo = async (job: ContentGenerationDto) => {
-    try {
-        const blob = await contentService.downloadVideo(job.id)
-        const url = URL.createObjectURL(blob)
-
-        const a = document.createElement('a')
-        a.href = url
-        a.download = `${job.title || 'video'}.mp4`
-        document.body.appendChild(a)
-        a.click()
-        document.body.removeChild(a)
-
-        URL.revokeObjectURL(url)
-    } catch (err: any) {
-        console.error('Failed to download video:', err)
-        // Show error message
+const getStatusColor = () => {
+    switch (props.status?.toLowerCase()) {
+        case 'completed':
+            return 'success'
+        case 'processing':
+        case 'starting':
+            return 'primary'
+        case 'failed':
+        case 'error':
+            return 'error'
+        case 'cancelled':
+            return 'warning'
+        default:
+            return 'info'
     }
 }
 
-const truncateText = (text: string, maxLength: number): string => {
-    if (text.length <= maxLength) return text
-    return text.substring(0, maxLength) + '...'
+const getStepColor = (status: string) => {
+    switch (status) {
+        case 'completed':
+            return 'success'
+        case 'processing':
+            return 'primary'
+        case 'failed':
+            return 'error'
+        default:
+            return 'surface-variant'
+    }
 }
 
-const formatTime = (dateString: string): string => {
-    if (!dateString) return ''
-    const date = new Date(dateString)
-    return date.toLocaleString('vi-VN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    })
+const formatTime = (seconds: number) => {
+    if (seconds < 60) {
+        return `${Math.round(seconds)}s`
+    } else if (seconds < 3600) {
+        const minutes = Math.floor(seconds / 60)
+        const remainingSeconds = Math.round(seconds % 60)
+        return `${minutes}m ${remainingSeconds}s`
+    } else {
+        const hours = Math.floor(seconds / 3600)
+        const minutes = Math.floor((seconds % 3600) / 60)
+        return `${hours}h ${minutes}m`
+    }
 }
 </script>
 
 <style scoped>
-.content-preview {
-    background-color: rgba(var(--v-theme-surface-variant), 0.5);
-    padding: 8px 12px;
-    border-radius: 6px;
-    border-left: 3px solid rgb(var(--v-theme-primary));
-    line-height: 1.4;
-    font-size: 0.875rem;
+/* Progress circular styling */
+:deep(.v-progress-circular) {
+    font-weight: 600;
 }
 
-.v-card {
-    border-radius: 12px;
+/* Timeline styling */
+:deep(.v-timeline-item__body) {
+    padding-bottom: 8px;
 }
 
-.v-progress-linear {
-    border-radius: 4px;
+/* Alert styling */
+:deep(.v-alert) {
+    border-radius: 8px;
 }
 
-.text-error {
-    color: rgb(var(--v-theme-error)) !important;
-}
-
-/* Dark theme adjustments */
-.v-theme--dark .content-preview {
-    background-color: rgba(var(--v-theme-surface-bright), 0.1);
-    border-left-color: rgb(var(--v-theme-primary-lighten-1));
+/* Card styling */
+:deep(.v-card--variant-outlined) {
+    border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 </style>

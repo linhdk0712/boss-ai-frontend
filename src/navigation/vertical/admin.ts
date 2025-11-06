@@ -80,4 +80,13 @@ export default [
         action: 'manage',
         subject: 'Admin',
     },
+
+    // WebSocket Test (Development)
+    {
+        title: 'WebSocket Test',
+        icon: { icon: 'tabler-plug-connected' },
+        to: 'websocket-test',
+        action: 'manage',
+        subject: 'Admin',
+    },
 ]

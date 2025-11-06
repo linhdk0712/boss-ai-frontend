@@ -106,10 +106,15 @@ export function useAsyncContentGeneration() {
             }
 
             // Start the async generation process
-            const response = await contentService.generateContentAsync({
-                ...request,
-                jobId
-            })
+            const queueRequest = {
+                requestParams: request,
+                contentType: request.contentType || 'article',
+                priority: 'STANDARD',
+                expirationHours: 24,
+                maxRetries: 3
+            }
+
+            const response = await contentService.generateContentAsync(queueRequest as any)
 
             if (response.errorCode === 'SUCCESS') {
                 // Update job status

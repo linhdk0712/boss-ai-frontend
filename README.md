@@ -235,6 +235,7 @@ import AppTextField from '@core/components/app-form-elements/AppTextField.vue'
 - **Login/Logout**: Centralized authentication actions with proper cleanup
 - **Account Activation**: Email-based activation with token verification
 - **Token Refresh**: Automatic JWT token refresh with fallback to logout
+- **Token Access**: Direct access to JWT tokens via `getToken()` utility function ✅ **NEW**
 - **User Profile Management**: Profile picture support via `profilePictureUrl` field
 - **Error Handling**: Centralized error management with user-friendly messages
 - **Loading States**: Built-in loading indicators for all authentication operations
@@ -255,6 +256,17 @@ const authStore = useAuthStore()
 const userData = computed(() => authStore.currentUser)
 const logout = () => authStore.logout() // Handles all cleanup
 
+// ✅ NEW: Direct token access via useAuth composable
+import { useAuth } from '@/composables/useAuth'
+const { getToken, isAuthenticated } = useAuth()
+
+// Access current JWT token
+const token = getToken()
+if (token) {
+  // Use token for API calls or other operations
+  console.log('Current token:', token)
+}
+
 // 🔒 SECURITY ENHANCEMENT: Automatic legacy cookie cleanup in router guards
 // plugins/1.router/guards.ts
 const hasValidTokens = authStore.isAuthenticated
@@ -274,6 +286,47 @@ if (hasLegacyCookies && !hasValidTokens) {
 - **Memory Cleanup**: Reduces browser storage usage by removing unused cookie data
 - **Session Integrity**: Validates authentication state consistency across the application
 - **Migration Safety**: Safely handles transition from legacy to modern authentication system
+
+#### Token Access Utility ✅ **NEW**
+The `useAuth` composable now includes a `getToken()` utility function for direct JWT token access:
+
+```typescript
+// Import the authentication composable
+import { useAuth } from '@/composables/useAuth'
+
+const { getToken, isAuthenticated } = useAuth()
+
+// Get current JWT access token
+const token = getToken()
+if (token) {
+  // Token is available for API calls
+  console.log('Current token:', token)
+} else {
+  // No valid token available
+  console.log('User not authenticated')
+}
+
+// Example: Conditional API calls based on token availability
+const makeAuthenticatedRequest = async () => {
+  const token = getToken()
+  if (!token) {
+    console.error('No authentication token available')
+    return
+  }
+  
+  // Proceed with authenticated API call
+  const response = await apiClient.get('/protected-endpoint', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+}
+```
+
+**Token Utility Features:**
+- **Direct Access**: Returns current JWT access token or null if unavailable
+- **Service Integration**: Delegates to `authService.getAccessToken()` for consistency
+- **Type Safety**: Returns `string | null` with proper TypeScript typing
+- **Reactive Updates**: Token changes reflect immediately through service layer
+- **Security**: Provides controlled access to sensitive authentication data
 
 ## 🎨 Icon System (Iconify)
 

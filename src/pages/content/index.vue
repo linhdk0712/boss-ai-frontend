@@ -8,7 +8,7 @@
             <div>
               <h3 class="text-h4 font-weight-bold">AI Content Generation</h3>
               <p class="text-subtitle-1 text-medium-emphasis mb-0">
-                Create engaging content with AI-powered assistance
+                Create engaging content with asynchronous AI processing
               </p>
             </div>
             <v-spacer />
@@ -21,10 +21,10 @@
       </v-row>
       <v-row>
         <!-- Configuration Panel - Left Side -->
-        <v-col cols="12" md="4" lg="3" class="pa-3">
+        <v-col cols="12" :md="showQueue ? 3 : 4" :lg="showQueue ? 3 : 3" class="pa-3">
           <ConfigurationPanel v-model:industry="form.industry" v-model:content-type="form.contentType"
             v-model:language="form.language" v-model:tone="form.tone" v-model:target-audience="form.targetAudience"
-            :disabled="isAnyOperationRunning" />
+            :disabled="isGenerating || isCreatingVideo" />
 
           <!-- Quick Tips Card -->
           <v-card class="tips-card mt-4" variant="tonal" color="info">
@@ -38,16 +38,35 @@
                 <li>Include target keywords if needed</li>
                 <li>Specify the desired length or format</li>
                 <li>Mention your brand voice or style</li>
+                <li>Jobs are processed asynchronously for better performance</li>
               </ul>
             </v-card-text>
           </v-card>
         </v-col>
 
-        <!-- Content Generation Form - Right Side -->
-        <v-col cols="12" md="8" lg="9" class="pa-3">
-          <ContentGenerationFormComponent v-model:content="form.content" v-model:title="form.title"
-            :loading="generating" :error="generateError" :disabled="isAnyOperationRunning"
-            :show-success="!!generatedContent && generatedContent.status !== 'FAILED'" @generate="handleGenerate" />
+        <!-- Content Generation Form - Center -->
+        <v-col :cols="showQueue ? 6 : 8" :lg="showQueue ? 6 : 9" class="pa-3">
+          <AsyncContentGenerationForm v-model:content="form.content" v-model:title="form.title" :sync-generating="false"
+            :async-generating="isGenerating" :error="errorMessage" :disabled="isGenerating || isCreatingVideo"
+            :active-jobs="activeJobs" :completed-jobs="completedJobs" @generate="handleGenerate" />
+
+          <!-- Success/Error Notifications -->
+          <v-alert v-if="showSuccess" type="success" variant="tonal" class="mt-4" closable
+            @click:close="showSuccess = false">
+            {{ successMessage }}
+          </v-alert>
+
+          <v-alert v-if="showError" type="error" variant="tonal" class="mt-4" closable @click:close="showError = false">
+            {{ errorMessage }}
+          </v-alert>
+        </v-col>
+
+        <!-- Job Queue Panel - Right Side -->
+        <v-col v-if="showQueue" cols="12" md="3" lg="3" class="pa-3">
+          <JobQueuePanel :active-jobs="activeJobs" :completed-jobs="completedJobs" :queue-length="queueLength"
+            :processing-jobs="processingJobs" :ws-connected="wsConnected" :polling-enabled="pollingEnabled"
+            @cancel-job="handleCancelJob" @retry-job="handleRetryJob" @clear-completed="clearCompletedJobs"
+            @reconnect="handleReconnect" />
         </v-col>
       </v-row>
     </v-container>
@@ -144,40 +163,59 @@
     </v-snackbar>
 
     <!-- Generated Content Dialog -->
-    <GeneratedContentDialog v-model="showContentDialog" :content="generatedContent" :loading="generating"
-      :saving="saving" :creating-video="creatingVideo" :can-save="canSave" :can-create-video="canCreateVideo"
-      :persistent="dialogPersistent" @save="handleSave" @create-video="handleCreateVideo"
-      @generate-new="handleGenerateNew" @close="handleDialogClose" @toggle-persistent="handleTogglePersistent" />
+    <GeneratedContentDialog v-if="selectedJobResult" v-model="showContentDialog" :content="selectedJobResult"
+      :loading="false" :saving="false" :creating-video="isCreatingVideo" :can-save="true" :can-create-video="true"
+      :persistent="dialogPersistent" @create-video="handleCreateVideo" @generate-new="handleGenerateNew"
+      @close="handleDialogClose" @toggle-persistent="handleTogglePersistent" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useContentConfig } from '@/composables/useContentConfig'
-import { useContentGeneration } from '@/composables/useContentGeneration'
+import { useAsyncContentGeneration } from '@/composables/useAsyncContentGeneration'
+import { useJobNotifications } from '@/composables/useJobNotifications'
 import type { ContentGenerationForm, ContentGenerateRequest } from '@/types/content'
 import ConfigurationPanel from '@/components/content/ConfigurationPanel.vue'
-import ContentGenerationFormComponent from '@/components/content/ContentGenerationForm.vue'
+import AsyncContentGenerationForm from '@/components/content/AsyncContentGenerationForm.vue'
+import JobQueuePanel from '@/components/content/JobQueuePanel.vue'
 import GeneratedContentDialog from '@/components/content/GeneratedContentDialog.vue'
 
 // Composables
 const { getDefaultLanguage } = useContentConfig()
+
+// Async content generation
 const {
-  generatedContent,
-  generating,
-  saving,
-  creatingVideo,
-  generateError,
-  saveError,
-  videoError,
-  canSave,
-  canCreateVideo,
-  isAnyOperationRunning,
-  generateContent,
-  saveContent,
-  triggerWorkflow,
-  clearErrors,
-  clearContent
-} = useContentGeneration()
+  activeJobs,
+  completedJobs,
+  isGenerating,
+  isCreatingVideo,
+  hasActiveJobs,
+  queueLength,
+  processingJobs,
+  wsConnected,
+  pollingEnabled,
+  generateContentAsync,
+  createVideoAsync,
+  cancelJob,
+  retryJob,
+  getJob,
+  clearCompletedJobs
+} = useAsyncContentGeneration()
+
+// Job notifications
+const {
+  notifications,
+  notifyJobComplete,
+  notifyJobFailed,
+  notifySystem,
+  clearNotifications
+} = useJobNotifications()
+
+// Local error/success state
+const showError = ref(false)
+const errorMessage = ref('')
+const showSuccess = ref(false)
+const successMessage = ref('')
 
 // Form state
 const form = ref<ContentGenerationForm>({
@@ -193,12 +231,10 @@ const form = ref<ContentGenerationForm>({
 // UI state
 const showHelp = ref(false)
 const helpStep = ref(1)
-const showError = ref(false)
-const showSuccess = ref(false)
+const showQueue = ref(true) // Show job queue panel
 const showContentDialog = ref(false)
 const dialogPersistent = ref(true) // Control dialog persistent behavior
-const errorMessage = ref('')
-const successMessage = ref('')
+const selectedJobResult = ref<any>(null)
 
 // Computed properties
 const persistentTooltipText = computed(() => {
@@ -220,6 +256,13 @@ const isFormValid = computed(() => {
 
 
 // Methods
+const clearErrors = () => {
+  showError.value = false
+  errorMessage.value = ''
+  showSuccess.value = false
+  successMessage.value = ''
+}
+
 const handleGenerate = async () => {
 
   // Check individual requirements and provide specific error messages
@@ -258,62 +301,115 @@ const handleGenerate = async () => {
   }
 
 
-  await generateContent(request)
+  try {
+    // Generate content asynchronously
+    const jobId = await generateContentAsync(request)
 
-  // Show dialog if content was generated successfully
-  if (generatedContent.value && generatedContent.value.status !== 'FAILED') {
+    // Show success notification
+    successMessage.value = 'Content generation started! You can monitor progress in the job queue.'
+    showSuccess.value = true
+
+    // Clear form after successful submission
+    form.value.content = ''
+
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Failed to start content generation'
+    showError.value = true
+  }
+}
+
+// Job management handlers
+const handleCancelJob = async (jobId: string) => {
+  try {
+    await cancelJob(jobId)
+    notifySystem('info', 'Job Cancelled', `Job ${jobId} has been cancelled`)
+  } catch (error: any) {
+    notifySystem('error', 'Cancel Failed', error.message || 'Failed to cancel job')
+  }
+}
+
+const handleRetryJob = async (jobId: string) => {
+  try {
+    const newJobId = await retryJob(jobId)
+    notifySystem('success', 'Job Retried', `Job retried with new ID: ${newJobId}`)
+  } catch (error: any) {
+    notifySystem('error', 'Retry Failed', error.message || 'Failed to retry job')
+  }
+}
+
+const handleJobComplete = (job: any) => {
+  if (job.result) {
+    selectedJobResult.value = job.result
     showContentDialog.value = true
   }
 }
 
-
-
-const handleSave = async (title: string) => {
-  clearErrors()
-  const result = await saveContent(title)
-
-  if (result) {
-    successMessage.value = 'Content saved successfully!'
-    showSuccess.value = true
-  }
+const handleReconnect = () => {
+  // Reconnection will be handled by the async content generation composable
+  notifySystem('info', 'Reconnecting...', 'Attempting to reconnect to real-time updates')
 }
 
-const handleCreateVideo = async (title?: string) => {
-  clearErrors()
-  const result = await triggerWorkflow(title)
 
-  if (result) {
-    successMessage.value = 'Video creation workflow started!'
-    showSuccess.value = true
+
+const handleCreateVideo = async (content: any) => {
+  try {
+    if (content && content.generatedContent) {
+      // Use async video generation
+      const jobId = await createVideoAsync({
+        content: content.generatedContent,
+        title: content.title || 'Generated Video',
+        contentType: 'video'
+      })
+
+      notifySystem('success', 'Video Generation Started', 'Video creation job has been queued')
+    }
+  } catch (error: any) {
+    notifySystem('error', 'Video Generation Failed', error.message || 'Failed to start video generation')
   }
 }
 
 const handleGenerateNew = () => {
-  // Clear current content and close dialog
-  clearContent()
-  showContentDialog.value = false
-
-  // Reset form if needed
+  // Reset form for new generation
   form.value.content = ''
   form.value.title = ''
+  showContentDialog.value = false
 }
 
 const handleDialogClose = () => {
   showContentDialog.value = false
+  selectedJobResult.value = null
 }
 
 const handleTogglePersistent = () => {
   dialogPersistent.value = !dialogPersistent.value
 }
 
-// Watch for errors
-watch([generateError, saveError, videoError], ([genErr, saveErr, vidErr]) => {
-  const error = genErr || saveErr || vidErr
-  if (error) {
-    errorMessage.value = error
-    showError.value = true
+// Watch for job failures to show errors
+watch(activeJobs, (jobs) => {
+  for (const [jobId, job] of jobs.entries()) {
+    if (job.status === 'failed' && job.error) {
+      errorMessage.value = job.error
+      showError.value = true
+      break
+    }
   }
-})
+}, { deep: true })
+
+// Watch for completed jobs to show results
+watch(completedJobs, (newJobs) => {
+  // Check for newly completed content generation jobs
+  for (const [jobId, job] of newJobs.entries()) {
+    if (job.type === 'content_generation' && job.status === 'completed' && job.result) {
+      // Auto-show dialog for completed content generation
+      selectedJobResult.value = job.result
+      showContentDialog.value = true
+
+      // Notify user
+      notifyJobComplete(job)
+      break // Only show one at a time
+    }
+  }
+}, { deep: true })
 
 // Initialize form with default language
 onMounted(() => {
@@ -327,8 +423,10 @@ onMounted(() => {
 definePage({
   name: 'content-index',
   meta: {
-    title: 'AI Content Generation',
-    requiresAuth: true
+    title: 'AI Content Generation (Async)',
+    requiresAuth: true,
+    action: 'create',
+    subject: 'Content'
   }
 })
 </script>

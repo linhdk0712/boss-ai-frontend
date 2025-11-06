@@ -20,8 +20,8 @@ export interface WebSocketConfig {
 export function useWebSocket(config: WebSocketConfig = {}) {
     const { getToken } = useAuth()
 
-    // Configuration
-    const wsUrl = config.url || `${import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8080'}/ws/job-status`
+    // Configuration - Use native WebSocket endpoint (without SockJS)
+    const wsUrl = config.url || `${import.meta.env.VITE_WS_BASE_URL || 'ws://localhost:8080'}/ws/job-status-native`
     const reconnectInterval = config.reconnectInterval || 3000
     const maxReconnectAttempts = config.maxReconnectAttempts || 10
     const heartbeatInterval = config.heartbeatInterval || 30000

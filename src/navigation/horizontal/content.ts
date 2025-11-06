@@ -19,7 +19,13 @@ export default [
                 action: 'read',
                 subject: 'Content',
             },
-
+            {
+                title: 'Job Queue Management',
+                to: 'job-queue-index',
+                icon: { icon: 'tabler-list-check' },
+                action: 'read',
+                subject: 'JobQueue',
+            },
         ],
     },
 ]

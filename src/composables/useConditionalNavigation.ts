@@ -18,15 +18,17 @@ export function useConditionalNavigation(defaultNavItems: VerticalNavItems) {
             children: [
                 { title: 'Generate Content', to: 'content-index', action: 'manage', subject: 'Content' },
                 { title: 'My Content', to: 'content-list', action: 'read', subject: 'Content' },
+                { title: 'Job Queue Management', to: 'job-queue-index', action: 'read', subject: 'JobQueue' },
             ],
         },
     ]
 
     // Computed navigation that switches based on current route
     const conditionalNavItems = computed(() => {
-        // If on analytics dashboard or content routes, show only content navigation (no Dashboard menu)
+        // If on analytics dashboard, content routes, or job-queue routes, show content navigation only
         if (route.name === 'dashboards-analytics' ||
-            route.name?.toString().startsWith('content-')) {
+            route.name?.toString().startsWith('content-') ||
+            route.name?.toString().startsWith('job-queue-')) {
             return contentOnlyNav
         }
 
@@ -39,7 +41,8 @@ export function useConditionalNavigation(defaultNavItems: VerticalNavItems) {
         isAnalyticsRoute: computed(() => route.name === 'dashboards-analytics'),
         isContentOnlyRoute: computed(() =>
             route.name === 'dashboards-analytics' ||
-            route.name?.toString().startsWith('content-')
+            route.name?.toString().startsWith('content-') ||
+            route.name?.toString().startsWith('job-queue-')
         ),
     }
 }

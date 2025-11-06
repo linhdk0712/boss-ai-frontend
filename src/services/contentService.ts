@@ -1,4 +1,4 @@
-import { CONTENT } from '@/constants/apiEndpoints'
+import { CONTENT, QUEUE } from '@/constants/apiEndpoints'
 import { apiClient } from '@/plugins/axios'
 import type {
     BaseResponse,
@@ -47,8 +47,8 @@ class ContentService {
     /**
      * Generate content asynchronously with job tracking
      */
-    async generateContentAsync(request: ContentGenerateRequest & { jobId: string }): Promise<BaseResponse<{ jobId: string }>> {
-        const response = await apiClient.post(CONTENT.GENERATE_ASYNC, request)
+    async generateContentAsync(request: any): Promise<BaseResponse<{ jobId: string }>> {
+        const response = await apiClient.post(QUEUE.JOBS, request)
         return response.data
     }
 
@@ -61,9 +61,9 @@ class ContentService {
     }
 
     /**
-     * Get job status for async operations
+     * Get job status for async operations (content-specific)
      */
-    async getJobStatus(jobId: string): Promise<BaseResponse<{
+    async getContentJobStatus(jobId: string): Promise<BaseResponse<{
         status: 'queued' | 'processing' | 'completed' | 'failed'
         progress: number
         message: string
@@ -75,9 +75,9 @@ class ContentService {
     }
 
     /**
-     * Cancel active job
+     * Cancel active content job
      */
-    async cancelJob(jobId: string): Promise<BaseResponse<void>> {
+    async cancelContentJob(jobId: string): Promise<BaseResponse<void>> {
         const response = await apiClient.delete(CONTENT.JOB_CANCEL(jobId))
         return response.data
     }
@@ -168,6 +168,30 @@ class ContentService {
      */
     async getVideoDownloadUrl(id: number): Promise<BaseResponse<{ downloadUrl: string; expiresAt: string }>> {
         const response = await apiClient.get(`${CONTENT.VIDEO_DOWNLOAD(id)}/url`)
+        return response.data
+    }
+
+    /**
+     * Get job status by job ID
+     */
+    async getJobStatus(jobId: string): Promise<BaseResponse<any>> {
+        const response = await apiClient.get(QUEUE.JOB_BY_ID(jobId))
+        return response.data
+    }
+
+    /**
+     * Cancel a queued job
+     */
+    async cancelJob(jobId: string): Promise<BaseResponse<void>> {
+        const response = await apiClient.delete(QUEUE.JOB_BY_ID(jobId))
+        return response.data
+    }
+
+    /**
+     * Get user's job history
+     */
+    async getUserJobs(page = 0, size = 20): Promise<BaseResponse<any>> {
+        const response = await apiClient.get(`${QUEUE.JOBS}?page=${page}&size=${size}`)
         return response.data
     }
 }

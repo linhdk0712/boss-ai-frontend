@@ -1,5 +1,7 @@
 import { useAbility } from '@casl/vue'
 // Using any type for route to avoid Vue Router type conflicts with unplugin-vue-router
+import { getAbility } from '@/plugins/casl'
+import type { Actions, Subjects } from '@/plugins/casl/ability'
 import type { NavGroup } from '@layouts/types'
 
 /**
@@ -13,15 +15,31 @@ import type { NavGroup } from '@layouts/types'
  * @param {string} subject CASL Subject // https://casl.js.org/v4/en/guide/intro#basics
  */
 export const can = (action: string | undefined, subject: string | undefined) => {
-  const vm = getCurrentInstance()
+  // If action or subject is undefined, allow access (for items without ACL requirements)
+  if (!action || !subject)
+    return true
 
-  if (!vm)
-    return false
+  try {
+    // Try to use the ability instance directly from the plugin
+    const ability = getAbility()
+    const result = ability.can(action as Actions, subject as Subjects)
 
-  const localCan = vm.proxy && '$can' in vm.proxy
 
-  // @ts-expect-error We will get TS error in below line because we aren't using $can in component instance
-  return localCan ? vm.proxy?.$can(action, subject) : true
+
+    return result
+  } catch (error) {
+    console.warn('[CASL] Error checking permission:', error)
+    // Fallback to getCurrentInstance() approach if direct access fails
+    const vm = getCurrentInstance()
+
+    if (!vm)
+      return false
+
+    const localCan = vm.proxy && '$can' in vm.proxy
+
+    // @ts-expect-error We will get TS error in below line because we aren't using $can in component instance
+    return localCan ? vm.proxy?.$can(action, subject) : true
+  }
 }
 
 /**
@@ -30,6 +48,8 @@ export const can = (action: string | undefined, subject: string | undefined) => 
  * @param {object} item navigation object item
  */
 export const canViewNavMenuGroup = (item: NavGroup) => {
+
+
   const hasAnyVisibleChild = item.children.some(i => can(i.action, i.subject))
 
   // If subject and action is defined in item => Return based on children visibility (Hide group if no child is visible)

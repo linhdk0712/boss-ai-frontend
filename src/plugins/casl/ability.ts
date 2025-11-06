@@ -1,7 +1,7 @@
 import { createMongoAbility, type MongoAbility } from '@casl/ability'
 import type { UserInfo } from '@/types/auth'
 
-export type Subjects = 'User' | 'Admin' | 'Dashboard' | 'Content' | 'Settings' | 'all'
+export type Subjects = 'User' | 'Admin' | 'Dashboard' | 'Content' | 'Settings' | 'JobQueue' | 'all'
 export type Actions = 'manage' | 'create' | 'read' | 'update' | 'delete' | 'all'
 
 export type AppAbility = MongoAbility<[Actions, Subjects]>
@@ -30,7 +30,8 @@ export const createAbility = (user: UserInfo | null): AppAbility => {
         { action: 'update', subject: 'User' }, // Can update their own profile
         { action: 'manage', subject: 'Content' }, // Full content access for users
         { action: 'read', subject: 'Settings' }, // Settings access for users
-        { action: 'manage', subject: 'Settings' } // Full settings access for users
+        { action: 'manage', subject: 'Settings' }, // Full settings access for users
+        { action: 'manage', subject: 'JobQueue' } // Full job queue access for users
     ])
 }
 

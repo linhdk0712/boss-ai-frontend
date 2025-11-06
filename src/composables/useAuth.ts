@@ -148,6 +148,10 @@ export function useAuth() {
         }
     }
 
+    const getToken = (): string | null => {
+        return authService.getAccessToken()
+    }
+
     return {
         // State
         isLoading: readonly(isLoading),
@@ -166,6 +170,7 @@ export function useAuth() {
         refreshToken,
 
         // Utilities
+        getToken,
         clearError: () => { error.value = null }
     }
 }

@@ -28,7 +28,7 @@ export const API_ENDPOINTS = {
         BASE: '/content',
         BY_ID: (id: number) => `/content/${id}`,
         GENERATE: '/content/generate',
-        GENERATE_ASYNC: '/content/generate-async',
+        GENERATE_ASYNC: '/queue/jobs',
         SAVE: '/content/save',
         WORKFLOW: '/content/workflow',
         WORKFLOW_ASYNC: '/content/workflow-async',
@@ -53,6 +53,25 @@ export const API_ENDPOINTS = {
         VERSION_SORTED: (contentId: number) => `/content/${contentId}/versions/sorted`,
     },
 
+    // Queue Management
+    QUEUE: {
+        BASE: '/queue',
+        JOBS: '/queue/jobs',
+        JOB_BY_ID: (jobId: string) => `/queue/jobs/${jobId}`,
+        STATISTICS: '/queue/statistics',
+        CLEANUP: '/queue/cleanup',
+    },
+
+    // Job Queue Management
+    JOBS: {
+        BASE: '/jobs',
+        BY_ID: (id: number) => `/jobs/${id}`,
+        DETAILS: (id: number) => `/jobs/${id}/details`,
+        RETRY: (id: number) => `/jobs/${id}/retry`,
+        DOWNLOAD: (id: number) => `/jobs/${id}/download`,
+        LIST: '/jobs',
+    },
+
     // Settings Management
     SETTINGS: {
         TONE: '/setting/tone',
@@ -65,4 +84,4 @@ export const API_ENDPOINTS = {
 } as const
 
 // Export individual endpoint groups for easier imports
-export const { AUTH, USERS, CONFIG, CONTENT, SETTINGS } = API_ENDPOINTS
+export const { AUTH, USERS, CONFIG, CONTENT, QUEUE, JOBS, SETTINGS } = API_ENDPOINTS

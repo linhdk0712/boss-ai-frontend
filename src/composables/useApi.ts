@@ -1,41 +1,27 @@
-import { createFetch } from '@vueuse/core'
-import { destr } from 'destr'
+import { ref } from 'vue'
 
-export const useApi = createFetch({
-  baseUrl: import.meta.env.VITE_API_BASE_URL || '/api',
-  fetchOptions: {
-    headers: {
-      Accept: 'application/json',
-    },
-  },
-  options: {
-    refetch: true,
-    async beforeFetch({ options }) {
-      const accessToken = useCookie('accessToken').value
+export function useApi() {
+  const loading = ref(false)
+  const error = ref<string | null>(null)
 
-      if (accessToken) {
-        options.headers = {
-          ...options.headers,
-          Authorization: `Bearer ${accessToken}`,
-        }
-      }
+  const execute = async <T>(apiCall: () => Promise<T>): Promise<T> => {
+    loading.value = true
+    error.value = null
 
-      return { options }
-    },
-    afterFetch(ctx) {
-      const { data, response } = ctx
+    try {
+      const result = await apiCall()
+      return result
+    } catch (err: any) {
+      error.value = err.message || 'An error occurred'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
 
-      // Parse data if it's JSON
-
-      let parsedData = null
-      try {
-        parsedData = destr(data)
-      }
-      catch (error) {
-        console.error(error)
-      }
-
-      return { data: parsedData, response }
-    },
-  },
-})
+  return {
+    loading,
+    error,
+    execute
+  }
+}

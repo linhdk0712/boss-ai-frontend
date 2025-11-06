@@ -7,8 +7,9 @@ export default [
     subject: 'Content',
     children: [
       { title: 'Generate Content', to: 'content-index', action: 'manage', subject: 'Content' },
-      { title: 'Async Generation', to: 'content-async-index', action: 'manage', subject: 'Content' },
+      { title: 'Sync Generation (Legacy)', to: 'content-async-index', action: 'manage', subject: 'Content' },
       { title: 'My Content', to: 'content-list', action: 'read', subject: 'Content' },
+      { title: 'Job Queue Management', to: 'job-queue-index', action: 'read', subject: 'JobQueue' },
     ],
   },
   {
