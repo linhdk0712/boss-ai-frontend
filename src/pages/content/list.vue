@@ -386,6 +386,9 @@
             @click="editContent(contentToView!); viewDialog = false">
             Edit
           </v-btn>
+          <v-btn prepend-icon="tabler-video-plus" variant="text" color="secondary" @click="createVideo(contentToView!)">
+            Create Video
+          </v-btn>
           <v-spacer />
           <v-btn variant="text" @click="viewDialog = false">
             Close
@@ -783,11 +786,11 @@ const createVideo = async (content: ContentGenerationDto) => {
 
     // Prepare workflow request
     const workflowRequest = {
-      content: content.generatedContent || content.content,
+      generatedContent: content.generatedContent || content.content,
       title: content.title,
       contentType: content.contentType || 'general',
       industry: content.industry,
-      language: content.language,
+      language: content.language || 'vi',
       tone: content.tone,
       targetAudience: content.targetAudience
     }

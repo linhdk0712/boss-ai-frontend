@@ -20,6 +20,13 @@ export default [
                 subject: 'Content',
             },
             {
+                title: 'Content Status',
+                to: 'content-status',
+                icon: { icon: 'tabler-activity' },
+                action: 'read',
+                subject: 'Content',
+            },
+            {
                 title: 'Job Queue Management',
                 to: 'job-queue-index',
                 icon: { icon: 'tabler-list-check' },

@@ -81,7 +81,13 @@ export const API_ENDPOINTS = {
         CONTENT_TYPE: '/setting/content-type',
         UPDATE: '/setting',
     },
+
+    // Flow Management (N8N Node Runs)
+    FLOW: {
+        BASE: '/flow',
+        BY_USER: (userId?: number) => userId ? `/flow?userId=${userId}` : '/flow',
+    },
 } as const
 
 // Export individual endpoint groups for easier imports
-export const { AUTH, USERS, CONFIG, CONTENT, QUEUE, JOBS, SETTINGS } = API_ENDPOINTS
+export const { AUTH, USERS, CONFIG, CONTENT, QUEUE, JOBS, SETTINGS, FLOW } = API_ENDPOINTS

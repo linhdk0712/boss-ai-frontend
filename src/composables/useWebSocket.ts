@@ -109,13 +109,17 @@ export function useWebSocket(config: WebSocketConfig = {}) {
      * Subscribe to job updates
      */
     const subscribe = (jobId: string): void => {
+        console.log(`Subscribing to job: ${jobId}`) // Debug log
         subscriptions.value.add(jobId)
 
         if (isConnected.value) {
+            console.log(`Sending subscription message for job: ${jobId}`) // Debug log
             send({
                 type: 'subscribe_job',
                 jobId
             })
+        } else {
+            console.log(`WebSocket not connected, subscription for ${jobId} will be sent when connected`) // Debug log
         }
     }
 
@@ -219,6 +223,7 @@ export function useWebSocket(config: WebSocketConfig = {}) {
     const handleMessage = (event: MessageEvent): void => {
         try {
             const message: WebSocketMessage = JSON.parse(event.data)
+            console.log('Raw WebSocket message:', message) // Debug log
 
             // Handle system messages
             if (message.type === 'connection_established') {
@@ -238,6 +243,7 @@ export function useWebSocket(config: WebSocketConfig = {}) {
             }
 
             // Route message to handlers
+            console.log(`Routing message to ${messageHandlers.value.size} handlers`) // Debug log
             for (const handler of messageHandlers.value.values()) {
                 try {
                     handler(message)

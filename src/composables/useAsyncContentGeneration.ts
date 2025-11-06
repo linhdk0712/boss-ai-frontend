@@ -79,33 +79,9 @@ export function useAsyncContentGeneration() {
     /**
      * Generate content asynchronously
      */
-    const generateContentAsync = async (request: ContentGenerateRequest): Promise<string> => {
-        const jobId = generateJobId()
-
-        // Create job entry
-        const job: AsyncJob = {
-            id: jobId,
-            type: 'content_generation',
-            status: 'queued',
-            progress: 0,
-            message: 'Queuing content generation...',
-            request,
-            startedAt: Date.now(),
-            estimatedDuration: 30000 // 30 seconds estimate
-        }
-
-        activeJobs.value.set(jobId, job)
-
+    const generateContentAsync = async (request: any): Promise<string> => {
         try {
-            // Subscribe to job updates via WebSocket
-            if (wsConnected.value) {
-                subscribeToJob(jobId)
-            } else {
-                // Enable polling fallback
-                enablePolling()
-            }
-
-            // Start the async generation process
+            // Start the async generation process first to get the real job ID
             const queueRequest = {
                 requestParams: request,
                 contentType: request.contentType || 'article',
@@ -114,19 +90,48 @@ export function useAsyncContentGeneration() {
                 maxRetries: 3
             }
 
+            console.log('Sending queue request:', queueRequest) // Debug log
+
             const response = await contentService.generateContentAsync(queueRequest as any)
 
             if (response.errorCode === 'SUCCESS') {
-                // Update job status
-                updateJobStatus(jobId, 'processing', 10, 'Content generation started...')
+                const jobId = response.data?.jobId
+                if (!jobId) {
+                    throw new Error('No job ID returned from server')
+                }
+
+                console.log('Got job ID from server:', jobId) // Debug log
+
+                // Create job entry with the real job ID
+                const job: AsyncJob = {
+                    id: jobId,
+                    type: 'content_generation',
+                    status: 'queued',
+                    progress: 0,
+                    message: 'Job queued successfully',
+                    request,
+                    startedAt: Date.now(),
+                    estimatedDuration: 30000 // 30 seconds estimate
+                }
+
+                activeJobs.value.set(jobId, job)
+
+                // Subscribe to job updates via WebSocket with the real job ID
+                if (wsConnected.value) {
+                    console.log('Subscribing to job with real ID:', jobId) // Debug log
+                    subscribeToJob(jobId)
+                } else {
+                    console.log('WebSocket not connected, enabling polling') // Debug log
+                    // Enable polling fallback
+                    enablePolling()
+                }
+
                 return jobId
             } else {
-                // Handle immediate error
-                updateJobStatus(jobId, 'failed', 0, response.errorMessage || 'Failed to start generation')
-                throw new Error(response.errorMessage)
+                throw new Error(response.errorMessage || 'Failed to start generation')
             }
         } catch (error: any) {
-            updateJobStatus(jobId, 'failed', 0, error.message || 'Failed to start generation')
+            console.error('Failed to start async content generation:', error)
             throw error
         }
     }
@@ -282,8 +287,11 @@ export function useAsyncContentGeneration() {
      * Handle WebSocket messages
      */
     const handleWebSocketMessage = (message: any): void => {
+        console.log('WebSocket message received:', message) // Debug log
+
         if (message.type === 'job_status_update') {
             const { jobId, data } = message
+            console.log(`Job status update for ${jobId}:`, data) // Debug log
             updateJobStatus(
                 jobId,
                 data.status,
@@ -294,6 +302,7 @@ export function useAsyncContentGeneration() {
             )
         } else if (message.type === 'job_completed') {
             const { jobId, result } = message
+            console.log(`Job completed for ${jobId}:`, result) // Debug log
             updateJobStatus(
                 jobId,
                 result.success ? 'completed' : 'failed',

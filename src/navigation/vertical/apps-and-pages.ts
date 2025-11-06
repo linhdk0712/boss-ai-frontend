@@ -9,6 +9,7 @@ export default [
       { title: 'Generate Content', to: 'content-index', action: 'manage', subject: 'Content' },
       { title: 'Sync Generation (Legacy)', to: 'content-async-index', action: 'manage', subject: 'Content' },
       { title: 'My Content', to: 'content-list', action: 'read', subject: 'Content' },
+      { title: 'Content Status', to: 'content-status', action: 'read', subject: 'Content' },
       { title: 'Job Queue Management', to: 'job-queue-index', action: 'read', subject: 'JobQueue' },
     ],
   },
@@ -18,6 +19,18 @@ export default [
     to: 'settings',
     action: 'read',
     subject: 'Settings',
+  },
+  {
+    title: 'Simple Dashboard',
+    icon: { icon: 'tabler-dashboard' },
+    to: 'simple-dashboard',
+    action: 'read',
+    subject: 'Dashboard',
+  },
+  {
+    title: 'Test Navigation',
+    icon: { icon: 'tabler-bug' },
+    to: 'test-navigation',
   },
 
   {

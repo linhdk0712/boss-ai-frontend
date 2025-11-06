@@ -1,4 +1,5 @@
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useWebSocket } from '@/composables/useWebSocket'
 import type { Job, PaginationInfo } from '@/types/content'
 
 export function useJobQueue() {
@@ -7,8 +8,15 @@ export function useJobQueue() {
     const selectedJob = ref<Job | null>(null)
     const loading = ref(false)
     const detailsLoading = ref(false)
-    const realTimeUpdatesEnabled = ref(false)
-    const isConnected = ref(true)
+    const realTimeUpdatesEnabled = ref(true)
+
+    // WebSocket connection
+    const {
+        isConnected,
+        connect: connectWebSocket,
+        disconnect: disconnectWebSocket,
+        onMessage
+    } = useWebSocket()
 
     // Pagination
     const pagination = ref<PaginationInfo>({
@@ -240,8 +248,96 @@ export function useJobQueue() {
 
     const toggleRealTimeUpdates = (enabled: boolean) => {
         realTimeUpdatesEnabled.value = enabled
-        // TODO: Implement WebSocket connection for real-time updates
+        if (enabled) {
+            connectWebSocket()
+        } else {
+            disconnectWebSocket()
+        }
     }
+
+    /**
+     * Handle WebSocket messages for job updates
+     */
+    const handleWebSocketMessage = (message: any): void => {
+        console.log('Job Queue WebSocket message:', message) // Debug log
+
+        if (message.type === 'job_status_update' || message.type === 'job_completed') {
+            const { jobId } = message
+
+            // Find and update the job in the current list
+            const jobIndex = jobs.value.findIndex(job => job.jobId === jobId)
+            if (jobIndex !== -1) {
+                const updatedJob = { ...jobs.value[jobIndex] }
+
+                if (message.type === 'job_status_update') {
+                    const { data } = message
+                    updatedJob.status = data.status || updatedJob.status
+                    if (data.status === 'PROCESSING' && !updatedJob.startedAt) {
+                        updatedJob.startedAt = new Date().toISOString()
+                    }
+                } else if (message.type === 'job_completed') {
+                    const { result } = message
+                    updatedJob.status = result.success ? 'COMPLETED' : 'FAILED'
+                    updatedJob.completedAt = new Date().toISOString()
+                    if (result.success && result.result) {
+                        updatedJob.result = result.result.generatedContent || JSON.stringify(result.result)
+                    }
+                    if (!result.success && result.error) {
+                        updatedJob.errorMessage = result.error
+                    }
+                }
+
+                // Update the job in the array
+                jobs.value[jobIndex] = updatedJob
+
+                console.log(`Updated job ${jobId} status to ${updatedJob.status}`) // Debug log
+            } else {
+                // Job not in current page, refresh to get latest data
+                console.log(`Job ${jobId} not found in current page, refreshing...`) // Debug log
+                refreshCurrentPage()
+            }
+        }
+    }
+
+    /**
+     * Refresh current page data
+     */
+    const refreshCurrentPage = async () => {
+        if (!loading.value) {
+            try {
+                await getJobs(pagination.value.page, pagination.value.size)
+            } catch (error) {
+                console.error('Error refreshing job queue:', error)
+            }
+        }
+    }
+
+    /**
+     * Initialize WebSocket connection
+     */
+    const initializeWebSocket = () => {
+        if (realTimeUpdatesEnabled.value) {
+            connectWebSocket()
+            onMessage(handleWebSocketMessage)
+        }
+    }
+
+    /**
+     * Cleanup WebSocket connection
+     */
+    const cleanupWebSocket = () => {
+        disconnectWebSocket()
+    }
+
+    // Initialize WebSocket on mount
+    onMounted(() => {
+        initializeWebSocket()
+    })
+
+    // Cleanup on unmount
+    onUnmounted(() => {
+        cleanupWebSocket()
+    })
 
     return {
         // State
@@ -258,6 +354,9 @@ export function useJobQueue() {
         getJobDetails,
         retryJob,
         downloadJobContent,
-        toggleRealTimeUpdates
+        toggleRealTimeUpdates,
+        refreshCurrentPage,
+        initializeWebSocket,
+        cleanupWebSocket
     }
 }

@@ -13,6 +13,21 @@
                         </div>
                         <v-spacer />
 
+                        <!-- WebSocket Status -->
+                        <v-chip :color="isConnected ? 'success' : 'error'" variant="tonal" size="small" class="me-2">
+                            <v-icon start :icon="isConnected ? 'mdi-wifi' : 'mdi-wifi-off'" />
+                            {{ isConnected ? 'Connected' : 'Disconnected' }}
+                        </v-chip>
+
+                        <!-- Real-time Toggle -->
+                        <v-tooltip text="Toggle real-time updates">
+                            <template #activator="{ props }">
+                                <v-btn v-bind="props" :color="realTimeUpdatesEnabled ? 'success' : 'secondary'"
+                                    :icon="realTimeUpdatesEnabled ? 'mdi-eye' : 'mdi-eye-off'" variant="tonal"
+                                    size="small" class="me-2" @click="toggleRealTimeUpdates(!realTimeUpdatesEnabled)" />
+                            </template>
+                        </v-tooltip>
+
                         <v-btn color="primary" prepend-icon="mdi-refresh" :loading="loading" @click="refreshJobs">
                             Refresh
                         </v-btn>
@@ -25,7 +40,14 @@
                     <v-card>
                         <v-card-title>
                             <div class="d-flex align-center justify-space-between w-100">
-                                <span>Job Queue</span>
+                                <div class="d-flex align-center">
+                                    <span>Job Queue</span>
+                                    <v-chip v-if="realTimeUpdatesEnabled && isConnected" color="success" variant="tonal"
+                                        size="x-small" class="ml-2">
+                                        <v-icon start size="12">mdi-circle</v-icon>
+                                        Live
+                                    </v-chip>
+                                </div>
                                 <v-chip color="primary" variant="tonal" size="small">
                                     {{ pagination.total }} Total Jobs
                                 </v-chip>
@@ -82,14 +104,18 @@
                                 <!-- Actions Column -->
                                 <template #item.actions="{ item }">
                                     <div class="d-flex ga-2 align-center">
-                                        <v-btn variant="text" size="small" color="primary" prepend-icon="mdi-eye"
-                                            @click="viewJobDetails(item)">
-                                            View
-                                        </v-btn>
-                                        <v-btn v-if="item.status === 'FAILED'" variant="text" size="small"
-                                            color="warning" prepend-icon="mdi-refresh" @click="retryJob(item)">
-                                            Retry
-                                        </v-btn>
+                                        <v-tooltip text="View Details">
+                                            <template #activator="{ props }">
+                                                <v-btn v-bind="props" variant="text" size="small" color="primary"
+                                                    icon="mdi-eye" @click="viewJobDetails(item)" />
+                                            </template>
+                                        </v-tooltip>
+                                        <v-tooltip v-if="item.status === 'FAILED'" text="Retry Job">
+                                            <template #activator="{ props }">
+                                                <v-btn v-bind="props" variant="text" size="small" color="warning"
+                                                    icon="mdi-refresh" @click="retryJob(item)" />
+                                            </template>
+                                        </v-tooltip>
                                     </div>
                                 </template>
                             </v-data-table>
@@ -210,8 +236,11 @@ const {
     jobs,
     loading,
     pagination,
+    isConnected,
+    realTimeUpdatesEnabled,
     getJobs,
-    retryJob: retryJobApi
+    retryJob: retryJobApi,
+    toggleRealTimeUpdates
 } = useJobQueue()
 
 // Local state
