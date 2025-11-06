@@ -21,6 +21,7 @@
     "@formkit/drag-and-drop": "0.1.6",
     "@sindresorhus/is": "7.0.1",
     "axios": "^1.7.7",
+    "flatpickr": "^4.6.13",
     "@tiptap/extension-highlight": "^2.12.0",
     "@tiptap/extension-image": "^2.12.0",
     "@tiptap/extension-link": "^2.12.0",
