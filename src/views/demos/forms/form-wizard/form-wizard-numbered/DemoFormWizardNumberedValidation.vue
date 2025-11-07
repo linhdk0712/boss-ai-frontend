@@ -72,9 +72,14 @@ const validateSocialLinkForm = () => {
       isCurrentStepValid.value = true
 
       // Handle form submission
-      // Form data: accountForm.value, personalForm.value,
+      const formData = {
+        ...accountForm.value,
+        ...personalForm.value,
         ...socialForm.value,
-      })
+      }
+
+      console.log('Form submitted with data:', formData)
+      // Add your form submission logic here
     }
     else { isCurrentStepValid.value = false }
   })
