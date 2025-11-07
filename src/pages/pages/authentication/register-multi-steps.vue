@@ -83,8 +83,7 @@ const form = ref({
 })
 
 const onSubmit = () => {
-  // eslint-disable-next-line no-alert
-  alert('Submitted..!!')
+  // Handle form submission
 }
 </script>
 
@@ -98,53 +97,25 @@ const onSubmit = () => {
     </div>
   </RouterLink>
 
-  <VRow
-    no-gutters
-    class="auth-wrapper"
-  >
-    <VCol
-      md="4"
-      class="d-none d-md-flex"
-    >
+  <VRow no-gutters class="auth-wrapper">
+    <VCol md="4" class="d-none d-md-flex">
       <!-- here your illustration -->
       <div class="d-flex justify-center align-center w-100 position-relative">
-        <VImg
-          :src="registerMultiStepIllustration"
-          class="illustration-image flip-in-rtl"
-        />
+        <VImg :src="registerMultiStepIllustration" class="illustration-image flip-in-rtl" />
 
-        <img
-          class="bg-image position-absolute w-100 flip-in-rtl"
-          :src="registerMultiStepBg"
-          alt="register-multi-step-bg"
-          height="340"
-        >
+        <img class="bg-image position-absolute w-100 flip-in-rtl" :src="registerMultiStepBg"
+          alt="register-multi-step-bg" height="340">
       </div>
     </VCol>
 
-    <VCol
-      cols="12"
-      md="8"
-      class="auth-card-v2 d-flex align-center justify-center pa-10"
-      style="background-color: rgb(var(--v-theme-surface));"
-    >
-      <VCard
-        flat
-        class="mt-12 mt-sm-10"
-      >
-        <AppStepper
-          v-model:current-step="currentStep"
-          :items="items"
-          :direction="$vuetify.display.smAndUp ? 'horizontal' : 'vertical'"
-          icon-size="22"
-          class="stepper-icon-step-bg mb-12"
-        />
+    <VCol cols="12" md="8" class="auth-card-v2 d-flex align-center justify-center pa-10"
+      style="background-color: rgb(var(--v-theme-surface));">
+      <VCard flat class="mt-12 mt-sm-10">
+        <AppStepper v-model:current-step="currentStep" :items="items"
+          :direction="$vuetify.display.smAndUp ? 'horizontal' : 'vertical'" icon-size="22"
+          class="stepper-icon-step-bg mb-12" />
 
-        <VWindow
-          v-model="currentStep"
-          class="disable-tab-transition"
-          style="max-inline-size: 681px;"
-        >
+        <VWindow v-model="currentStep" class="disable-tab-transition" style="max-inline-size: 681px;">
           <VForm>
             <VWindowItem>
               <h4 class="text-h4">
@@ -155,65 +126,31 @@ const onSubmit = () => {
               </p>
 
               <VRow>
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="form.username"
-                    label="Username"
-                    placeholder="Johndoe"
-                  />
+                <VCol cols="12" md="6">
+                  <AppTextField v-model="form.username" label="Username" placeholder="Johndoe" />
                 </VCol>
 
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="form.email"
-                    label="Email"
-                    placeholder="johndoe@email.com"
-                  />
+                <VCol cols="12" md="6">
+                  <AppTextField v-model="form.email" label="Email" placeholder="johndoe@email.com" />
                 </VCol>
 
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="form.password"
-                    label="Password"
-                    placeholder="············"
-                    :type="isPasswordVisible ? 'text' : 'password'"
-                    autocomplete="password"
+                <VCol cols="12" md="6">
+                  <AppTextField v-model="form.password" label="Password" placeholder="············"
+                    :type="isPasswordVisible ? 'text' : 'password'" autocomplete="password"
                     :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                    @click:append-inner="isPasswordVisible = !isPasswordVisible"
-                  />
+                    @click:append-inner="isPasswordVisible = !isPasswordVisible" />
                 </VCol>
 
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="form.confirmPassword"
-                    label="Confirm Password"
-                    autocomplete="confirm-password"
-                    placeholder="············"
-                    :type="isConfirmPasswordVisible ? 'text' : 'password'"
+                <VCol cols="12" md="6">
+                  <AppTextField v-model="form.confirmPassword" label="Confirm Password" autocomplete="confirm-password"
+                    placeholder="············" :type="isConfirmPasswordVisible ? 'text' : 'password'"
                     :append-inner-icon="isConfirmPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                    @click:append-inner="isConfirmPasswordVisible = !isConfirmPasswordVisible"
-                  />
+                    @click:append-inner="isConfirmPasswordVisible = !isConfirmPasswordVisible" />
                 </VCol>
 
                 <VCol cols="12">
-                  <AppTextField
-                    v-model="form.link"
-                    label="Profile Link"
-                    placeholder="https://profile.com/johndoe"
-                    type="url"
-                  />
+                  <AppTextField v-model="form.link" label="Profile Link" placeholder="https://profile.com/johndoe"
+                    type="url" />
                 </VCol>
               </VRow>
             </VWindowItem>
@@ -227,89 +164,38 @@ const onSubmit = () => {
               </p>
 
               <VRow>
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="form.firstName"
-                    label="First Name"
-                    placeholder="John"
-                  />
+                <VCol cols="12" md="6">
+                  <AppTextField v-model="form.firstName" label="First Name" placeholder="John" />
                 </VCol>
 
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="form.lastName"
-                    label="Last Name"
-                    placeholder="Doe"
-                  />
+                <VCol cols="12" md="6">
+                  <AppTextField v-model="form.lastName" label="Last Name" placeholder="Doe" />
                 </VCol>
 
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="form.mobile"
-                    type="number"
-                    label="Mobile"
-                    placeholder="+1 123 456 7890"
-                  />
+                <VCol cols="12" md="6">
+                  <AppTextField v-model="form.mobile" type="number" label="Mobile" placeholder="+1 123 456 7890" />
                 </VCol>
 
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="form.pincode"
-                    type="number"
-                    label="Pincode"
-                    placeholder="123456"
-                  />
+                <VCol cols="12" md="6">
+                  <AppTextField v-model="form.pincode" type="number" label="Pincode" placeholder="123456" />
                 </VCol>
 
                 <VCol cols="12">
-                  <AppTextField
-                    v-model="form.address"
-                    label="Address"
-                    placeholder="1234 Main St, New York, NY 10001, USA"
-                  />
+                  <AppTextField v-model="form.address" label="Address"
+                    placeholder="1234 Main St, New York, NY 10001, USA" />
                 </VCol>
 
                 <VCol cols="12">
-                  <AppTextField
-                    v-model="form.landmark"
-                    label="Landmark"
-                    placeholder="Near Central Park"
-                  />
+                  <AppTextField v-model="form.landmark" label="Landmark" placeholder="Near Central Park" />
                 </VCol>
 
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="form.city"
-                    label="City"
-                    placeholder="New York"
-                  />
+                <VCol cols="12" md="6">
+                  <AppTextField v-model="form.city" label="City" placeholder="New York" />
                 </VCol>
 
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppSelect
-                    v-model="form.state"
-                    label="State"
-                    placeholder="Select State"
-                    :items="['New York', 'California', 'Florida', 'Washington', 'Texas']"
-                  />
+                <VCol cols="12" md="6">
+                  <AppSelect v-model="form.state" label="State" placeholder="Select State"
+                    :items="['New York', 'California', 'Florida', 'Washington', 'Texas']" />
                 </VCol>
               </VRow>
             </VWindowItem>
@@ -322,11 +208,8 @@ const onSubmit = () => {
                 Select plan as per your requirement
               </p>
 
-              <CustomRadiosWithIcon
-                v-model:selected-radio="form.selectedPlan"
-                :radio-content="radioContent"
-                :grid-column="{ sm: '4', cols: '12' }"
-              >
+              <CustomRadiosWithIcon v-model:selected-radio="form.selectedPlan" :radio-content="radioContent"
+                :grid-column="{ sm: '4', cols: '12' }">
                 <template #default="{ item }">
                   <div class="text-center">
                     <h5 class="text-h5 mb-2">
@@ -356,46 +239,20 @@ const onSubmit = () => {
 
               <VRow>
                 <VCol cols="12">
-                  <AppTextField
-                    v-model="form.cardNumber"
-                    type="number"
-                    label="Card Number"
-                    placeholder="1234 1234 1234 1234"
-                  />
+                  <AppTextField v-model="form.cardNumber" type="number" label="Card Number"
+                    placeholder="1234 1234 1234 1234" />
                 </VCol>
 
-                <VCol
-                  cols="12"
-                  md="6"
-                >
-                  <AppTextField
-                    v-model="form.cardName"
-                    label="Name on Card"
-                    placeholder="John Doe"
-                  />
+                <VCol cols="12" md="6">
+                  <AppTextField v-model="form.cardName" label="Name on Card" placeholder="John Doe" />
                 </VCol>
 
-                <VCol
-                  cols="6"
-                  md="3"
-                >
-                  <AppTextField
-                    v-model="form.expiryDate"
-                    label="Expiry"
-                    placeholder="MM/YY"
-                  />
+                <VCol cols="6" md="3">
+                  <AppTextField v-model="form.expiryDate" label="Expiry" placeholder="MM/YY" />
                 </VCol>
 
-                <VCol
-                  cols="6"
-                  md="3"
-                >
-                  <AppTextField
-                    v-model="form.cvv"
-                    type="number"
-                    label="CVV"
-                    placeholder="123"
-                  />
+                <VCol cols="6" md="3">
+                  <AppTextField v-model="form.cvv" type="number" label="CVV" placeholder="123" />
                 </VCol>
               </VRow>
             </VWindowItem>
@@ -403,39 +260,19 @@ const onSubmit = () => {
         </VWindow>
 
         <div class="d-flex flex-wrap justify-space-between gap-x-4 mt-6">
-          <VBtn
-            color="secondary"
-            :disabled="currentStep === 0"
-            variant="tonal"
-            @click="currentStep--"
-          >
-            <VIcon
-              icon="tabler-arrow-left"
-              start
-              class="flip-in-rtl"
-            />
+          <VBtn color="secondary" :disabled="currentStep === 0" variant="tonal" @click="currentStep--">
+            <VIcon icon="tabler-arrow-left" start class="flip-in-rtl" />
             Previous
           </VBtn>
 
-          <VBtn
-            v-if="items.length - 1 === currentStep"
-            color="success"
-            @click="onSubmit"
-          >
+          <VBtn v-if="items.length - 1 === currentStep" color="success" @click="onSubmit">
             submit
           </VBtn>
 
-          <VBtn
-            v-else
-            @click="currentStep++"
-          >
+          <VBtn v-else @click="currentStep++">
             Next
 
-            <VIcon
-              icon="tabler-arrow-right"
-              end
-              class="flip-in-rtl"
-            />
+            <VIcon icon="tabler-arrow-right" end class="flip-in-rtl" />
           </VBtn>
         </div>
       </VCard>

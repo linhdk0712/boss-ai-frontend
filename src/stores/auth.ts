@@ -27,7 +27,6 @@ export const useAuthStore = defineStore('auth', () => {
                 currentUser.value = user
                 updateAbility(user)
             } catch (e) {
-                console.error('Failed to parse stored user data:', e)
                 authService.clearTokens()
                 currentUser.value = null
                 updateAbility(null)
@@ -144,7 +143,7 @@ export const useAuthStore = defineStore('auth', () => {
             // Redirect to login page
             await router.push('/login')
         } catch (err) {
-            console.error('Logout error:', err)
+            // Handle logout error
         }
     }
 
@@ -171,7 +170,6 @@ export const useAuthStore = defineStore('auth', () => {
 
             return false
         } catch (err) {
-            console.error('Token refresh failed:', err)
             await logout()
             return false
         }

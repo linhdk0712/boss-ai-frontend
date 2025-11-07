@@ -90,8 +90,6 @@ export function useAsyncContentGeneration() {
                 maxRetries: 3
             }
 
-            console.log('Sending queue request:', queueRequest) // Debug log
-
             const response = await contentService.generateContentAsync(queueRequest as any)
 
             if (response.errorCode === 'SUCCESS') {
@@ -99,8 +97,6 @@ export function useAsyncContentGeneration() {
                 if (!jobId) {
                     throw new Error('No job ID returned from server')
                 }
-
-                console.log('Got job ID from server:', jobId) // Debug log
 
                 // Create job entry with the real job ID
                 const job: AsyncJob = {
@@ -118,10 +114,8 @@ export function useAsyncContentGeneration() {
 
                 // Subscribe to job updates via WebSocket with the real job ID
                 if (wsConnected.value) {
-                    console.log('Subscribing to job with real ID:', jobId) // Debug log
                     subscribeToJob(jobId)
                 } else {
-                    console.log('WebSocket not connected, enabling polling') // Debug log
                     // Enable polling fallback
                     enablePolling()
                 }
@@ -131,7 +125,7 @@ export function useAsyncContentGeneration() {
                 throw new Error(response.errorMessage || 'Failed to start generation')
             }
         } catch (error: any) {
-            console.error('Failed to start async content generation:', error)
+            // console.error('Failed to start async content generation:', error)
             throw error
         }
     }
@@ -199,7 +193,7 @@ export function useAsyncContentGeneration() {
                 unsubscribeFromJob(jobId)
             }
         } catch (error: any) {
-            console.error('Failed to cancel job:', error)
+            // console.error('Failed to cancel job:', error)
         }
     }
 
@@ -287,11 +281,8 @@ export function useAsyncContentGeneration() {
      * Handle WebSocket messages
      */
     const handleWebSocketMessage = (message: any): void => {
-        console.log('WebSocket message received:', message) // Debug log
-
         if (message.type === 'job_status_update') {
             const { jobId, data } = message
-            console.log(`Job status update for ${jobId}:`, data) // Debug log
             updateJobStatus(
                 jobId,
                 data.status,
@@ -302,7 +293,6 @@ export function useAsyncContentGeneration() {
             )
         } else if (message.type === 'job_completed') {
             const { jobId, result } = message
-            console.log(`Job completed for ${jobId}:`, result) // Debug log
             updateJobStatus(
                 jobId,
                 result.success ? 'completed' : 'failed',
@@ -336,7 +326,7 @@ export function useAsyncContentGeneration() {
                         updateJobStatus(jobId, status, progress, message, result, error)
                     }
                 } catch (error) {
-                    console.error(`Failed to poll status for job ${jobId}:`, error)
+                    // console.error(`Failed to poll status for job ${jobId}:`, error)
                 }
             }
         }, pollingIntervalMs)

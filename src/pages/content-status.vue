@@ -147,7 +147,7 @@ const loadStatistics = async () => {
             statistics.value = response.data
         }
     } catch (err: any) {
-        console.error('Failed to load statistics:', err)
+        // Error handling for statistics loading
     } finally {
         isLoadingStats.value = false
     }

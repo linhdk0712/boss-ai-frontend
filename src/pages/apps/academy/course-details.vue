@@ -8,9 +8,9 @@ const courseDetails = ref<CourseDetails>()
 
 const { data, error } = await useApi<CourseDetails>('/apps/academy/course-details')
 
-if (error.value)
-  console.log(error.value)
-else if (data.value)
+if (error.value) {
+  // Handle error
+} else if (data.value)
   courseDetails.value = data.value
 
 const panelStatus = ref(0)
@@ -18,15 +18,9 @@ const panelStatus = ref(0)
 
 <template>
   <VRow>
-    <VCol
-      cols="12"
-      md="8"
-    >
+    <VCol cols="12" md="8">
       <VCard>
-        <VCardItem
-          title="UI/UX Basic Fundamentals"
-          class="pb-6"
-        >
+        <VCardItem title="UI/UX Basic Fundamentals" class="pb-6">
           <template #subtitle>
             <div class="text-body-1">
               Prof. <span class="text-h6 d-inline-block">{{ courseDetails?.instructor }}</span>
@@ -34,40 +28,20 @@ const panelStatus = ref(0)
           </template>
           <template #append>
             <div class="d-flex gap-4 align-center">
-              <VChip
-                variant="tonal"
-                color="error"
-                size="small"
-              >
+              <VChip variant="tonal" color="error" size="small">
                 UI/UX
               </VChip>
-              <VIcon
-                size="24"
-                class="cursor-pointer"
-                icon="tabler-share"
-              />
-              <VIcon
-                size="24"
-                class="cursor-pointer"
-                icon="tabler-bookmarks"
-              />
+              <VIcon size="24" class="cursor-pointer" icon="tabler-share" />
+              <VIcon size="24" class="cursor-pointer" icon="tabler-bookmarks" />
             </div>
           </template>
         </VCardItem>
         <VCardText>
-          <VCard
-            flat
-            border
-          >
+          <VCard flat border>
             <div class="px-2 pt-2">
-              <VideoPlayer
-                src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4"
-                :poster="InstructorPoster"
-                controls
-                plays-inline
-                :height="$vuetify.display.mdAndUp ? 440 : 250"
-                class="w-100 rounded"
-              />
+              <VideoPlayer src="https://cdn.plyr.io/static/demo/View_From_A_Blue_Moon_Trailer-576p.mp4"
+                :poster="InstructorPoster" controls plays-inline :height="$vuetify.display.mdAndUp ? 440 : 250"
+                class="w-100 rounded" />
             </div>
             <VCardText>
               <h5 class="text-h5 mb-4">
@@ -86,37 +60,25 @@ const panelStatus = ref(0)
                   <VList class="card-list text-medium-emphasis">
                     <VListItem>
                       <template #prepend>
-                        <VIcon
-                          icon="tabler-check"
-                          size="20"
-                        />
+                        <VIcon icon="tabler-check" size="20" />
                       </template>
                       <VListItemTitle>Skill Level: {{ courseDetails?.skillLevel }}</VListItemTitle>
                     </VListItem>
                     <VListItem>
                       <template #prepend>
-                        <VIcon
-                          icon="tabler-users"
-                          size="20"
-                        />
+                        <VIcon icon="tabler-users" size="20" />
                       </template>
                       <VListItemTitle>Students: {{ courseDetails?.totalStudents }}</VListItemTitle>
                     </VListItem>
                     <VListItem>
                       <template #prepend>
-                        <VIcon
-                          icon="tabler-world"
-                          size="20"
-                        />
+                        <VIcon icon="tabler-world" size="20" />
                       </template>
                       <VListItemTitle>Languages: {{ courseDetails?.language }}</VListItemTitle>
                     </VListItem>
                     <VListItem>
                       <template #prepend>
-                        <VIcon
-                          icon="tabler-file"
-                          size="20"
-                        />
+                        <VIcon icon="tabler-file" size="20" />
                       </template>
                       <VListItemTitle>Captions: {{ courseDetails?.isCaptions }}</VListItemTitle>
                     </VListItem>
@@ -127,19 +89,13 @@ const panelStatus = ref(0)
                   <VList class="card-list text-medium-emphasis">
                     <VListItem>
                       <template #prepend>
-                        <VIcon
-                          icon="tabler-video"
-                          size="20"
-                        />
+                        <VIcon icon="tabler-video" size="20" />
                       </template>
                       <VListItemTitle>Lectures: {{ courseDetails?.totalLectures }}</VListItemTitle>
                     </VListItem>
                     <VListItem>
                       <template #prepend>
-                        <VIcon
-                          icon="tabler-clock"
-                          size="20"
-                        />
+                        <VIcon icon="tabler-clock" size="20" />
                       </template>
                       <VListItemTitle>Video: {{ courseDetails?.length }}</VListItemTitle>
                     </VListItem>
@@ -160,10 +116,7 @@ const panelStatus = ref(0)
                 Instructor
               </h5>
               <div class="d-flex align-center gap-x-4">
-                <VAvatar
-                  :image="courseDetails?.instructorAvatar"
-                  size="38"
-                />
+                <VAvatar :image="courseDetails?.instructorAvatar" size="38" />
                 <div>
                   <h6 class="text-h6 mb-1">
                     {{ courseDetails?.instructor }}
@@ -179,26 +132,12 @@ const panelStatus = ref(0)
       </VCard>
     </VCol>
 
-    <VCol
-      cols="12"
-      md="4"
-    >
+    <VCol cols="12" md="4">
       <div class="course-content">
-        <VExpansionPanels
-          v-model="panelStatus"
-          variant="accordion"
-          class="expansion-panels-width-border"
-        >
-          <template
-            v-for="(section, index) in courseDetails?.content"
-            :key="index"
-          >
-            <VExpansionPanel
-              elevation="0"
-              :value="index"
-              expand-icon="tabler-chevron-right"
-              collapse-icon="tabler-chevron-down"
-            >
+        <VExpansionPanels v-model="panelStatus" variant="accordion" class="expansion-panels-width-border">
+          <template v-for="(section, index) in courseDetails?.content" :key="index">
+            <VExpansionPanel elevation="0" :value="index" expand-icon="tabler-chevron-right"
+              collapse-icon="tabler-chevron-down">
               <template #title>
                 <div>
                   <h5 class="text-h5 mb-1">
@@ -211,16 +150,9 @@ const panelStatus = ref(0)
               </template>
               <template #text>
                 <VList class="card-list">
-                  <VListItem
-                    v-for="(topic, id) in section.topics"
-                    :key="id"
-                    class="py-4"
-                  >
+                  <VListItem v-for="(topic, id) in section.topics" :key="id" class="py-4">
                     <template #prepend>
-                      <VCheckbox
-                        :model-value="topic.isCompleted"
-                        class="me-1"
-                      />
+                      <VCheckbox :model-value="topic.isCompleted" class="me-1" />
                     </template>
                     <VListItemTitle class="text-high-emphasis font-weight-medium">
                       {{ id + 1 }} . {{ topic.title }}

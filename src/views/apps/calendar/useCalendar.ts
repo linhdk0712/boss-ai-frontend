@@ -78,7 +78,7 @@ export const useCalendar = (event: Ref<Event | NewEvent>, isEventHandlerSidebarA
 
   // 👉 Fetch events
   const fetchEvents: EventSourceFunc = (info, successCallback) => {
-  // If there's no info => Don't make useless API call
+    // If there's no info => Don't make useless API call
     if (!info)
       return
 
@@ -93,7 +93,7 @@ export const useCalendar = (event: Ref<Event | NewEvent>, isEventHandlerSidebarA
         })))
       })
       .catch(e => {
-        console.error('Error occurred while fetching calendar events', e)
+        // Handle calendar events fetch error
       })
   }
 
@@ -107,8 +107,7 @@ export const useCalendar = (event: Ref<Event | NewEvent>, isEventHandlerSidebarA
     const existingEvent = calendarApi.value?.getEventById(String(updatedEventData.id))
 
     if (!existingEvent) {
-      console.warn('Can\'t found event in calendar to update')
-
+      // Event not found in calendar
       return
     }
 

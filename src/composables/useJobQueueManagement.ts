@@ -98,7 +98,7 @@ export function useJobQueueManagement() {
                 statistics.value = result.data
             }
         } catch (error) {
-            console.error('Error loading job statistics:', error)
+            // console.error('Error loading job statistics:', error)
         } finally {
             statisticsLoading.value = false
         }
@@ -166,14 +166,14 @@ export function useJobQueueManagement() {
     const handleRetryJob = async (jobId: number) => {
         try {
             const result = await jobQueue.retryJob(jobId)
-            console.log(`Job ${jobId} retry initiated:`, result)
+            // console.log(`Job ${jobId} retry initiated:`, result)
 
             // Refresh jobs to show the new retry job
             await refreshJobs()
 
             return result
         } catch (error) {
-            console.error(`Error retrying job ${jobId}:`, error)
+            // console.error(`Error retrying job ${jobId}:`, error)
             throw error
         }
     }
@@ -182,7 +182,7 @@ export function useJobQueueManagement() {
         try {
             await jobQueue.downloadJobContent(jobId, format)
         } catch (error) {
-            console.error(`Error downloading job ${jobId}:`, error)
+            // console.error(`Error downloading job ${jobId}:`, error)
             throw error
         }
     }
@@ -191,10 +191,10 @@ export function useJobQueueManagement() {
         try {
             state.showVideoDialog = true
             const result = await videoGeneration.generateVideoFromJobAsync(jobId)
-            console.log(`Video generation started for job ${jobId}:`, result)
+            // console.log(`Video generation started for job ${jobId}:`, result)
             return result
         } catch (error) {
-            console.error(`Error generating video for job ${jobId}:`, error)
+            // console.error(`Error generating video for job ${jobId}:`, error)
             state.showVideoDialog = false
             throw error
         }
@@ -203,14 +203,14 @@ export function useJobQueueManagement() {
     const handleCancelJob = async (jobId: number) => {
         try {
             const result = await jobQueueService.cancelJob(jobId)
-            console.log(`Job ${jobId} cancelled:`, result)
+            // console.log(`Job ${jobId} cancelled:`, result)
 
             // Refresh jobs to show updated status
             await refreshJobs()
 
             return result
         } catch (error) {
-            console.error(`Error cancelling job ${jobId}:`, error)
+            // console.error(`Error cancelling job ${jobId}:`, error)
             throw error
         }
     }
@@ -220,7 +220,7 @@ export function useJobQueueManagement() {
             await jobQueue.getJobDetails(jobId)
             state.showDetailsModal = true
         } catch (error) {
-            console.error(`Error loading job details for ${jobId}:`, error)
+            // console.error(`Error loading job details for ${jobId}:`, error)
             throw error
         }
     }
@@ -327,7 +327,7 @@ export function useJobQueueManagement() {
                 try {
                     await refreshJobs()
                 } catch (error) {
-                    console.error('Auto-refresh failed:', error)
+                    // console.error('Auto-refresh failed:', error)
                 }
             }
         }, refreshIntervalMs.value)

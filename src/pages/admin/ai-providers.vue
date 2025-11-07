@@ -9,19 +9,10 @@
         </p>
       </div>
       <div class="d-flex gap-3">
-        <VBtn
-          color="primary"
-          prepend-icon="tabler-refresh"
-          @click="refreshDashboard"
-          :loading="loading"
-        >
+        <VBtn color="primary" prepend-icon="tabler-refresh" @click="refreshDashboard" :loading="loading">
           Refresh
         </VBtn>
-        <VBtn
-          color="secondary"
-          prepend-icon="tabler-settings"
-          @click="openSettings"
-        >
+        <VBtn color="secondary" prepend-icon="tabler-settings" @click="openSettings">
           Settings
         </VBtn>
       </div>
@@ -32,13 +23,7 @@
       <VCol cols="12" sm="6" lg="3">
         <VCard>
           <VCardText class="d-flex align-center">
-            <VAvatar
-              size="44"
-              rounded
-              color="primary"
-              variant="tonal"
-              class="me-3"
-            >
+            <VAvatar size="44" rounded color="primary" variant="tonal" class="me-3">
               <VIcon icon="tabler-server" />
             </VAvatar>
             <div>
@@ -54,13 +39,7 @@
       <VCol cols="12" sm="6" lg="3">
         <VCard>
           <VCardText class="d-flex align-center">
-            <VAvatar
-              size="44"
-              rounded
-              color="success"
-              variant="tonal"
-              class="me-3"
-            >
+            <VAvatar size="44" rounded color="success" variant="tonal" class="me-3">
               <VIcon icon="tabler-check" />
             </VAvatar>
             <div>
@@ -76,13 +55,7 @@
       <VCol cols="12" sm="6" lg="3">
         <VCard>
           <VCardText class="d-flex align-center">
-            <VAvatar
-              size="44"
-              rounded
-              color="info"
-              variant="tonal"
-              class="me-3"
-            >
+            <VAvatar size="44" rounded color="info" variant="tonal" class="me-3">
               <VIcon icon="tabler-percentage" />
             </VAvatar>
             <div>
@@ -98,13 +71,7 @@
       <VCol cols="12" sm="6" lg="3">
         <VCard>
           <VCardText class="d-flex align-center">
-            <VAvatar
-              size="44"
-              rounded
-              color="warning"
-              variant="tonal"
-              class="me-3"
-            >
+            <VAvatar size="44" rounded color="warning" variant="tonal" class="me-3">
               <VIcon icon="tabler-clock" />
             </VAvatar>
             <div>
@@ -120,25 +87,14 @@
 
     <!-- Provider Status Cards -->
     <VRow class="mb-6">
-      <VCol
-        v-for="provider in providers"
-        :key="provider.providerName"
-        cols="12"
-        md="6"
-        lg="4"
-      >
+      <VCol v-for="provider in providers" :key="provider.providerName" cols="12" md="6" lg="4">
         <VCard class="provider-card">
           <VCardText>
             <!-- Provider Header -->
             <div class="d-flex justify-space-between align-center mb-4">
               <div class="d-flex align-center">
-                <VAvatar
-                  size="32"
-                  rounded
-                  :color="getProviderStatusColor(provider.healthStatus?.healthLevel)"
-                  variant="tonal"
-                  class="me-3"
-                >
+                <VAvatar size="32" rounded :color="getProviderStatusColor(provider.healthStatus?.healthLevel)"
+                  variant="tonal" class="me-3">
                   <VIcon :icon="getProviderIcon(provider.providerName)" />
                 </VAvatar>
                 <div>
@@ -150,11 +106,7 @@
                   </span>
                 </div>
               </div>
-              <VChip
-                :color="provider.isAvailable ? 'success' : 'error'"
-                size="small"
-                variant="tonal"
-              >
+              <VChip :color="provider.isAvailable ? 'success' : 'error'" size="small" variant="tonal">
                 {{ provider.isAvailable ? 'Online' : 'Offline' }}
               </VChip>
             </div>
@@ -191,14 +143,8 @@
             <div v-if="provider.recentAlerts?.length > 0" class="mt-4">
               <h6 class="text-sm font-weight-medium mb-2">Recent Alerts</h6>
               <div class="alerts-list">
-                <VChip
-                  v-for="(alert, index) in provider.recentAlerts.slice(0, 2)"
-                  :key="index"
-                  :color="getAlertColor(alert.severity)"
-                  size="x-small"
-                  variant="tonal"
-                  class="me-1 mb-1"
-                >
+                <VChip v-for="(alert, index) in provider.recentAlerts.slice(0, 2)" :key="index"
+                  :color="getAlertColor(alert.severity)" size="x-small" variant="tonal" class="me-1 mb-1">
                   {{ alert.type }}
                 </VChip>
               </div>
@@ -206,19 +152,11 @@
           </VCardText>
 
           <VCardActions>
-            <VBtn
-              size="small"
-              variant="text"
-              @click="viewProviderDetails(provider.providerName)"
-            >
+            <VBtn size="small" variant="text" @click="viewProviderDetails(provider.providerName)">
               View Details
             </VBtn>
-            <VBtn
-              size="small"
-              variant="text"
-              @click="forceHealthCheck(provider.providerName)"
-              :loading="healthCheckLoading[provider.providerName]"
-            >
+            <VBtn size="small" variant="text" @click="forceHealthCheck(provider.providerName)"
+              :loading="healthCheckLoading[provider.providerName]">
               Health Check
             </VBtn>
           </VCardActions>
@@ -236,13 +174,7 @@
           </VCardTitle>
           <VCardText>
             <VRow>
-              <VCol
-                v-for="(cost, providerName) in costSummary"
-                :key="providerName"
-                cols="12"
-                sm="6"
-                md="4"
-              >
+              <VCol v-for="(cost, providerName) in costSummary" :key="providerName" cols="12" sm="6" md="4">
                 <div class="cost-item pa-4 rounded border">
                   <h6 class="text-h6 font-weight-medium mb-2">{{ providerName }}</h6>
                   <div class="d-flex justify-space-between mb-1">
@@ -263,24 +195,14 @@
                       {{ formatPercentage(cost.dailyBudgetUsagePercent / 100) }}
                     </span>
                   </div>
-                  
+
                   <!-- Budget Warning -->
-                  <VAlert
-                    v-if="cost.dailyBudgetExceeded || cost.monthlyBudgetExceeded"
-                    type="error"
-                    variant="tonal"
-                    density="compact"
-                    class="mt-2"
-                  >
+                  <VAlert v-if="cost.dailyBudgetExceeded || cost.monthlyBudgetExceeded" type="error" variant="tonal"
+                    density="compact" class="mt-2">
                     Budget exceeded!
                   </VAlert>
-                  <VAlert
-                    v-else-if="cost.dailyBudgetWarning || cost.monthlyBudgetWarning"
-                    type="warning"
-                    variant="tonal"
-                    density="compact"
-                    class="mt-2"
-                  >
+                  <VAlert v-else-if="cost.dailyBudgetWarning || cost.monthlyBudgetWarning" type="warning"
+                    variant="tonal" density="compact" class="mt-2">
                     Budget warning
                   </VAlert>
                 </div>
@@ -292,17 +214,13 @@
     </VRow>
 
     <!-- Provider Details Dialog -->
-    <VDialog
-      v-model="detailsDialog"
-      max-width="800"
-      scrollable
-    >
+    <VDialog v-model="detailsDialog" max-width="800" scrollable>
       <VCard v-if="selectedProvider">
         <VCardTitle class="d-flex align-center">
           <VIcon :icon="getProviderIcon(selectedProvider.providerName)" class="me-2" />
           {{ selectedProvider.providerName }} Details
         </VCardTitle>
-        
+
         <VCardText>
           <VTabs v-model="detailsTab">
             <VTab value="metrics">Metrics</VTab>
@@ -344,16 +262,9 @@
 
             <VTabsWindowItem value="alerts">
               <div class="alerts-details">
-                <div
-                  v-for="(alert, index) in selectedProvider.recentAlerts"
-                  :key="index"
-                  class="alert-item d-flex align-center pa-3 mb-2 rounded border"
-                >
-                  <VIcon
-                    :icon="getAlertIcon(alert.severity)"
-                    :color="getAlertColor(alert.severity)"
-                    class="me-3"
-                  />
+                <div v-for="(alert, index) in selectedProvider.recentAlerts" :key="index"
+                  class="alert-item d-flex align-center pa-3 mb-2 rounded border">
+                  <VIcon :icon="getAlertIcon(alert.severity)" :color="getAlertColor(alert.severity)" class="me-3" />
                   <div class="flex-grow-1">
                     <div class="font-weight-medium">{{ alert.type }}</div>
                     <div class="text-sm text-medium-emphasis">{{ alert.message }}</div>
@@ -361,11 +272,7 @@
                       {{ formatTimestamp(alert.timestamp) }}
                     </div>
                   </div>
-                  <VChip
-                    :color="getAlertColor(alert.severity)"
-                    size="small"
-                    variant="tonal"
-                  >
+                  <VChip :color="getAlertColor(alert.severity)" size="small" variant="tonal">
                     {{ alert.severity }}
                   </VChip>
                 </div>
@@ -492,7 +399,6 @@ const loadDashboard = async () => {
       costSummary.value = response.data.costSummary
     }
   } catch (error) {
-    console.error('Failed to load provider dashboard:', error)
     // Handle error - show notification
   } finally {
     loading.value = false
@@ -507,7 +413,6 @@ const refreshDashboard = () => {
 // Open settings (placeholder)
 const openSettings = () => {
   // TODO: Implement settings dialog
-  console.log('Open settings')
 }
 
 // View provider details
@@ -527,7 +432,7 @@ const forceHealthCheck = async (providerName: string) => {
     // Refresh data after health check
     await loadDashboard()
   } catch (error) {
-    console.error('Failed to force health check:', error)
+    // Handle health check error
   } finally {
     healthCheckLoading.value[providerName] = false
   }

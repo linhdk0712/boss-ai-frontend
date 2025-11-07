@@ -68,7 +68,7 @@ export function useWebSocket(config: WebSocketConfig = {}) {
         } catch (error: any) {
             isConnecting.value = false
             connectionError.value = error.message
-            console.error('WebSocket connection failed:', error)
+            // console.error('WebSocket connection failed:', error)
             scheduleReconnect()
         }
     }
@@ -101,7 +101,7 @@ export function useWebSocket(config: WebSocketConfig = {}) {
         try {
             socket.value.send(JSON.stringify(message))
         } catch (error) {
-            console.error('Failed to send WebSocket message:', error)
+            // console.error('Failed to send WebSocket message:', error)
         }
     }
 
@@ -109,17 +109,13 @@ export function useWebSocket(config: WebSocketConfig = {}) {
      * Subscribe to job updates
      */
     const subscribe = (jobId: string): void => {
-        console.log(`Subscribing to job: ${jobId}`) // Debug log
         subscriptions.value.add(jobId)
 
         if (isConnected.value) {
-            console.log(`Sending subscription message for job: ${jobId}`) // Debug log
             send({
                 type: 'subscribe_job',
                 jobId
             })
-        } else {
-            console.log(`WebSocket not connected, subscription for ${jobId} will be sent when connected`) // Debug log
         }
     }
 
@@ -203,7 +199,7 @@ export function useWebSocket(config: WebSocketConfig = {}) {
         reconnectAttempts.value = 0
         lastConnectedAt.value = Date.now()
 
-        console.log('WebSocket connected successfully')
+        // console.log('WebSocket connected successfully')
 
         // Resubscribe to all jobs
         for (const jobId of subscriptions.value) {
@@ -223,11 +219,10 @@ export function useWebSocket(config: WebSocketConfig = {}) {
     const handleMessage = (event: MessageEvent): void => {
         try {
             const message: WebSocketMessage = JSON.parse(event.data)
-            console.log('Raw WebSocket message:', message) // Debug log
 
             // Handle system messages
             if (message.type === 'connection_established') {
-                console.log('WebSocket connection established:', message)
+                // console.log('WebSocket connection established:', message)
                 return
             }
 
@@ -243,17 +238,16 @@ export function useWebSocket(config: WebSocketConfig = {}) {
             }
 
             // Route message to handlers
-            console.log(`Routing message to ${messageHandlers.value.size} handlers`) // Debug log
             for (const handler of messageHandlers.value.values()) {
                 try {
                     handler(message)
                 } catch (error) {
-                    console.error('Message handler error:', error)
+                    // console.error('Message handler error:', error)
                 }
             }
 
         } catch (error) {
-            console.error('Failed to parse WebSocket message:', error)
+            // console.error('Failed to parse WebSocket message:', error)
         }
     }
 
@@ -265,7 +259,7 @@ export function useWebSocket(config: WebSocketConfig = {}) {
         isConnecting.value = false
         clearTimers()
 
-        console.log('WebSocket connection closed:', event.code, event.reason)
+        // console.log('WebSocket connection closed:', event.code, event.reason)
 
         // Schedule reconnect if not a clean close
         if (event.code !== 1000 && reconnectAttempts.value < maxReconnectAttempts) {
@@ -279,7 +273,7 @@ export function useWebSocket(config: WebSocketConfig = {}) {
      * Handle WebSocket error event
      */
     const handleError = (event: Event): void => {
-        console.error('WebSocket error:', event)
+        // console.error('WebSocket error:', event)
         connectionError.value = 'WebSocket connection error'
     }
 
@@ -292,7 +286,7 @@ export function useWebSocket(config: WebSocketConfig = {}) {
         reconnectAttempts.value++
         const delay = Math.min(reconnectInterval * Math.pow(2, reconnectAttempts.value - 1), 30000)
 
-        console.log(`Scheduling WebSocket reconnect attempt ${reconnectAttempts.value} in ${delay}ms`)
+        // console.log(`Scheduling WebSocket reconnect attempt ${reconnectAttempts.value} in ${delay}ms`)
 
         reconnectTimer.value = setTimeout(() => {
             reconnectTimer.value = null

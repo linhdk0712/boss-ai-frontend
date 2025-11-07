@@ -14,7 +14,7 @@ onMounted(async () => {
         try {
             await fetchAllSettings()
         } catch (error) {
-            console.error('Failed to load settings summary:', error)
+            // console.error('Failed to load settings summary:', error)
         }
     }
 })

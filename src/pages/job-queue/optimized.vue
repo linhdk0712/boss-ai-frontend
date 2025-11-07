@@ -140,50 +140,7 @@
             </template>
         </v-alert>
 
-        <!-- Performance Debug Panel (Development Only) -->
-        <v-expansion-panels v-if="isDevelopment" class="mt-6" variant="accordion">
-            <v-expansion-panel>
-                <v-expansion-panel-title>
-                    <v-icon class="me-2">mdi-bug</v-icon>
-                    Performance Debug
-                </v-expansion-panel-title>
-                <v-expansion-panel-text>
-                    <div class="debug-info">
-                        <v-row>
-                            <v-col cols="12" md="6">
-                                <h4>Request Metrics</h4>
-                                <ul>
-                                    <li>Average Request Time: {{ averageRequestTime || 'N/A' }}</li>
-                                    <li>Total Requests: {{ requestCount }}</li>
-                                    <li>Cache Hit Rate: {{ cacheHitRate }}%</li>
-                                    <li>Jobs in Memory: {{ jobs.length }}</li>
-                                </ul>
-                            </v-col>
-                            <v-col cols="12" md="6">
-                                <h4>Current State</h4>
-                                <ul>
-                                    <li>View Mode: {{ viewMode }}</li>
-                                    <li>Page Size: {{ pageSize }}</li>
-                                    <li>Current Page: {{ currentPage }}</li>
-                                    <li>Auto Refresh: {{ autoRefreshEnabled ? 'On' : 'Off' }}</li>
-                                </ul>
-                            </v-col>
-                        </v-row>
 
-                        <v-divider class="my-4" />
-
-                        <div class="d-flex ga-2">
-                            <v-btn size="small" variant="outlined" @click="clearCache">
-                                Clear Cache
-                            </v-btn>
-                            <v-btn size="small" variant="outlined" @click="logPerformanceMetrics">
-                                Log Metrics
-                            </v-btn>
-                        </div>
-                    </div>
-                </v-expansion-panel-text>
-            </v-expansion-panel>
-        </v-expansion-panels>
     </div>
 </template>
 
@@ -337,17 +294,7 @@ const handleVideoStarted = (job: Job) => {
     showVideoDialog.value = false
 }
 
-// Performance debugging
-const logPerformanceMetrics = () => {
-    console.group('Job Queue Performance Metrics')
-    console.log('Average Request Time:', averageRequestTime.value)
-    console.log('Total Requests:', requestCount.value)
-    console.log('Jobs in Memory:', jobs.value.length)
-    console.log('Cache Hit Rate:', cacheHitRate.value + '%')
-    console.log('Current View Mode:', viewMode.value)
-    console.log('Auto Refresh:', autoRefreshEnabled.value)
-    console.groupEnd()
-}
+// Performance metrics tracking (removed debug logging)
 
 // Watch auto-refresh toggle
 watch(autoRefreshEnabled, (enabled) => {
@@ -413,25 +360,7 @@ onMounted(() => {
     padding: 16px;
 }
 
-.debug-info {
-    font-family: 'Roboto Mono', monospace;
-    font-size: 0.875rem;
-}
 
-.debug-info h4 {
-    margin-bottom: 8px;
-    color: rgb(var(--v-theme-primary));
-}
-
-.debug-info ul {
-    list-style: none;
-    padding: 0;
-}
-
-.debug-info li {
-    padding: 2px 0;
-    border-bottom: 1px solid rgba(var(--v-border-color), 0.1);
-}
 
 /* Responsive adjustments */
 @media (max-width: 1200px) {

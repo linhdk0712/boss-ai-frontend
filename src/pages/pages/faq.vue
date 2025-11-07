@@ -12,7 +12,9 @@ const fetchFaqs = async () => {
     query: {
       q: faqSearchQuery.value,
     },
-  }).catch(err => console.log(err))
+  }).catch(err => {
+    // Handle error silently
+  })
 
   faqs.value = data
 }
@@ -40,78 +42,29 @@ const contactUs = [
 <template>
   <section>
     <!-- 👉 Search -->
-    <AppSearchHeader
-      title="Hello, how can we help?"
-      subtitle="or choose a category to quickly find the help you need"
-      custom-class="mb-6"
-      placeholder="Search Articles..."
-      density="comfortable"
-      is-reverse
-    />
+    <AppSearchHeader title="Hello, how can we help?" subtitle="or choose a category to quickly find the help you need"
+      custom-class="mb-6" placeholder="Search Articles..." density="comfortable" is-reverse />
 
     <!-- 👉 Faq sections and questions -->
     <VRow>
-      <VCol
-        v-show="faqs.length"
-        cols="12"
-        sm="4"
-        lg="3"
-        class="position-relative"
-      >
+      <VCol v-show="faqs.length" cols="12" sm="4" lg="3" class="position-relative">
         <!-- 👉 Tabs -->
-        <VTabs
-          v-model="activeTab"
-          direction="vertical"
-          class="v-tabs-pill"
-          grow
-        >
-          <VTab
-            v-for="faq in faqs"
-            :key="faq.faqTitle"
-            :value="faq.faqTitle"
-          >
-            <VIcon
-              :icon="faq.faqIcon"
-              :size="20"
-              start
-            />
+        <VTabs v-model="activeTab" direction="vertical" class="v-tabs-pill" grow>
+          <VTab v-for="faq in faqs" :key="faq.faqTitle" :value="faq.faqTitle">
+            <VIcon :icon="faq.faqIcon" :size="20" start />
             {{ faq.faqTitle }}
           </VTab>
         </VTabs>
-        <VImg
-          :width="245"
-          :src="sittingGirlWithLaptop"
-          class="d-none d-sm-block mt-4 mx-auto"
-        />
+        <VImg :width="245" :src="sittingGirlWithLaptop" class="d-none d-sm-block mt-4 mx-auto" />
       </VCol>
 
-      <VCol
-        cols="12"
-        sm="8"
-        lg="9"
-      >
+      <VCol cols="12" sm="8" lg="9">
         <!-- 👉 Windows -->
-        <VWindow
-          v-model="activeTab"
-          class="faq-v-window disable-tab-transition"
-        >
-          <VWindowItem
-            v-for="faq in faqs"
-            :key="faq.faqTitle"
-            :value="faq.faqTitle"
-          >
+        <VWindow v-model="activeTab" class="faq-v-window disable-tab-transition">
+          <VWindowItem v-for="faq in faqs" :key="faq.faqTitle" :value="faq.faqTitle">
             <div class="d-flex align-center mb-4">
-              <VAvatar
-                rounded
-                color="primary"
-                variant="tonal"
-                class="me-4"
-                size="50"
-              >
-                <VIcon
-                  :size="30"
-                  :icon="faq.faqIcon"
-                />
+              <VAvatar rounded color="primary" variant="tonal" class="me-4" size="50">
+                <VIcon :size="30" :icon="faq.faqIcon" />
               </VAvatar>
 
               <div>
@@ -124,31 +77,16 @@ const contactUs = [
               </div>
             </div>
 
-            <VExpansionPanels
-              v-model="activeQuestion"
-              multiple
-            >
-              <VExpansionPanel
-                v-for="item in faq.faqs"
-                :key="item.question"
-                :title="item.question"
-                :text="item.answer"
-              />
+            <VExpansionPanels v-model="activeQuestion" multiple>
+              <VExpansionPanel v-for="item in faq.faqs" :key="item.question" :title="item.question"
+                :text="item.answer" />
             </VExpansionPanels>
           </VWindowItem>
         </VWindow>
       </VCol>
 
-      <VCol
-        v-show="!faqs.length"
-        cols="12"
-        :class="!faqs.length ? 'd-flex justify-center align-center' : ''"
-      >
-        <VIcon
-          icon="tabler-help"
-          start
-          size="20"
-        />
+      <VCol v-show="!faqs.length" cols="12" :class="!faqs.length ? 'd-flex justify-center align-center' : ''">
+        <VIcon icon="tabler-help" start size="20" />
         <span class="text-base font-weight-medium">
           No Results Found!!
         </span>
@@ -157,12 +95,7 @@ const contactUs = [
 
     <!-- 👉 You still have a question? -->
     <div class="text-center pt-16">
-      <VChip
-        label
-        color="primary"
-        size="small"
-        class="mb-2"
-      >
+      <VChip label color="primary" size="small" class="mb-2">
         Question
       </VChip>
 
@@ -175,27 +108,11 @@ const contactUs = [
 
       <!-- contacts -->
       <VRow class="mt-9">
-        <VCol
-          v-for="contact in contactUs"
-          :key="contact.icon"
-          sm="6"
-          cols="12"
-        >
-          <VCard
-            flat
-            style="background-color: rgba(var(--v-theme-on-surface), var(--v-hover-opacity));"
-          >
+        <VCol v-for="contact in contactUs" :key="contact.icon" sm="6" cols="12">
+          <VCard flat style="background-color: rgba(var(--v-theme-on-surface), var(--v-hover-opacity));">
             <VCardText class="pb-4">
-              <VAvatar
-                rounded
-                color="primary"
-                variant="tonal"
-                size="46"
-              >
-                <VIcon
-                  :icon="contact.icon"
-                  size="26"
-                />
+              <VAvatar rounded color="primary" variant="tonal" size="46">
+                <VIcon :icon="contact.icon" size="26" />
               </VAvatar>
             </VCardText>
             <VCardText>

@@ -139,7 +139,7 @@ export function useJobQueue() {
             }
 
         } catch (error) {
-            console.error('Error fetching jobs:', error)
+            // console.error('Error fetching jobs:', error)
             jobs.value = []
             throw error
         } finally {
@@ -174,7 +174,7 @@ export function useJobQueue() {
                 throw new Error(data.errorMessage || 'Failed to fetch job details')
             }
         } catch (error) {
-            console.error('Error fetching job details:', error)
+            // console.error('Error fetching job details:', error)
             throw error
         } finally {
             detailsLoading.value = false
@@ -208,7 +208,7 @@ export function useJobQueue() {
                 throw new Error(data.errorMessage || 'Failed to retry job')
             }
         } catch (error) {
-            console.error('Error retrying job:', error)
+            // console.error('Error retrying job:', error)
             throw error
         }
     }
@@ -241,7 +241,7 @@ export function useJobQueue() {
             window.URL.revokeObjectURL(url)
             document.body.removeChild(a)
         } catch (error) {
-            console.error('Error downloading job content:', error)
+            // console.error('Error downloading job content:', error)
             throw error
         }
     }
@@ -259,8 +259,6 @@ export function useJobQueue() {
      * Handle WebSocket messages for job updates
      */
     const handleWebSocketMessage = (message: any): void => {
-        console.log('Job Queue WebSocket message:', message) // Debug log
-
         if (message.type === 'job_status_update' || message.type === 'job_completed') {
             const { jobId } = message
 
@@ -289,11 +287,8 @@ export function useJobQueue() {
 
                 // Update the job in the array
                 jobs.value[jobIndex] = updatedJob
-
-                console.log(`Updated job ${jobId} status to ${updatedJob.status}`) // Debug log
             } else {
                 // Job not in current page, refresh to get latest data
-                console.log(`Job ${jobId} not found in current page, refreshing...`) // Debug log
                 refreshCurrentPage()
             }
         }
@@ -307,7 +302,7 @@ export function useJobQueue() {
             try {
                 await getJobs(pagination.value.page, pagination.value.size)
             } catch (error) {
-                console.error('Error refreshing job queue:', error)
+                // console.error('Error refreshing job queue:', error)
             }
         }
     }

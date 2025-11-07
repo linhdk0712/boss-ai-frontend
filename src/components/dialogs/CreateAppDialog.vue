@@ -141,28 +141,17 @@ watch(() => props, () => {
 })
 
 const onSubmit = () => {
-  // eslint-disable-next-line no-alert
-  alert('submitted...!!')
+  // Handle form submission
   emit('updatedData', createAppData.value)
 }
 </script>
 
 <template>
-  <VDialog
-    :model-value="props.isDialogVisible"
-    max-width="900"
-    min-height="590"
-    @update:model-value="dialogVisibleUpdate"
-  >
+  <VDialog :model-value="props.isDialogVisible" max-width="900" min-height="590"
+    @update:model-value="dialogVisibleUpdate">
     <!-- 👉 dialog close btn -->
-    <DialogCloseBtn
-      size="small"
-      @click="emit('update:isDialogVisible', false)"
-    />
-    <VCard
-      class="create-app-dialog"
-      min-height="590"
-    >
+    <DialogCloseBtn size="small" @click="emit('update:isDialogVisible', false)" />
+    <VCard class="create-app-dialog" min-height="590">
       <VCardText class="pa-5 pa-sm-16">
         <!-- 👉 Title -->
         <h4 class="text-h4 text-center mb-2">
@@ -173,59 +162,27 @@ const onSubmit = () => {
         </p>
 
         <VRow>
-          <VCol
-            cols="12"
-            sm="5"
-            md="4"
-            lg="3"
-          >
-            <AppStepper
-              v-model:current-step="currentStep"
-              direction="vertical"
-              :items="createApp"
-              icon-size="22"
-              class="stepper-icon-step-bg"
-            />
+          <VCol cols="12" sm="5" md="4" lg="3">
+            <AppStepper v-model:current-step="currentStep" direction="vertical" :items="createApp" icon-size="22"
+              class="stepper-icon-step-bg" />
           </VCol>
 
-          <VCol
-            cols="12"
-            sm="7"
-            md="8"
-            lg="9"
-          >
-            <VWindow
-              v-model="currentStep"
-              class="disable-tab-transition stepper-content"
-            >
+          <VCol cols="12" sm="7" md="8" lg="9">
+            <VWindow v-model="currentStep" class="disable-tab-transition stepper-content">
               <!-- 👉 category -->
               <VWindowItem>
-                <AppTextField
-                  label="Application Name"
-                  placeholder="Application Name"
-                />
+                <AppTextField label="Application Name" placeholder="Application Name" />
 
                 <h5 class="text-h5 mt-6 mb-4">
                   Category
                 </h5>
                 <VRadioGroup v-model="createAppData.category">
                   <VList class="card-list">
-                    <VListItem
-                      v-for="category in categories"
-                      :key="category.title"
-                      @click="createAppData.category = category.slug"
-                    >
+                    <VListItem v-for="category in categories" :key="category.title"
+                      @click="createAppData.category = category.slug">
                       <template #prepend>
-                        <VAvatar
-                          size="46"
-                          rounded
-                          variant="tonal"
-                          :color="category.color"
-                        >
-                          <VIcon
-                            :icon="category.icon"
-                            size="30"
-                          />
+                        <VAvatar size="46" rounded variant="tonal" :color="category.color">
+                          <VIcon :icon="category.icon" size="30" />
                         </VAvatar>
                       </template>
 
@@ -253,22 +210,11 @@ const onSubmit = () => {
                 </h5>
                 <VRadioGroup v-model="createAppData.framework">
                   <VList class="card-list">
-                    <VListItem
-                      v-for="framework in frameworks"
-                      :key="framework.title"
-                      @click="createAppData.framework = framework.slug"
-                    >
+                    <VListItem v-for="framework in frameworks" :key="framework.title"
+                      @click="createAppData.framework = framework.slug">
                       <template #prepend>
-                        <VAvatar
-                          size="46"
-                          rounded
-                          variant="tonal"
-                          :color="framework.color"
-                        >
-                          <VIcon
-                            :icon="framework.icon"
-                            size="30"
-                          />
+                        <VAvatar size="46" rounded variant="tonal" :color="framework.color">
+                          <VIcon :icon="framework.icon" size="30" />
                         </VAvatar>
                       </template>
                       <VListItemTitle>
@@ -289,32 +235,18 @@ const onSubmit = () => {
 
               <!-- 👉 Database Engine -->
               <VWindowItem>
-                <AppTextField
-                  label="Database Name"
-                  placeholder="UserDB"
-                />
+                <AppTextField label="Database Name" placeholder="UserDB" />
 
                 <h5 class="text-h5 mt-6 mb-4">
                   Select Database Engine
                 </h5>
                 <VRadioGroup v-model="createAppData.database">
                   <VList class="card-list">
-                    <VListItem
-                      v-for="database in databases"
-                      :key="database.title"
-                      @click="createAppData.database = database.slug"
-                    >
+                    <VListItem v-for="database in databases" :key="database.title"
+                      @click="createAppData.database = database.slug">
                       <template #prepend>
-                        <VAvatar
-                          size="46"
-                          rounded
-                          variant="tonal"
-                          :color="database.color"
-                        >
-                          <VIcon
-                            :icon="database.icon"
-                            size="30"
-                          />
+                        <VAvatar size="46" rounded variant="tonal" :color="database.color">
+                          <VIcon :icon="database.icon" size="30" />
                         </VAvatar>
                       </template>
                       <VListItemTitle>
@@ -342,52 +274,24 @@ const onSubmit = () => {
                 <VForm>
                   <VRow>
                     <VCol cols="12">
-                      <AppTextField
-                        v-model="createAppData.cardNumber"
-                        label="Card Number"
-                        placeholder="1234 1234 1234 1234"
-                        type="number"
-                      />
+                      <AppTextField v-model="createAppData.cardNumber" label="Card Number"
+                        placeholder="1234 1234 1234 1234" type="number" />
                     </VCol>
 
-                    <VCol
-                      cols="12"
-                      md="6"
-                    >
-                      <AppTextField
-                        v-model="createAppData.cardName"
-                        label="Name on Card"
-                        placeholder="John Doe"
-                      />
+                    <VCol cols="12" md="6">
+                      <AppTextField v-model="createAppData.cardName" label="Name on Card" placeholder="John Doe" />
                     </VCol>
 
-                    <VCol
-                      cols="6"
-                      md="3"
-                    >
-                      <AppTextField
-                        v-model="createAppData.cardExpiry"
-                        label="Expiry"
-                        placeholder="MM/YY"
-                      />
+                    <VCol cols="6" md="3">
+                      <AppTextField v-model="createAppData.cardExpiry" label="Expiry" placeholder="MM/YY" />
                     </VCol>
 
-                    <VCol
-                      cols="6"
-                      md="3"
-                    >
-                      <AppTextField
-                        v-model="createAppData.cardCvv"
-                        label="CVV"
-                        placeholder="123"
-                      />
+                    <VCol cols="6" md="3">
+                      <AppTextField v-model="createAppData.cardCvv" label="CVV" placeholder="123" />
                     </VCol>
 
                     <VCol cols="12">
-                      <VSwitch
-                        v-model="createAppData.isSave"
-                        label="Save Card for future billing?"
-                      />
+                      <VSwitch v-model="createAppData.isSave" label="Save Card for future billing?" />
                     </VCol>
                   </VRow>
                 </VForm>
@@ -401,48 +305,24 @@ const onSubmit = () => {
                   Submit to kickstart your project.
                 </p>
 
-                <VImg
-                  :src="laptopGirl"
-                  width="176"
-                  class="mx-auto"
-                />
+                <VImg :src="laptopGirl" width="176" class="mx-auto" />
               </VWindowItem>
             </VWindow>
 
             <div class="d-flex justify-space-between mt-6">
-              <VBtn
-                variant="tonal"
-                color="secondary"
-                :disabled="currentStep === 0"
-                @click="currentStep--"
-              >
-                <VIcon
-                  icon="tabler-arrow-left"
-                  start
-                  class="flip-in-rtl"
-                />
+              <VBtn variant="tonal" color="secondary" :disabled="currentStep === 0" @click="currentStep--">
+                <VIcon icon="tabler-arrow-left" start class="flip-in-rtl" />
                 Previous
               </VBtn>
 
-              <VBtn
-                v-if="createApp.length - 1 === currentStep"
-                color="success"
-                @click="onSubmit"
-              >
+              <VBtn v-if="createApp.length - 1 === currentStep" color="success" @click="onSubmit">
                 submit
               </VBtn>
 
-              <VBtn
-                v-else
-                @click="currentStep++"
-              >
+              <VBtn v-else @click="currentStep++">
                 Next
 
-                <VIcon
-                  icon="tabler-arrow-right"
-                  end
-                  class="flip-in-rtl"
-                />
+                <VIcon icon="tabler-arrow-right" end class="flip-in-rtl" />
               </VBtn>
             </div>
           </VCol>

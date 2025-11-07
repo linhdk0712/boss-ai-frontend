@@ -81,7 +81,7 @@ const loadTabData = async (category: SettingsCategory) => {
     try {
         await fetchSettings(category)
     } catch (error) {
-        console.error('Error loading tab data:', error)
+        // Error handling for tab data loading
     }
 }
 
@@ -99,7 +99,6 @@ const handleToggleSetting = async (setting: any) => {
 
         snackbar.value = true
     } catch (error) {
-        console.error('Error toggling setting:', error)
         snackbarMessage.value = 'An error occurred while updating the setting'
         snackbarColor.value = 'error'
         snackbar.value = true

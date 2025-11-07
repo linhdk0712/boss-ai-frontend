@@ -61,7 +61,8 @@ const resolveStatusColor = (status: string) => {
 
 const categoryIconFilter = (categoryName: string): {
   icon: string
-  color: string }[] => {
+  color: string
+}[] => {
   const index = categoryIcons.findIndex(category => category.name === categoryName)
 
   if (index !== -1)
@@ -70,49 +71,29 @@ const categoryIconFilter = (categoryName: string): {
   return [{ icon: 'tabler-help-circle', color: 'primary' }]
 }
 
-if (error.value)
-  console.error(error.value)
+if (error.value) {
+  // Handle error
+}
 </script>
 
 <template>
   <div>
     <VCardText>
       <VRow>
-        <VCol
-          cols="12"
-          offset-md="8"
-          md="4"
-        >
-          <AppTextField
-            v-model="search"
-            placeholder="Search ..."
-            append-inner-icon="tabler-search"
-            single-line
-            hide-details
-            dense
-            outlined
-          />
+        <VCol cols="12" offset-md="8" md="4">
+          <AppTextField v-model="search" placeholder="Search ..." append-inner-icon="tabler-search" single-line
+            hide-details dense outlined />
         </VCol>
       </VRow>
     </VCardText>
 
     <!-- 👉 Data Table  -->
-    <VDataTable
-      :headers="headers"
-      :items="productList || []"
-      :search="search"
-      :items-per-page="5"
-      class="text-no-wrap"
-    >
+    <VDataTable :headers="headers" :items="productList || []" :search="search" :items-per-page="5" class="text-no-wrap">
       <!-- product -->
       <template #item.product.name="{ item }">
         <div class="d-flex align-center">
           <div>
-            <VImg
-              :src="item.product.image"
-              height="40"
-              width="40"
-            />
+            <VImg :src="item.product.image" height="40" width="40" />
           </div>
           <div class="d-flex flex-column ms-3">
             <span class="d-block font-weight-medium text-truncate text-high-emphasis">{{ item.product.name }}</span>
@@ -124,18 +105,9 @@ if (error.value)
       <!-- category -->
       <template #item.product.category="{ item }">
         <div class="d-flex align-center">
-          <VAvatar
-            v-for="(category, index) in categoryIconFilter(item.product.category)"
-            :key="index"
-            size="26"
-            :color="category.color"
-            variant="tonal"
-          >
-            <VIcon
-              size="20"
-              :color="category.color"
-              class="rounded-0"
-            >
+          <VAvatar v-for="(category, index) in categoryIconFilter(item.product.category)" :key="index" size="26"
+            :color="category.color" variant="tonal">
+            <VIcon size="20" :color="category.color" class="rounded-0">
               {{ category.icon }}
             </VIcon>
           </VAvatar>
@@ -146,15 +118,9 @@ if (error.value)
       <!-- buyer -->
       <template #item.buyer.name="{ item }">
         <div class="d-flex align-center">
-          <VAvatar
-            size="1.875rem"
-            :color="!item.buyer.avatar ? 'primary' : undefined"
-            :variant="!item.buyer.avatar ? 'tonal' : undefined"
-          >
-            <VImg
-              v-if="item.buyer.avatar"
-              :src="item.buyer.avatar"
-            />
+          <VAvatar size="1.875rem" :color="!item.buyer.avatar ? 'primary' : undefined"
+            :variant="!item.buyer.avatar ? 'tonal' : undefined">
+            <VImg v-if="item.buyer.avatar" :src="item.buyer.avatar" />
             <span v-else>{{ item.buyer.name.slice(0, 2).toUpperCase() }}</span>
           </VAvatar>
           <span class="text-no-wrap font-weight-medium text-high-emphasis ms-2">{{ item.buyer.name }}</span>
@@ -174,12 +140,8 @@ if (error.value)
 
       <!-- Status -->
       <template #item.status="{ item }">
-        <VChip
-          :color="resolveStatusColor(item.payment.status)"
-          :class="`text-${resolveStatusColor(item.payment.status)}`"
-          size="small"
-          class="font-weight-medium"
-        >
+        <VChip :color="resolveStatusColor(item.payment.status)"
+          :class="`text-${resolveStatusColor(item.payment.status)}`" size="small" class="font-weight-medium">
           {{ item.payment.status }}
         </VChip>
       </template>

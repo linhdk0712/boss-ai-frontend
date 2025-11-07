@@ -4,7 +4,7 @@ import ScrollToTop from '@core/components/ScrollToTop.vue'
 import initCore from '@core/initCore'
 import { initConfigStore, useConfigStore } from '@core/stores/config'
 import { hexToRgb } from '@core/utils/colorConverter'
-
+import { SpeedInsights } from '@vercel/speed-insights/vue';
 const { global } = useTheme()
 
 // ℹ️ Sync current theme with initial loader theme
@@ -15,6 +15,7 @@ const configStore = useConfigStore()
 </script>
 
 <template>
+  <SpeedInsights />
   <VLocaleProvider :rtl="configStore.isAppRTL">
     <!-- ℹ️ This is required to set the background color of active nav link based on currently active global theme's primary -->
     <VApp :style="`--v-global-theme-primary: ${hexToRgb(global.current.value.colors.primary)}`">

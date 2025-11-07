@@ -58,7 +58,7 @@ export function useVideoGeneration() {
                 throw new Error(result.errorMessage || 'Failed to start video generation')
             }
         } catch (error: any) {
-            console.error('Error generating video:', error)
+            // console.error('Error generating video:', error)
             throw new Error(error.message || 'Failed to start video generation')
         } finally {
             loading.value = false
@@ -82,7 +82,7 @@ export function useVideoGeneration() {
                 throw new Error(result.errorMessage || 'Failed to start video generation from job')
             }
         } catch (error: any) {
-            console.error('Error generating video from job:', error)
+            // console.error('Error generating video from job:', error)
             videoStatus.value = 'FAILED'
             videoError.value = error.message || 'Failed to start video generation from job'
             throw error
@@ -108,7 +108,7 @@ export function useVideoGeneration() {
                 throw new Error(result.errorMessage || 'Failed to queue video generation from job')
             }
         } catch (error: any) {
-            console.error('Error generating video async from job:', error)
+            // console.error('Error generating video async from job:', error)
             videoStatus.value = 'FAILED'
             videoError.value = error.message || 'Failed to queue video generation from job'
             throw error
@@ -140,7 +140,7 @@ export function useVideoGeneration() {
                 throw new Error(result.errorMessage || 'Failed to check video progress')
             }
         } catch (error: any) {
-            console.error('Error checking video progress:', error)
+            // console.error('Error checking video progress:', error)
             throw new Error(error.message || 'Failed to check video progress')
         }
     }
@@ -169,7 +169,7 @@ export function useVideoGeneration() {
                 throw new Error(result.errorMessage || 'Failed to cancel video generation')
             }
         } catch (error: any) {
-            console.error('Error cancelling video generation:', error)
+            // console.error('Error cancelling video generation:', error)
             throw new Error(error.message || 'Failed to cancel video generation')
         }
     }
@@ -321,7 +321,7 @@ export function useVideoGeneration() {
             subscribe(`n8n-execution-${currentJob.value.executionId}`)
         }
 
-        console.log(`Started tracking video progress for job: ${jobId}`)
+        // console.log(`Started tracking video progress for job: ${jobId}`)
     }
 
     // Stop tracking video progress
@@ -341,7 +341,7 @@ export function useVideoGeneration() {
             }
         }
 
-        console.log('Stopped tracking video progress')
+        // console.log('Stopped tracking video progress')
     }
 
     // Enhanced generate video method with progress tracking
@@ -408,7 +408,7 @@ export function useVideoGeneration() {
         // Connect if not already connected
         if (!isConnected.value) {
             connect().catch(error => {
-                console.error('Failed to connect to WebSocket for video progress:', error)
+                // console.error('Failed to connect to WebSocket for video progress:', error)
             })
         }
     })

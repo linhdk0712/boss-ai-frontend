@@ -40,12 +40,15 @@ const worker = setupWorker(
 )
 
 export default function () {
-  const workerUrl = `${import.meta.env.BASE_URL ?? '/'}mockServiceWorker.js`
+  // Only start MSW in development mode
+  if (import.meta.env.DEV) {
+    const workerUrl = `${import.meta.env.BASE_URL ?? '/'}mockServiceWorker.js`
 
-  worker.start({
-    serviceWorker: {
-      url: workerUrl,
-    },
-    onUnhandledRequest: 'bypass',
-  })
+    worker.start({
+      serviceWorker: {
+        url: workerUrl,
+      },
+      onUnhandledRequest: 'bypass',
+    })
+  }
 }

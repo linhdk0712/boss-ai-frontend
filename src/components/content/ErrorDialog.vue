@@ -324,7 +324,7 @@ const copyErrorDetails = async () => {
         await navigator.clipboard.writeText(JSON.stringify(details, null, 2))
         // Could show a toast notification here
     } catch (err) {
-        console.error('Failed to copy error details:', err)
+        // console.error('Failed to copy error details:', err)
     }
 }
 

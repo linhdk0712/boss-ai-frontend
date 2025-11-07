@@ -771,7 +771,6 @@ const copyContent = async (content: ContentGenerationDto) => {
     successMessage.value = 'Content copied to clipboard!'
     showSuccess.value = true
   } catch (error) {
-    console.error('Failed to copy content:', error)
     errorMessage.value = 'Failed to copy content to clipboard'
     showError.value = true
   }
@@ -816,7 +815,6 @@ const createVideo = async (content: ContentGenerationDto) => {
       showError.value = true
     }
   } catch (error: any) {
-    console.error('Failed to create video:', error)
     errorMessage.value = error.response?.data?.errorMessage || error.message || 'Không thể tạo video'
     showError.value = true
   }

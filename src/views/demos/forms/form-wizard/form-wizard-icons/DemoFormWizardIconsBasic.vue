@@ -52,7 +52,7 @@ const formData = ref({
 })
 
 const onSubmit = () => {
-  console.log(formData.value)
+  // Handle form submission
 }
 </script>
 
@@ -60,11 +60,7 @@ const onSubmit = () => {
   <VCard>
     <VCardText>
       <!-- 👉 Stepper -->
-      <AppStepper
-        v-model:current-step="currentStep"
-        :items="iconsSteps"
-        align="center"
-      />
+      <AppStepper v-model:current-step="currentStep" :items="iconsSteps" align="center" />
     </VCardText>
 
     <VDivider />
@@ -72,10 +68,7 @@ const onSubmit = () => {
     <VCardText>
       <!-- 👉 stepper content -->
       <VForm>
-        <VWindow
-          v-model="currentStep"
-          class="disable-tab-transition"
-        >
+        <VWindow v-model="currentStep" class="disable-tab-transition">
           <VWindowItem>
             <VRow>
               <VCol cols="12">
@@ -87,56 +80,26 @@ const onSubmit = () => {
                 </p>
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.username"
-                  placeholder="CarterLeonardo"
-                  label="Username"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.username" placeholder="CarterLeonardo" label="Username" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.email"
-                  placeholder="carterleonardo@gmail.com"
-                  label="Email"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.email" placeholder="carterleonardo@gmail.com" label="Email" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.password"
-                  label="Password"
-                  placeholder="············"
-                  :type="isPasswordVisible ? 'text' : 'password'"
-                  autocomplete="password"
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.password" label="Password" placeholder="············"
+                  :type="isPasswordVisible ? 'text' : 'password'" autocomplete="password"
                   :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                  @click:append-inner="isPasswordVisible = !isPasswordVisible"
-                />
+                  @click:append-inner="isPasswordVisible = !isPasswordVisible" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.cPassword"
-                  label="Confirm Password"
-                  autocomplete="confirm-password"
-                  placeholder="············"
-                  :type="isCPasswordVisible ? 'text' : 'password'"
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.cPassword" label="Confirm Password" autocomplete="confirm-password"
+                  placeholder="············" :type="isCPasswordVisible ? 'text' : 'password'"
                   :append-inner-icon="isCPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
-                  @click:append-inner="isCPasswordVisible = !isCPasswordVisible"
-                />
+                  @click:append-inner="isCPasswordVisible = !isCPasswordVisible" />
               </VCol>
             </VRow>
           </VWindowItem>
@@ -152,50 +115,22 @@ const onSubmit = () => {
                 </p>
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.firstName"
-                  label="First Name"
-                  placeholder="Leonard"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.firstName" label="First Name" placeholder="Leonard" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.lastName"
-                  label="Last Name"
-                  placeholder="Carter"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.lastName" label="Last Name" placeholder="Carter" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppSelect
-                  v-model="formData.country"
-                  label="Country"
-                  placeholder="Select Country"
-                  :items="['UK', 'USA', 'Canada', 'Australia', 'Germany']"
-                />
+              <VCol cols="12" md="6">
+                <AppSelect v-model="formData.country" label="Country" placeholder="Select Country"
+                  :items="['UK', 'USA', 'Canada', 'Australia', 'Germany']" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppSelect
-                  v-model="formData.language"
-                  label="Language"
-                  placeholder="Select Language"
-                  :items="['English', 'Spanish', 'French', 'Russian', 'German']"
-                />
+              <VCol cols="12" md="6">
+                <AppSelect v-model="formData.language" label="Language" placeholder="Select Language"
+                  :items="['English', 'Spanish', 'French', 'Russian', 'German']" />
               </VCol>
             </VRow>
           </VWindowItem>
@@ -211,49 +146,21 @@ const onSubmit = () => {
                 </p>
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.address"
-                  placeholder="98 Borough bridge Road, Birmingham"
-                  label="Address"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.address" placeholder="98 Borough bridge Road, Birmingham"
+                  label="Address" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.landmark"
-                  placeholder="Borough bridge"
-                  label="Landmark"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.landmark" placeholder="Borough bridge" label="Landmark" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.pincode"
-                  placeholder="658921"
-                  label="Pincode"
-                  type="number"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.pincode" placeholder="658921" label="Pincode" type="number" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.city"
-                  placeholder="New York"
-                  label="City"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.city" placeholder="New York" label="City" />
               </VCol>
             </VRow>
           </VWindowItem>
@@ -269,48 +176,20 @@ const onSubmit = () => {
                 </p>
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.twitter"
-                  placeholder="https://twitter.com/abc"
-                  label="Twitter"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.twitter" placeholder="https://twitter.com/abc" label="Twitter" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.facebook"
-                  placeholder="https://facebook.com/abc"
-                  label="Facebook"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.facebook" placeholder="https://facebook.com/abc" label="Facebook" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.googlePlus"
-                  placeholder="https://plus.google.com/abc"
-                  label="Google+"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.googlePlus" placeholder="https://plus.google.com/abc" label="Google+" />
               </VCol>
 
-              <VCol
-                cols="12"
-                md="6"
-              >
-                <AppTextField
-                  v-model="formData.linkedIn"
-                  placeholder="https://linkedin.com/abc"
-                  label="LinkedIn"
-                />
+              <VCol cols="12" md="6">
+                <AppTextField v-model="formData.linkedIn" placeholder="https://linkedin.com/abc" label="LinkedIn" />
               </VCol>
             </VRow>
           </VWindowItem>
@@ -389,39 +268,19 @@ const onSubmit = () => {
         </VWindow>
 
         <div class="d-flex flex-wrap gap-4 justify-sm-space-between justify-center mt-8">
-          <VBtn
-            color="secondary"
-            variant="tonal"
-            :disabled="currentStep === 0"
-            @click="currentStep--"
-          >
-            <VIcon
-              icon="tabler-arrow-left"
-              start
-              class="flip-in-rtl"
-            />
+          <VBtn color="secondary" variant="tonal" :disabled="currentStep === 0" @click="currentStep--">
+            <VIcon icon="tabler-arrow-left" start class="flip-in-rtl" />
             Previous
           </VBtn>
 
-          <VBtn
-            v-if="iconsSteps.length - 1 === currentStep"
-            color="success"
-            @click="onSubmit"
-          >
+          <VBtn v-if="iconsSteps.length - 1 === currentStep" color="success" @click="onSubmit">
             submit
           </VBtn>
 
-          <VBtn
-            v-else
-            @click="currentStep++"
-          >
+          <VBtn v-else @click="currentStep++">
             Next
 
-            <VIcon
-              icon="tabler-arrow-right"
-              end
-              class="flip-in-rtl"
-            />
+            <VIcon icon="tabler-arrow-right" end class="flip-in-rtl" />
           </VBtn>
         </div>
       </VForm>

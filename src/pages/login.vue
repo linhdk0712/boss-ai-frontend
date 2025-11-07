@@ -67,7 +67,7 @@ const handleLogin = async () => {
       await router.replace(redirectPath)
     }
   } catch (error) {
-    console.error('Login navigation error:', error)
+    // Handle navigation error
   }
 }
 
@@ -78,7 +78,7 @@ const onSubmit = async () => {
       await handleLogin()
     }
   } catch (error) {
-    console.error('Form validation error:', error)
+    // Handle form validation error
   }
 }
 

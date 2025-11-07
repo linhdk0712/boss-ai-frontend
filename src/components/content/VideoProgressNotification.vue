@@ -148,13 +148,13 @@ const truncateText = (text: string, maxLength: number): string => {
 const viewCompletedVideo = (notification: any) => {
     notification.show = false
     // TODO: Navigate to video view or open video player
-    console.log('View completed video:', notification.job)
+    // console.log('View completed video:', notification.job)
 }
 
 const retryVideo = (notification: any) => {
     notification.show = false
     // TODO: Implement retry functionality
-    console.log('Retry video:', notification.job)
+    // console.log('Retry video:', notification.job)
 }
 
 // Watch for completed jobs to show success notifications

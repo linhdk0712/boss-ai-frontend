@@ -21,7 +21,7 @@ export function useAuth() {
         try {
             currentUser.value = JSON.parse(storedUser)
         } catch (e) {
-            console.error('Failed to parse stored user data:', e)
+            // console.error('Failed to parse stored user data:', e)
             localStorage.removeItem('userData')
         }
     }
@@ -116,7 +116,7 @@ export function useAuth() {
             // Redirect to login page (handled by router guards)
             window.location.href = '/login'
         } catch (err) {
-            console.error('Logout error:', err)
+            // console.error('Logout error:', err)
         }
     }
 
@@ -142,7 +142,7 @@ export function useAuth() {
 
             return false
         } catch (err) {
-            console.error('Token refresh failed:', err)
+            // console.error('Token refresh failed:', err)
             await logout()
             return false
         }

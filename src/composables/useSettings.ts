@@ -54,7 +54,7 @@ export function useSettings() {
             }
         } catch (err: any) {
             error.value = err.response?.data?.errorMessage || err.message || 'Failed to fetch settings'
-            console.error('Error fetching settings:', err)
+            // console.error('Error fetching settings:', err)
         } finally {
             loading.value = false
         }
@@ -76,7 +76,7 @@ export function useSettings() {
             }
         } catch (err: any) {
             error.value = err.response?.data?.errorMessage || err.message || 'Failed to fetch all settings'
-            console.error('Error fetching all settings:', err)
+            // console.error('Error fetching all settings:', err)
         } finally {
             loading.value = false
         }
@@ -105,7 +105,7 @@ export function useSettings() {
             }
         } catch (err: any) {
             error.value = err.response?.data?.errorMessage || err.message || 'Failed to update setting'
-            console.error('Error updating setting:', err)
+            // console.error('Error updating setting:', err)
             return false
         } finally {
             updating.value = false

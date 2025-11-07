@@ -347,7 +347,7 @@ export function useJobNotifications() {
      */
     const viewJobResult = (job: AsyncJob): void => {
         // This will be handled by the parent component
-        console.log('View job result:', job)
+        // console.log('View job result:', job)
     }
 
     /**
@@ -355,7 +355,7 @@ export function useJobNotifications() {
      */
     const retryJob = (job: AsyncJob): void => {
         // This will be handled by the parent component
-        console.log('Retry job:', job)
+        // console.log('Retry job:', job)
     }
 
     return {

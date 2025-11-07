@@ -251,7 +251,7 @@ const target = join(__dirname, 'icons.css')
           }
           catch (err) {
             // Invalid icon
-            console.error(`Error parsing ${name} from ${source.dir}:`, err)
+            // console.error(`Error parsing ${name} from ${source.dir}:`, err)
             iconSet.remove(name)
 
             return
@@ -281,9 +281,9 @@ const target = join(__dirname, 'icons.css')
     // Save the CSS to a file
     await fs.writeFile(target, cssContent, 'utf8')
 
-    console.log(`Saved CSS to ${target}!`)
+    // console.log(`Saved CSS to ${target}!`)
   })().catch(err => {
-    console.error(err)
+    // console.error(err)
   })
 
 /**

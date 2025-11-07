@@ -10,7 +10,9 @@ const fetchProjectData = async () => {
       query: {
         tab: router.params.tab,
       },
-    }).catch(err => console.log(err))
+    }).catch(err => {
+      // Handle error silently
+    })
 
     projectData.value = data
   }
@@ -29,21 +31,11 @@ const moreList = [
 
 <template>
   <VRow v-if="projectData">
-    <VCol
-      v-for="data in projectData"
-      :key="data.title"
-      cols="12"
-      sm="6"
-      lg="4"
-    >
+    <VCol v-for="data in projectData" :key="data.title" cols="12" sm="6" lg="4">
       <VCard>
         <VCardItem class="pb-4">
           <template #prepend>
-            <VAvatar
-              :image="data.avatar"
-              size="38"
-              class="me-2"
-            />
+            <VAvatar :image="data.avatar" size="38" class="me-2" />
           </template>
 
           <VCardTitle>{{ data.title }}</VCardTitle>
@@ -56,10 +48,7 @@ const moreList = [
 
           <template #append>
             <div class="mt-n2">
-              <MoreBtn
-                item-props
-                :menu-list="moreList"
-              />
+              <MoreBtn item-props :menu-list="moreList" />
             </div>
           </template>
         </VCardItem>
@@ -98,11 +87,7 @@ const moreList = [
               </span>
             </h6>
 
-            <VChip
-              label
-              :color="data.chipColor"
-              size="small"
-            >
+            <VChip label :color="data.chipColor" size="small">
               {{ data.daysLeft }} Days left
             </VChip>
           </div>
@@ -111,24 +96,13 @@ const moreList = [
             <span>Task: {{ data.tasks }}</span>
             <span>{{ Math.round((data.completedTask / data.totalTask) * 100) }}% Completed</span>
           </div>
-          <VProgressLinear
-            rounded
-            rounded-bar
-            height="8"
-            :model-value="data.completedTask"
-            :max="data.totalTask"
-            color="primary"
-          />
+          <VProgressLinear rounded rounded-bar height="8" :model-value="data.completedTask" :max="data.totalTask"
+            color="primary" />
 
           <div class="d-flex align-center justify-space-between flex-wrap gap-2 mt-4">
             <div class="d-flex align-center">
               <div class="v-avatar-group me-3">
-                <VAvatar
-                  v-for="avatar in data.avatarGroup"
-                  :key="avatar.name"
-                  :image="avatar.avatar"
-                  :size="32"
-                />
+                <VAvatar v-for="avatar in data.avatarGroup" :key="avatar.name" :image="avatar.avatar" :size="32" />
               </div>
               <span class="text-body-2 text-disabled">
                 {{ data.members }}
@@ -136,11 +110,7 @@ const moreList = [
             </div>
 
             <span class="d-flex align-center">
-              <VIcon
-                icon="tabler-message-dots"
-                class="me-1 text-disabled"
-                size="24"
-              />
+              <VIcon icon="tabler-message-dots" class="me-1 text-disabled" size="24" />
               <div class="text-disabled text-body-1">{{ data.comments }}</div>
             </span>
           </div>

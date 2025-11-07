@@ -54,7 +54,6 @@ class JobQueueService {
             })
             return response.data
         } catch (error: any) {
-            console.error('Error fetching jobs:', error)
             throw this.handleApiError(error, 'Failed to fetch jobs')
         }
     }
@@ -69,7 +68,6 @@ class JobQueueService {
             })
             return response.data
         } catch (error: any) {
-            console.error(`Error fetching job details for job ${jobId}:`, error)
             throw this.handleApiError(error, 'Failed to fetch job details')
         }
     }
@@ -84,7 +82,6 @@ class JobQueueService {
             })
             return response.data
         } catch (error: any) {
-            console.error(`Error retrying job ${jobId}:`, error)
             throw this.handleApiError(error, 'Failed to retry job')
         }
     }
@@ -107,7 +104,6 @@ class JobQueueService {
             )
             return response.data
         } catch (error: any) {
-            console.error(`Error downloading job content for job ${jobId}:`, error)
             throw this.handleApiError(error, 'Failed to download job content')
         }
     }
@@ -137,7 +133,6 @@ class JobQueueService {
             // Cleanup
             window.URL.revokeObjectURL(url)
         } catch (error: any) {
-            console.error(`Error downloading job content file for job ${jobId}:`, error)
             throw error
         }
     }
@@ -152,7 +147,6 @@ class JobQueueService {
             })
             return response.data
         } catch (error: any) {
-            console.error('Error fetching job statistics:', error)
             throw this.handleApiError(error, 'Failed to fetch job statistics')
         }
     }
@@ -167,7 +161,6 @@ class JobQueueService {
             })
             return response.data
         } catch (error: any) {
-            console.error(`Error cancelling job ${jobId}:`, error)
             throw this.handleApiError(error, 'Failed to cancel job')
         }
     }
@@ -182,7 +175,6 @@ class JobQueueService {
             })
             return response.data
         } catch (error: any) {
-            console.error(`Error refreshing job status for job ${jobId}:`, error)
             throw this.handleApiError(error, 'Failed to refresh job status')
         }
     }
@@ -252,8 +244,6 @@ class JobQueueService {
 
                 // Calculate delay with exponential backoff
                 const delay = baseDelay * Math.pow(2, attempt)
-                console.log(`API call failed, retrying in ${delay}ms... (attempt ${attempt + 1}/${maxRetries})`)
-
                 await new Promise(resolve => setTimeout(resolve, delay))
             }
         }

@@ -275,7 +275,7 @@ export function useJobQueueErrorHandler() {
                         config.maxDelay
                     )
 
-                    console.log(`Retry attempt ${attempt}/${config.maxAttempts} for ${context} in ${delay}ms`)
+                    // console.log(`Retry attempt ${attempt}/${config.maxAttempts} for ${context} in ${delay}ms`)
 
                     // Show retry notification
                     notifySystem('info', 'Retrying...',

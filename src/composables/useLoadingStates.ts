@@ -316,7 +316,7 @@ export function useLoadingStates() {
     }
 
     /**
-     * Get loading summary for debugging
+     * Get loading summary for monitoring
      */
     const getLoadingSummary = () => {
         const activeOperations = Object.entries(loadingStates)

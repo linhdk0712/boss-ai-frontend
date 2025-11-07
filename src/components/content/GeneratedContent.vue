@@ -153,7 +153,7 @@ const copyToClipboard = async () => {
     await navigator.clipboard.writeText(textToCopy)
     copySuccess.value = true
   } catch (error) {
-    console.error('Failed to copy to clipboard:', error)
+    // console.error('Failed to copy to clipboard:', error)
     // Fallback for older browsers
     const textArea = document.createElement('textarea')
     textArea.value = props.content.generatedContent
@@ -170,7 +170,7 @@ const copyToClipboard = async () => {
         copySuccess.value = true
       }
     } catch (err) {
-      console.error('Fallback copy failed:', err)
+      // console.error('Fallback copy failed:', err)
     }
 
     document.body.removeChild(textArea)

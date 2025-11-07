@@ -154,7 +154,7 @@ export function useToastNotifications() {
                 icon: 'mdi-refresh',
                 action: () => {
                     // This would be handled by the parent component
-                    console.log('Retry action triggered')
+                    // console.log('Retry action triggered')
                 }
             }]
         })
@@ -217,7 +217,7 @@ export function useToastNotifications() {
                     icon: 'mdi-information',
                     action: () => {
                         // Show detailed results
-                        console.log('Show bulk operation details')
+                        // console.log('Show bulk operation details')
                     }
                 }]
             })

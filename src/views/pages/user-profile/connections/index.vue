@@ -10,7 +10,9 @@ const fetchProjectData = async () => {
       query: {
         tab: router.params.tab,
       },
-    }).catch(err => console.log(err))
+    }).catch(err => {
+      // Handle error silently
+    })
 
     connectionData.value = data
   }
@@ -21,33 +23,20 @@ watch(router, fetchProjectData, { immediate: true })
 
 <template>
   <VRow>
-    <VCol
-      v-for="data in connectionData"
-      :key="data.name"
-      sm="6"
-      lg="4"
-      cols="12"
-    >
+    <VCol v-for="data in connectionData" :key="data.name" sm="6" lg="4" cols="12">
       <VCard>
         <div class="vertical-more">
-          <MoreBtn
-            :menu-list="[
-              { title: 'Share connection', value: 'Share connection' },
-              { title: 'Block connection', value: 'Block connection' },
-              { type: 'divider', class: 'my-2' },
-              { title: 'Delete', value: 'Delete', class: 'text-error' },
-            ]"
-            item-props
-          />
+          <MoreBtn :menu-list="[
+            { title: 'Share connection', value: 'Share connection' },
+            { title: 'Block connection', value: 'Block connection' },
+            { type: 'divider', class: 'my-2' },
+            { title: 'Delete', value: 'Delete', class: 'text-error' },
+          ]" item-props />
         </div>
 
         <VCardItem>
           <VCardTitle class="d-flex flex-column align-center justify-center gap-y-6">
-            <VAvatar
-              size="100"
-              :image="data.avatar"
-              class="mt-5"
-            />
+            <VAvatar size="100" :image="data.avatar" class="mt-5" />
 
             <div class="text-center">
               <h5 class="text-h5">
@@ -59,13 +48,7 @@ watch(router, fetchProjectData, { immediate: true })
             </div>
 
             <div class="d-flex align-center flex-wrap gap-4">
-              <VChip
-                v-for="chip in data.chips"
-                :key="chip.title"
-                label
-                :color="chip.color"
-                size="small"
-              >
+              <VChip v-for="chip in data.chips" :key="chip.title" label :color="chip.color" size="small">
                 {{ chip.title }}
               </VChip>
             </div>
@@ -101,21 +84,13 @@ watch(router, fetchProjectData, { immediate: true })
           </div>
 
           <div class="d-flex justify-center gap-4 mt-6">
-            <VBtn
-              :prepend-icon="data.isConnected ? 'tabler-user-check' : 'tabler-user-plus'"
-              :variant="data.isConnected ? 'elevated' : 'tonal'"
-            >
+            <VBtn :prepend-icon="data.isConnected ? 'tabler-user-check' : 'tabler-user-plus'"
+              :variant="data.isConnected ? 'elevated' : 'tonal'">
               {{ data.isConnected ? 'connected' : 'connect' }}
             </VBtn>
 
-            <IconBtn
-              variant="tonal"
-              class="rounded"
-            >
-              <VIcon
-                icon="tabler-mail"
-                color="secondary"
-              />
+            <IconBtn variant="tonal" class="rounded">
+              <VIcon icon="tabler-mail" color="secondary" />
             </IconBtn>
           </div>
         </VCardText>

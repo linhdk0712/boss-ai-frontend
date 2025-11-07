@@ -278,7 +278,7 @@ const copyContent = async () => {
             // Show success notification
             showSuccessNotification('Content copied to clipboard')
         } catch (error) {
-            console.error('Failed to copy content:', error)
+            // console.error('Failed to copy content:', error)
             showErrorNotification('Failed to copy content to clipboard')
         }
     }
@@ -309,12 +309,12 @@ const formatJsonContent = () => {
 
 const showSuccessNotification = (message: string) => {
     // This would typically use a toast/snackbar service
-    console.log('Success:', message)
+    // console.log('Success:', message)
 }
 
 const showErrorNotification = (message: string) => {
     // This would typically use a toast/snackbar service
-    console.error('Error:', message)
+    // console.error('Error:', message)
 }
 
 const downloadContent = (format: string) => {

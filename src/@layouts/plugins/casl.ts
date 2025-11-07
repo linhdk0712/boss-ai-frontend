@@ -28,7 +28,6 @@ export const can = (action: string | undefined, subject: string | undefined) => 
 
     return result
   } catch (error) {
-    console.warn('[CASL] Error checking permission:', error)
     // Fallback to getCurrentInstance() approach if direct access fails
     const vm = getCurrentInstance()
 
@@ -90,7 +89,6 @@ export const canNavigate = (to: any) => {
       return true // Allow routes without specific permissions
     })
   } catch (error) {
-    console.warn('CASL ability check failed:', error)
     return true // Default to allowing access if CASL check fails
   }
 }

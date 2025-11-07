@@ -56,7 +56,7 @@ const loadContent = async () => {
             content.value = response.data
         }
     } catch (error) {
-        console.error('Failed to load content:', error)
+        // Error handling for content loading
     } finally {
         isLoadingContent.value = false
     }

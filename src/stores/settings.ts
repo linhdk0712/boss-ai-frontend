@@ -80,7 +80,6 @@ export const useSettingsStore = defineStore('settings', () => {
             }
         } catch (err: any) {
             error.value = err.response?.data?.errorMessage || err.message || 'Failed to fetch settings'
-            console.error('Error fetching settings:', err)
         } finally {
             loading.value[category] = false
         }
@@ -117,7 +116,6 @@ export const useSettingsStore = defineStore('settings', () => {
 
         } catch (err: any) {
             error.value = err.response?.data?.errorMessage || err.message || 'Failed to fetch all settings'
-            console.error('Error fetching all settings:', err)
         } finally {
             // Clear all loading states
             categories.forEach(category => {
@@ -150,7 +148,6 @@ export const useSettingsStore = defineStore('settings', () => {
             }
         } catch (err: any) {
             error.value = err.response?.data?.errorMessage || err.message || 'Failed to update setting'
-            console.error('Error updating setting:', err)
             return false
         } finally {
             updating.value = false

@@ -36,7 +36,6 @@ class WorkflowIntegrationService {
 
             return workflowRequest
         } catch (error: any) {
-            console.error(`Error preparing job ${jobId} for workflow:`, error)
             throw new Error(error.message || 'Failed to prepare job content for video generation')
         }
     }
@@ -63,7 +62,6 @@ class WorkflowIntegrationService {
 
             return response.data
         } catch (error: any) {
-            console.error(`Error generating video from job ${jobId}:`, error)
             throw this.handleWorkflowError(error, 'Failed to generate video from job')
         }
     }
@@ -91,7 +89,6 @@ class WorkflowIntegrationService {
 
             return response.data
         } catch (error: any) {
-            console.error(`Error generating video async from job ${jobId}:`, error)
             throw this.handleWorkflowError(error, 'Failed to start async video generation from job')
         }
     }
@@ -107,7 +104,6 @@ class WorkflowIntegrationService {
 
             return response.data
         } catch (error: any) {
-            console.error(`Error checking video progress for job ${jobId}, workflow ${workflowId}:`, error)
             throw this.handleWorkflowError(error, 'Failed to check video generation progress')
         }
     }
@@ -126,7 +122,6 @@ class WorkflowIntegrationService {
 
             return response.data
         } catch (error: any) {
-            console.error(`Error cancelling video generation for job ${jobId}, workflow ${workflowId}:`, error)
             throw this.handleWorkflowError(error, 'Failed to cancel video generation')
         }
     }
@@ -142,7 +137,6 @@ class WorkflowIntegrationService {
 
             return response.data
         } catch (error: any) {
-            console.error(`Error fetching video history for job ${jobId}:`, error)
             throw this.handleWorkflowError(error, 'Failed to fetch video generation history')
         }
     }
@@ -172,14 +166,7 @@ class WorkflowIntegrationService {
             'script'
         ]
 
-        if (job.contentType && !videoCompatibleTypes.includes(job.contentType)) {
-            console.warn(`Content type '${job.contentType}' may not be optimal for video generation`)
-        }
-
-        // Check content length (optional warning)
-        if (typeof job.result === 'string' && job.result.length > 5000) {
-            console.warn('Content is quite long for video generation. Consider summarizing.')
-        }
+        // Content type and length validation (warnings removed for production)
     }
 
     /**
@@ -203,7 +190,7 @@ class WorkflowIntegrationService {
                     ? JSON.parse(job.parameters)
                     : job.parameters
             } catch (error) {
-                console.warn('Failed to parse job parameters:', error)
+                // Failed to parse job parameters
             }
         }
 
@@ -316,7 +303,6 @@ class WorkflowIntegrationService {
 
             return response.data
         } catch (error: any) {
-            console.error(`Error fetching workflow templates for job ${jobId}:`, error)
             throw this.handleWorkflowError(error, 'Failed to fetch workflow templates')
         }
     }

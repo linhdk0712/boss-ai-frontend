@@ -10,7 +10,9 @@ const fetchTeamData = async () => {
       query: {
         tab: router.params.tab,
       },
-    }).catch(err => console.log(err))
+    }).catch(err => {
+      // Handle error silently
+    })
 
     teamData.value = data
   }
@@ -29,38 +31,18 @@ const moreList = [
 
 <template>
   <VRow v-if="teamData">
-    <VCol
-      v-for="team in teamData"
-      :key="team.title"
-      cols="12"
-      md="6"
-      lg="4"
-    >
+    <VCol v-for="team in teamData" :key="team.title" cols="12" md="6" lg="4">
       <VCard>
-        <VCardItem
-          class="pb-4"
-          :title="team.title"
-        >
+        <VCardItem class="pb-4" :title="team.title">
           <template #prepend>
-            <VAvatar
-              size="38"
-              :image="team?.avatar"
-            />
+            <VAvatar size="38" :image="team?.avatar" />
           </template>
           <template #append>
             <div>
               <IconBtn>
-                <VIcon
-                  size="24"
-                  icon="tabler-star"
-                  class="text-disabled"
-                />
+                <VIcon size="24" icon="tabler-star" class="text-disabled" />
               </IconBtn>
-              <MoreBtn
-                :menu-list="moreList"
-                item-props
-                density="comfortable"
-              />
+              <MoreBtn :menu-list="moreList" item-props density="comfortable" />
             </div>
           </template>
         </VCardItem>
@@ -71,17 +53,10 @@ const moreList = [
 
         <VCardText class="d-flex align-center">
           <div class="v-avatar-group">
-            <VAvatar
-              v-for="data in team.avatarGroup"
-              :key="data.name"
-              size="32"
-            >
+            <VAvatar v-for="data in team.avatarGroup" :key="data.name" size="32">
               <VImg :src="data.avatar" />
 
-              <VTooltip
-                activator="parent"
-                location="top"
-              >
+              <VTooltip activator="parent" location="top">
                 {{ data.name }}
               </VTooltip>
             </VAvatar>
@@ -90,14 +65,8 @@ const moreList = [
           <VSpacer />
 
           <div class="d-flex align-center gap-2">
-            <VChip
-              v-for="data in team.chips"
-              :key="data.title"
-              label
-              :color="data.color"
-              size="small"
-              class="font-weight-medium"
-            >
+            <VChip v-for="data in team.chips" :key="data.title" label :color="data.color" size="small"
+              class="font-weight-medium">
               {{ data.title }}
             </VChip>
           </div>

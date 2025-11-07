@@ -25,9 +25,8 @@ export const useChatStore = defineStore('chat', {
       }))
 
       if (error.value) {
-        console.log(error.value)
-      }
-      else {
+        // Handle error
+      } else {
         const { chatsContacts, contacts, profileUser } = data.value
 
         this.chatsContacts = chatsContacts

@@ -265,7 +265,6 @@ const refreshJobs = async () => {
         await getJobs(0, 10)
     } catch (err: any) {
         error.value = err.message || 'Failed to load jobs'
-        console.error('Error loading jobs:', err)
     }
 }
 
@@ -275,7 +274,6 @@ const handlePageChange = async (page: number) => {
         await getJobs(page - 1, pagination.value.size) // Convert to 0-based index
     } catch (err: any) {
         error.value = err.message || 'Failed to load jobs'
-        console.error('Error loading jobs:', err)
     }
 }
 
@@ -285,7 +283,6 @@ const handleSizeChange = async (size: number) => {
         await getJobs(0, size) // Reset to first page
     } catch (err: any) {
         error.value = err.message || 'Failed to load jobs'
-        console.error('Error loading jobs:', err)
     }
 }
 
@@ -300,7 +297,6 @@ const retryJob = async (job: Job) => {
         await refreshJobs() // Refresh the list
     } catch (err: any) {
         error.value = err.message || 'Failed to retry job'
-        console.error('Error retrying job:', err)
     }
 }
 

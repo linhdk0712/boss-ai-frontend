@@ -200,7 +200,7 @@ export const handlerAppsEcommerce = [
     }).reverse()
 
     if (sortByLocal) {
-      console.log(sortByLocal)
+      // console.log(sortByLocal)
       if (sortByLocal === 'order') {
         filterOrders.sort((a, b) => {
           if (orderByLocal === 'desc')

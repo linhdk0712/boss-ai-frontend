@@ -6,9 +6,8 @@ const profileHeaderData = ref<ProfileHeader>()
 const { data, error } = await useApi<ProfileHeader>('/pages/profile/header')
 
 if (error.value) {
-  console.log(error.value)
-}
-else {
+  // Handle error
+} else {
   if (data.value)
     profileHeaderData.value = data.value
 }
@@ -16,21 +15,11 @@ else {
 
 <template>
   <VCard v-if="profileHeaderData">
-    <VImg
-      :src="profileHeaderData.coverImg"
-      min-height="125"
-      max-height="250"
-      cover
-    />
+    <VImg :src="profileHeaderData.coverImg" min-height="125" max-height="250" cover />
 
     <VCardText class="d-flex align-bottom flex-sm-row flex-column justify-center gap-x-6">
       <div class="d-flex h-0">
-        <VAvatar
-          rounded
-          size="130"
-          :image="profileHeaderData.profileImg"
-          class="user-profile-avatar mx-auto"
-        />
+        <VAvatar rounded size="130" :image="profileHeaderData.profileImg" class="user-profile-avatar mx-auto" />
       </div>
 
       <div class="user-profile-info w-100 mt-16 pt-6 pt-sm-0 mt-sm-0">
@@ -41,30 +30,21 @@ else {
         <div class="d-flex align-center justify-center justify-sm-space-between flex-wrap gap-5">
           <div class="d-flex flex-wrap justify-center justify-sm-start flex-grow-1 gap-6">
             <span class="d-flex gap-x-2 align-center">
-              <VIcon
-                size="24"
-                icon="tabler-palette"
-              />
+              <VIcon size="24" icon="tabler-palette" />
               <div class="text-body-1 font-weight-medium">
                 {{ profileHeaderData?.designation }}
               </div>
             </span>
 
             <span class="d-flex gap-x-2 align-center">
-              <VIcon
-                size="24"
-                icon="tabler-map-pin"
-              />
+              <VIcon size="24" icon="tabler-map-pin" />
               <div class="text-body-1 font-weight-medium">
                 {{ profileHeaderData?.location }}
               </div>
             </span>
 
             <span class="d-flex gap-x-2 align-center">
-              <VIcon
-                size="24"
-                icon="tabler-calendar"
-              />
+              <VIcon size="24" icon="tabler-calendar" />
               <div class="text-body-1 font-weight-medium">
                 {{ profileHeaderData?.joiningDate }}
               </div>

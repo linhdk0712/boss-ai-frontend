@@ -4,7 +4,7 @@ export function useErrorHandler() {
     const error = ref<string | null>(null)
 
     const handleApiError = (apiError: any) => {
-        console.error('API Error:', apiError)
+        // console.error('API Error:', apiError)
 
         if (apiError.response?.data?.errorMessage) {
             error.value = apiError.response.data.errorMessage

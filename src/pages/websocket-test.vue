@@ -78,7 +78,6 @@ const testWebSocketConnection = () => {
         ws.value.onerror = (error) => {
             connectionStatus.value = 'Error'
             addMessage(`❌ WebSocket error: ${error}`)
-            console.error('WebSocket error:', error)
         }
 
         ws.value.onclose = (event) => {

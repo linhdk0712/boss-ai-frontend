@@ -197,7 +197,7 @@ export function useOptimizedJobQueue() {
         } catch (err: any) {
             error.value = err.message || 'Failed to load jobs'
             showError('Failed to load jobs', err.message)
-            console.error('Error loading jobs:', err)
+            // console.error('Error loading jobs:', err)
         } finally {
             loading.value = false
         }
@@ -277,7 +277,7 @@ export function useOptimizedJobQueue() {
             }
 
         } catch (err: any) {
-            console.error('Error loading content types:', err)
+            // console.error('Error loading content types:', err)
             // Don't show error toast for this as it's not critical
         } finally {
             contentTypesLoading.value = false
@@ -309,7 +309,7 @@ export function useOptimizedJobQueue() {
 
         } catch (err: any) {
             showError('Failed to retry job', err.message)
-            console.error('Error retrying job:', err)
+            // console.error('Error retrying job:', err)
         } finally {
             loading.value = false
         }
@@ -329,7 +329,7 @@ export function useOptimizedJobQueue() {
 
         } catch (err: any) {
             showError('Failed to generate video', err.message)
-            console.error('Error generating video:', err)
+            // console.error('Error generating video:', err)
         } finally {
             loading.value = false
         }
@@ -369,7 +369,6 @@ export function useOptimizedJobQueue() {
                 }
             } catch (err) {
                 // Silently fail prefetch
-                console.debug('Prefetch failed:', err)
             }
         }
     }

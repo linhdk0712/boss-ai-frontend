@@ -228,7 +228,6 @@ const loadVideo = async () => {
             error.value = 'Video chưa sẵn sàng để phát'
         }
     } catch (err: any) {
-        console.error('Failed to load video:', err)
         error.value = err.response?.data?.errorMessage || err.message || 'Không thể tải video'
     } finally {
         loading.value = false
@@ -255,7 +254,6 @@ const downloadVideo = async () => {
 
         URL.revokeObjectURL(url)
     } catch (err: any) {
-        console.error('Failed to download video:', err)
         // Show error message
     }
 }
@@ -286,7 +284,7 @@ const copyContent = async () => {
         await navigator.clipboard.writeText(textToCopy)
         // Show success message
     } catch (error) {
-        console.error('Failed to copy content:', error)
+        // Handle copy error
     }
 }
 
@@ -313,7 +311,6 @@ const onVideoLoaded = () => {
 const onVideoError = (event: Event) => {
     loading.value = false
     error.value = 'Không thể phát video. Vui lòng thử lại.'
-    console.error('Video error:', event)
 }
 
 // Helper methods

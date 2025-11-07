@@ -32,7 +32,7 @@ export const handlerDashboard = [
     let filteredProjects = db.analytics.filter(project => ((project.name.toLowerCase().includes(queryLower) || project.leader.toLowerCase().includes(queryLower)) || project.project.toLowerCase().includes(queryLower))).reverse()
 
     if (sortByLocal) {
-      console.log(sortByLocal)
+      // console.log(sortByLocal)
       if (sortByLocal === 'project') {
         filteredProjects = filteredProjects.sort((a, b) => {
           if (orderByLocal === 'asc')

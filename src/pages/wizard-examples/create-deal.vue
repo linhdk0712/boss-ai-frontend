@@ -65,40 +65,23 @@ const createDealData = ref<CreateDealData>({
 })
 
 const onSubmit = () => {
-  console.log('createDealData :>> ', createDealData.value)
+  // Handle form submission
 }
 </script>
 
 <template>
   <VCard>
     <VRow no-gutters>
-      <VCol
-        cols="12"
-        md="4"
-        lg="3"
-        :class="$vuetify.display.mdAndUp ? 'border-e' : 'border-b'"
-      >
+      <VCol cols="12" md="4" lg="3" :class="$vuetify.display.mdAndUp ? 'border-e' : 'border-b'">
         <VCardText>
-          <AppStepper
-            v-model:current-step="currentStep"
-            direction="vertical"
-            :items="createDealSteps"
-            icon-size="22"
-            class="stepper-icon-step-bg"
-          />
+          <AppStepper v-model:current-step="currentStep" direction="vertical" :items="createDealSteps" icon-size="22"
+            class="stepper-icon-step-bg" />
         </VCardText>
       </VCol>
 
-      <VCol
-        cols="12"
-        md="8"
-        lg="9"
-      >
+      <VCol cols="12" md="8" lg="9">
         <VCardText>
-          <VWindow
-            v-model="currentStep"
-            class="disable-tab-transition"
-          >
+          <VWindow v-model="currentStep" class="disable-tab-transition">
             <VWindowItem>
               <CreateDealType v-model:form-data="createDealData.dealType" />
             </VWindowItem>
@@ -117,39 +100,19 @@ const onSubmit = () => {
           </VWindow>
 
           <div class="d-flex flex-wrap gap-4 justify-space-between mt-6">
-            <VBtn
-              color="secondary"
-              variant="tonal"
-              :disabled="currentStep === 0"
-              @click="currentStep--"
-            >
-              <VIcon
-                icon="tabler-arrow-left"
-                start
-                class="flip-in-rtl"
-              />
+            <VBtn color="secondary" variant="tonal" :disabled="currentStep === 0" @click="currentStep--">
+              <VIcon icon="tabler-arrow-left" start class="flip-in-rtl" />
               Previous
             </VBtn>
 
-            <VBtn
-              v-if="createDealSteps.length - 1 === currentStep"
-              color="success"
-              @click="onSubmit"
-            >
+            <VBtn v-if="createDealSteps.length - 1 === currentStep" color="success" @click="onSubmit">
               submit
             </VBtn>
 
-            <VBtn
-              v-else
-              @click="currentStep++"
-            >
+            <VBtn v-else @click="currentStep++">
               Next
 
-              <VIcon
-                icon="tabler-arrow-right"
-                end
-                class="flip-in-rtl"
-              />
+              <VIcon icon="tabler-arrow-right" end class="flip-in-rtl" />
             </VBtn>
           </div>
         </VCardText>

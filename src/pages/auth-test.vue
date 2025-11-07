@@ -17,9 +17,9 @@ const testLogin = async () => {
     })
 
     if (success) {
-        console.log('Login successful!')
+        // Login successful
     } else {
-        console.log('Login failed:', authStore.error)
+        // Login failed
     }
 }
 
@@ -33,9 +33,9 @@ const testRegister = async () => {
     })
 
     if (success) {
-        console.log('Registration successful!')
+        // Registration successful
     } else {
-        console.log('Registration failed:', authStore.error)
+        // Registration failed
     }
 }
 </script>

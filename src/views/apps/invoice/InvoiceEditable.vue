@@ -28,9 +28,9 @@ const clients = ref<Client[]>([])
 const fetchClients = async () => {
   const { data, error } = await useApi<any>('/apps/invoice/clients')
 
-  if (error.value)
-    console.log(error.value)
-  else
+  if (error.value) {
+    // Handle error
+  } else
     clients.value = data.value
 }
 
@@ -55,7 +55,8 @@ const removeProduct = (id: number) => {
 <template>
   <VCard class="pa-6 pa-sm-12">
     <!-- SECTION Header -->
-    <div class="d-flex flex-wrap justify-space-between flex-column rounded bg-var-theme-background flex-sm-row gap-6 pa-6 mb-6">
+    <div
+      class="d-flex flex-wrap justify-space-between flex-column rounded bg-var-theme-background flex-sm-row gap-6 pa-6 mb-6">
       <!-- 👉 Left Content -->
       <div>
         <div class="d-flex align-center app-logo mb-6">
@@ -84,51 +85,28 @@ const removeProduct = (id: number) => {
       <div class="d-flex flex-column gap-2">
         <!-- 👉 Invoice Id -->
         <div class="d-flex align-start align-sm-center gap-x-4 font-weight-medium text-lg flex-column flex-sm-row">
-          <span
-            class="text-high-emphasis text-sm-end"
-            style="inline-size: 5.625rem ;"
-          >Invoice:</span>
+          <span class="text-high-emphasis text-sm-end" style="inline-size: 5.625rem ;">Invoice:</span>
           <span>
-            <AppTextField
-              id="invoice-id"
-              v-model="invoice.id"
-              disabled
-              prefix="#"
-              style="inline-size: 9.5rem;"
-            />
+            <AppTextField id="invoice-id" v-model="invoice.id" disabled prefix="#" style="inline-size: 9.5rem;" />
           </span>
         </div>
 
         <!-- 👉 Issue Date -->
         <div class="d-flex gap-x-4 align-start align-sm-center flex-column flex-sm-row">
-          <span
-            class="text-high-emphasis text-sm-end"
-            style="inline-size: 5.625rem;"
-          >Date Issued:</span>
+          <span class="text-high-emphasis text-sm-end" style="inline-size: 5.625rem;">Date Issued:</span>
 
           <span style="inline-size: 9.5rem;">
-            <AppDateTimePicker
-              id="issued-date"
-              v-model="invoice.issuedDate"
-              placeholder="YYYY-MM-DD"
-              :config="{ position: 'auto right' }"
-            />
+            <AppDateTimePicker id="issued-date" v-model="invoice.issuedDate" placeholder="YYYY-MM-DD"
+              :config="{ position: 'auto right' }" />
           </span>
         </div>
 
         <!-- 👉 Due Date -->
         <div class="d-flex gap-x-4 align-start align-sm-center flex-column flex-sm-row">
-          <span
-            class="text-high-emphasis text-sm-end"
-            style="inline-size: 5.625rem;"
-          >Due Date:</span>
+          <span class="text-high-emphasis text-sm-end" style="inline-size: 5.625rem;">Due Date:</span>
           <span style="min-inline-size: 9.5rem;">
-            <AppDateTimePicker
-              id="due-date"
-              v-model="invoice.dueDate"
-              placeholder="YYYY-MM-DD"
-              :config="{ position: 'auto right' }"
-            />
+            <AppDateTimePicker id="due-date" v-model="invoice.dueDate" placeholder="YYYY-MM-DD"
+              :config="{ position: 'auto right' }" />
           </span>
         </div>
       </div>
@@ -141,27 +119,15 @@ const removeProduct = (id: number) => {
           Invoice To:
         </h6>
 
-        <VSelect
-          id="client-name"
-          v-model="invoice.client"
-          :items="clients"
-          item-title="name"
-          item-value="name"
-          placeholder="Select Client"
-          return-object
-          class="mb-4"
-          style="inline-size: 11.875rem;"
-        />
+        <VSelect id="client-name" v-model="invoice.client" :items="clients" item-title="name" item-value="name"
+          placeholder="Select Client" return-object class="mb-4" style="inline-size: 11.875rem;" />
         <p class="mb-0">
           {{ invoice.client.name }}
         </p>
         <p class="mb-0">
           {{ invoice.client.company }}
         </p>
-        <p
-          v-if="invoice.client.address"
-          class="mb-0"
-        >
+        <p v-if="invoice.client.address" class="mb-0">
           {{ invoice.client.address }}, {{ invoice.client.country }}
         </p>
         <p class="mb-0">
@@ -221,23 +187,11 @@ const removeProduct = (id: number) => {
     <VDivider class="my-6 border-dashed" />
     <!-- 👉 Add purchased products -->
     <div class="add-products-form">
-      <div
-        v-for="(product, index) in props.data.purchasedProducts"
-        :key="product.title"
-        class="mb-4"
-      >
-        <InvoiceProductEdit
-          :id="index"
-          :data="product"
-          @remove-product="removeProduct"
-        />
+      <div v-for="(product, index) in props.data.purchasedProducts" :key="product.title" class="mb-4">
+        <InvoiceProductEdit :id="index" :data="product" @remove-product="removeProduct" />
       </div>
 
-      <VBtn
-        size="small"
-        prepend-icon="tabler-plus"
-        @click="addItem"
-      >
+      <VBtn size="small" prepend-icon="tabler-plus" @click="addItem">
         Add Item
       </VBtn>
     </div>
@@ -251,19 +205,10 @@ const removeProduct = (id: number) => {
           <h6 class="text-h6 me-2">
             Salesperson:
           </h6>
-          <AppTextField
-            id="salesperson"
-            v-model="salesperson"
-            style="inline-size: 8rem;"
-            placeholder="John Doe"
-          />
+          <AppTextField id="salesperson" v-model="salesperson" style="inline-size: 8rem;" placeholder="John Doe" />
         </div>
 
-        <AppTextField
-          id="thanks-note"
-          v-model="thanksNote"
-          placeholder="Thanks for your business"
-        />
+        <AppTextField id="thanks-note" v-model="thanksNote" placeholder="Thanks for your business" />
       </div>
 
       <div>
@@ -327,12 +272,7 @@ const removeProduct = (id: number) => {
       <h6 class="text-h6 mb-2">
         Note:
       </h6>
-      <VTextarea
-        id="note"
-        v-model="note"
-        placeholder="Write note here..."
-        :rows="2"
-      />
+      <VTextarea id="note" v-model="note" placeholder="Write note here..." :rows="2" />
     </div>
   </VCard>
 </template>

@@ -86,7 +86,7 @@ export function useContentGeneration() {
             }
         } catch (err: any) {
             generateError.value = err.response?.data?.errorMessage || err.message || 'Failed to generate content'
-            console.error('Content generation failed:', err)
+            // console.error('Content generation failed:', err)
         } finally {
             generating.value = false
         }
@@ -138,7 +138,7 @@ export function useContentGeneration() {
             }
         } catch (err: any) {
             saveError.value = err.response?.data?.errorMessage || err.message || 'Failed to save content'
-            console.error('Content save failed:', err)
+            // console.error('Content save failed:', err)
             return null
         } finally {
             saving.value = false
@@ -207,7 +207,7 @@ export function useContentGeneration() {
             }
         } catch (err: any) {
             videoError.value = err.response?.data?.errorMessage || err.message || 'Failed to create video'
-            console.error('Video workflow failed:', err)
+            // console.error('Video workflow failed:', err)
             return null
         } finally {
             creatingVideo.value = false

@@ -18,9 +18,9 @@ const articleData = ref<HelpCenterArticle>()
 
 setTimeout(async () => {
   const { data, error } = await useApi<any>('/pages/help-center/article')
-  if (error.value)
-    console.log(error.value)
-  else
+  if (error.value) {
+    // Handle error
+  } else
     articleData.value = data.value
 }, 1000)
 </script>
@@ -33,20 +33,12 @@ setTimeout(async () => {
 
     <!-- 👉 Content -->
     <VContainer>
-      <div
-        v-if="articleData && articleData?.title"
-        class="article-section"
-      >
+      <div v-if="articleData && articleData?.title" class="article-section">
         <VRow>
-          <VCol
-            cols="12"
-            md="8"
-          >
+          <VCol cols="12" md="8">
             <div>
-              <VBreadcrumbs
-                class="px-0 pb-2 pt-0 help-center-breadcrumbs"
-                :items="[{ title: 'Help Center', to: { name: 'front-pages-help-center' }, class: 'text-primary' }, { title: 'how to add product in cart' }]"
-              />
+              <VBreadcrumbs class="px-0 pb-2 pt-0 help-center-breadcrumbs"
+                :items="[{ title: 'Help Center', to: { name: 'front-pages-help-center' }, class: 'text-primary' }, { title: 'how to add product in cart' }]" />
               <h4 class="text-h4 mb-2">
                 {{ articleData?.title }}
               </h4>
@@ -56,51 +48,25 @@ setTimeout(async () => {
             </div>
             <VDivider class="my-6" />
             <!-- eslint-disable vue/no-v-html -->
-            <div
-              class="mb-6 text-body-1"
-              v-html="articleData?.productContent"
-            />
-            <VImg
-              class="rounded-lg"
-              :src="articleData?.productImg"
-            />
+            <div class="mb-6 text-body-1" v-html="articleData?.productContent" />
+            <VImg class="rounded-lg" :src="articleData?.productImg" />
             <p class="my-6 text-body-1">
               {{ articleData?.checkoutContent }}
             </p>
-            <VImg
-              class="rounded-lg"
-              :src="articleData?.checkoutImg"
-            />
+            <VImg class="rounded-lg" :src="articleData?.checkoutImg" />
           </VCol>
-          <VCol
-            cols="12"
-            md="4"
-          >
-            <VTextField
-              prepend-inner-icon="tabler-search"
-              placeholder="Search..."
-              class="mb-6"
-            />
+          <VCol cols="12" md="4">
+            <VTextField prepend-inner-icon="tabler-search" placeholder="Search..." class="mb-6" />
             <div>
               <!-- 👉 Article List  -->
-              <h5
-                class="text-h5 px-6 py-2 mb-4 rounded"
-                style="background: rgba(var(--v-theme-on-surface), var(--v-hover-opacity));"
-              >
+              <h5 class="text-h5 px-6 py-2 mb-4 rounded"
+                style="background: rgba(var(--v-theme-on-surface), var(--v-hover-opacity));">
                 Articles in this section
               </h5>
               <VList class="card-list">
-                <VListItem
-                  v-for="(item, index) in articleData?.articleList"
-                  :key="index"
-                  link
-                  class="text-disabled"
-                >
+                <VListItem v-for="(item, index) in articleData?.articleList" :key="index" link class="text-disabled">
                   <template #append>
-                    <VIcon
-                      :icon="$vuetify.locale.isRtl ? 'tabler-chevron-left' : 'tabler-chevron-right'"
-                      size="20"
-                    />
+                    <VIcon :icon="$vuetify.locale.isRtl ? 'tabler-chevron-left' : 'tabler-chevron-right'" size="20" />
                   </template>
                   <div class="text-body-1 text-high-emphasis">
                     {{ item }}

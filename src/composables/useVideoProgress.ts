@@ -113,12 +113,12 @@ export function useVideoProgress() {
                     if (updatedContent.status === 'WORKFLOW_COMPLETED' ||
                         updatedContent.status === 'WORKFLOW_FAILED') {
                         // Keep in map for UI display, but it won't be polled anymore
-                        console.log(`Video job ${job.id} completed with status: ${updatedContent.status}`)
+                        // console.log(`Video job ${job.id} completed with status: ${updatedContent.status}`)
                     }
                 }
             }
         } catch (error) {
-            console.error('Error checking video job status:', error)
+            // console.error('Error checking video job status:', error)
         }
     }
 

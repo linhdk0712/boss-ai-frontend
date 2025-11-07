@@ -15,7 +15,9 @@ const fetchAboutData = async () => {
       query: {
         tab: router.params.tab,
       },
-    }).catch(err => console.log(err))
+    }).catch(err => {
+      // Handle error silently
+    })
 
     profileTabData.value = data
   }
@@ -26,33 +28,21 @@ watch(router, fetchAboutData, { immediate: true })
 
 <template>
   <VRow v-if="profileTabData">
-    <VCol
-      md="4"
-      cols="12"
-    >
+    <VCol md="4" cols="12">
       <About :data="profileTabData" />
     </VCol>
 
-    <VCol
-      cols="12"
-      md="8"
-    >
+    <VCol cols="12" md="8">
       <VRow>
         <VCol cols="12">
           <ActivityTimeline />
         </VCol>
 
-        <VCol
-          cols="12"
-          md="6"
-        >
+        <VCol cols="12" md="6">
           <Connection :connections-data="profileTabData.connections" />
         </VCol>
 
-        <VCol
-          cols="12"
-          md="6"
-        >
+        <VCol cols="12" md="6">
           <Teams :teams-data="profileTabData.teamsTech" />
         </VCol>
 

@@ -80,7 +80,7 @@ export function useContentConfig() {
             initialized.value = true
         } catch (err: any) {
             error.value = err.response?.data?.errorMessage || err.message || 'Failed to load configuration'
-            console.error('Failed to load configuration:', err)
+            // console.error('Failed to load configuration:', err)
         } finally {
             loading.value = false
         }

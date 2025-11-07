@@ -112,7 +112,7 @@ export function useContentManagement() {
             }
         } catch (err: any) {
             error.value = err.response?.data?.errorMessage || err.message || 'Failed to load content'
-            console.error('Failed to load content list:', err)
+            // console.error('Failed to load content list:', err)
             // Ensure contentList is always an array even on error
             if (!contentList.value) {
                 contentList.value = []
@@ -141,7 +141,7 @@ export function useContentManagement() {
             }
         } catch (err: any) {
             error.value = err.response?.data?.errorMessage || err.message || 'Failed to load content'
-            console.error('Failed to load content:', err)
+            // console.error('Failed to load content:', err)
             return null
         } finally {
             loadingDetail.value = false
@@ -177,7 +177,7 @@ export function useContentManagement() {
             }
         } catch (err: any) {
             updateError.value = err.response?.data?.errorMessage || err.message || 'Failed to update content'
-            console.error('Failed to update content:', err)
+            // console.error('Failed to update content:', err)
             return null
         } finally {
             updating.value = false
@@ -213,7 +213,7 @@ export function useContentManagement() {
             }
         } catch (err: any) {
             deleteError.value = err.response?.data?.errorMessage || err.message || 'Failed to delete content'
-            console.error('Failed to delete content:', err)
+            // console.error('Failed to delete content:', err)
             return false
         } finally {
             deleting.value = false
