@@ -87,7 +87,43 @@ export const API_ENDPOINTS = {
         BASE: '/flow',
         BY_USER: (userId?: number) => userId ? `/flow?userId=${userId}` : '/flow',
     },
+
+    // Template Management
+    TEMPLATES: {
+        BASE: '/templates',
+        BY_ID: (id: number) => `/templates/${id}`,
+        BY_CATEGORY: (category: string) => `/templates/category/${category}`,
+        BY_INDUSTRY: (industry: string) => `/templates/industry/${industry}`,
+        RECOMMENDED: '/templates/recommended',
+        POPULAR: '/templates/popular',
+        SEARCH: '/templates/search',
+        APPLY: (id: number) => `/templates/${id}/apply`,
+        RATE: (id: number) => `/templates/${id}/rate`,
+        USAGE: (id: number) => `/templates/${id}/usage`,
+    },
+
+    // User Preset Management
+    PRESETS: {
+        BASE: '/presets',
+        BY_ID: (id: number) => `/presets/${id}`,
+        BY_CATEGORY: (category: string) => `/presets/category/${category}`,
+        BY_CONTENT_TYPE: (contentType: string) => `/presets/content-type/${contentType}`,
+        FAVORITES: '/presets/favorites',
+        DEFAULT: '/presets/default',
+        SEARCH: '/presets/search',
+        MOST_USED: '/presets/most-used',
+        RECENT: '/presets/recent',
+        SHARE: (id: number) => `/presets/${id}/share`,
+        UNSHARE: (id: number) => `/presets/${id}/unshare`,
+        WORKSPACE: (workspaceId: number) => `/presets/workspace/${workspaceId}`,
+        EXPORT: (id: number) => `/presets/${id}/export`,
+        IMPORT: '/presets/import',
+        ANALYTICS: (id: number) => `/presets/${id}/analytics`,
+        USER_ANALYTICS: '/presets/analytics',
+        OPTIMIZATION: (id: number) => `/presets/${id}/optimization`,
+        ALL_OPTIMIZATION: '/presets/optimization',
+    },
 } as const
 
 // Export individual endpoint groups for easier imports
-export const { AUTH, USERS, CONFIG, CONTENT, QUEUE, JOBS, SETTINGS, FLOW } = API_ENDPOINTS
+export const { AUTH, USERS, CONFIG, CONTENT, QUEUE, JOBS, SETTINGS, FLOW, TEMPLATES, PRESETS } = API_ENDPOINTS

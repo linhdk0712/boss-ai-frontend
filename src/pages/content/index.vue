@@ -13,6 +13,14 @@
             </div>
             <v-spacer />
             <!-- Quick Actions -->
+            <PresetQuickApply :presets="presets" :loading="presetsLoading" class="me-2" @apply="handleApplyPreset"
+              @manage-presets="showPresetLibrary = true" />
+            <v-btn variant="outlined" prepend-icon="mdi-content-save" class="me-2" @click="showPresetSaveDialog = true">
+              Save Preset
+            </v-btn>
+            <v-btn variant="outlined" prepend-icon="mdi-view-grid" class="me-2" @click="showTemplateGallery = true">
+              Templates
+            </v-btn>
             <v-btn color="primary" prepend-icon="mdi-history" :to="{ name: 'content-list' }" class="me-2">
               My Content
             </v-btn>
@@ -167,6 +175,35 @@
       :loading="false" :saving="false" :creating-video="isCreatingVideo" :can-save="true" :can-create-video="true"
       :persistent="dialogPersistent" @create-video="handleCreateVideo" @generate-new="handleGenerateNew"
       @close="handleDialogClose" @toggle-persistent="handleTogglePersistent" />
+
+    <!-- Template Gallery Dialog -->
+    <v-dialog v-model="showTemplateGallery" max-width="1200" scrollable>
+      <TemplateGallery @close="showTemplateGallery = false" @select="handleTemplateSelect"
+        @apply="handleTemplateApply" />
+    </v-dialog>
+
+    <!-- Preset Save Dialog -->
+    <PresetSaveDialog v-model="showPresetSaveDialog" :configuration="{
+      content: form.content,
+      industry: form.industry,
+      contentType: form.contentType,
+      language: form.language,
+      tone: form.tone,
+      targetAudience: form.targetAudience,
+      title: form.title
+    }" :saving="savingPreset" @save="handleSavePreset" />
+
+    <!-- Preset Library Dialog -->
+    <v-dialog v-model="showPresetLibrary" max-width="900" scrollable>
+      <PresetLibrary :presets="presets" :loading="presetsLoading" :error="presetsError"
+        @close="showPresetLibrary = false" @apply="handleApplyPreset" @delete="handleDeletePreset"
+        @set-default="handleSetDefaultPreset" @share="handleSharePresetClick" @export="handleExportPreset"
+        @import="handleImportPreset" />
+    </v-dialog>
+
+    <!-- Preset Share Dialog -->
+    <PresetShareDialog v-model="showPresetShareDialog" :preset="presetToShare" :workspaces="[]" :sharing="sharingPreset"
+      @share="handleSharePreset" />
   </div>
 </template>
 
@@ -174,11 +211,20 @@
 import { useContentConfig } from '@/composables/useContentConfig'
 import { useAsyncContentGeneration } from '@/composables/useAsyncContentGeneration'
 import { useJobNotifications } from '@/composables/useJobNotifications'
+import { useTemplateManagement } from '@/composables/useTemplateManagement'
+import { usePresetManagement } from '@/composables/usePresetManagement'
 import type { ContentGenerationForm, ContentGenerateRequest } from '@/types/content'
+import type { ContentTemplate } from '@/services/templateService'
+import type { UserPreset, CreatePresetRequest } from '@/types/preset'
+import TemplateGallery from '@/components/content/TemplateGallery.vue'
 import ConfigurationPanel from '@/components/content/ConfigurationPanel.vue'
 import AsyncContentGenerationForm from '@/components/content/AsyncContentGenerationForm.vue'
 import JobQueuePanel from '@/components/content/JobQueuePanel.vue'
 import GeneratedContentDialog from '@/components/content/GeneratedContentDialog.vue'
+import PresetSaveDialog from '@/components/content/PresetSaveDialog.vue'
+import PresetLibrary from '@/components/content/PresetLibrary.vue'
+import PresetQuickApply from '@/components/content/PresetQuickApply.vue'
+import PresetShareDialog from '@/components/content/PresetShareDialog.vue'
 
 // Composables
 const { getDefaultLanguage } = useContentConfig()
@@ -235,6 +281,33 @@ const showQueue = ref(true) // Show job queue panel
 const showContentDialog = ref(false)
 const dialogPersistent = ref(true) // Control dialog persistent behavior
 const selectedJobResult = ref<any>(null)
+const showTemplateGallery = ref(false)
+const showPresetSaveDialog = ref(false)
+const showPresetLibrary = ref(false)
+const showPresetShareDialog = ref(false)
+const presetToShare = ref<UserPreset | null>(null)
+const savingPreset = ref(false)
+const sharingPreset = ref(false)
+
+// Template management
+const { applyTemplate } = useTemplateManagement()
+
+// Preset management
+const {
+  presets,
+  loading: presetsLoading,
+  error: presetsError,
+  defaultPreset,
+  loadPresets,
+  createPreset,
+  updatePreset,
+  deletePreset,
+  setDefaultPreset,
+  applyPreset,
+  sharePreset,
+  exportPreset,
+  importPreset
+} = usePresetManagement()
 
 // Computed properties
 const persistentTooltipText = computed(() => {
@@ -349,6 +422,43 @@ const handleReconnect = () => {
   notifySystem('info', 'Reconnecting...', 'Attempting to reconnect to real-time updates')
 }
 
+// Template handlers
+const handleTemplateSelect = (template: ContentTemplate) => {
+  // Quick apply template without customization
+  handleTemplateApply(template)
+}
+
+const handleTemplateApply = async (template: ContentTemplate, customParams?: Record<string, any>) => {
+  try {
+    // Apply template to get merged configuration
+    const appliedConfig = await applyTemplate(template.id, customParams)
+
+    if (appliedConfig) {
+      // Merge template configuration into form
+      form.value.content = appliedConfig.content || form.value.content
+      form.value.industry = appliedConfig.industry || form.value.industry
+      form.value.contentType = appliedConfig.contentType || form.value.contentType
+      form.value.targetAudience = appliedConfig.targetAudience || form.value.targetAudience
+
+      // Merge custom params if provided
+      if (appliedConfig.customParams) {
+        // Apply any additional custom parameters
+        Object.assign(form.value, appliedConfig.customParams)
+      }
+
+      // Close template gallery
+      showTemplateGallery.value = false
+
+      // Show success message
+      successMessage.value = `Template "${template.name}" applied successfully!`
+      showSuccess.value = true
+    }
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Failed to apply template'
+    showError.value = true
+  }
+}
+
 
 
 const handleCreateVideo = async (content: any) => {
@@ -411,11 +521,171 @@ watch(completedJobs, (newJobs) => {
   }
 }, { deep: true })
 
-// Initialize form with default language
-onMounted(() => {
+// Preset handlers
+const handleSavePreset = async (data: { name: string; description?: string; isDefault: boolean }) => {
+  try {
+    savingPreset.value = true
+
+    const request: CreatePresetRequest = {
+      name: data.name,
+      description: data.description,
+      configuration: {
+        content: form.value.content,
+        industry: form.value.industry,
+        contentType: form.value.contentType,
+        language: form.value.language,
+        tone: form.value.tone,
+        targetAudience: form.value.targetAudience,
+        title: form.value.title
+      },
+      isDefault: data.isDefault
+    }
+
+    const preset = await createPreset(request)
+
+    if (preset) {
+      successMessage.value = `Preset "${preset.name}" saved successfully!`
+      showSuccess.value = true
+      showPresetSaveDialog.value = false
+    } else if (presetsError.value) {
+      errorMessage.value = presetsError.value
+      showError.value = true
+    }
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Failed to save preset'
+    showError.value = true
+  } finally {
+    savingPreset.value = false
+  }
+}
+
+const handleApplyPreset = async (preset: UserPreset) => {
+  try {
+    // Apply preset to update usage stats
+    await applyPreset(preset)
+
+    // Apply configuration to form
+    form.value.content = preset.configuration.content || ''
+    form.value.industry = preset.configuration.industry
+    form.value.contentType = preset.configuration.contentType
+    form.value.language = preset.configuration.language
+    form.value.tone = preset.configuration.tone
+    form.value.targetAudience = preset.configuration.targetAudience
+    form.value.title = preset.configuration.title
+
+    successMessage.value = `Preset "${preset.name}" applied successfully!`
+    showSuccess.value = true
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Failed to apply preset'
+    showError.value = true
+  }
+}
+
+const handleDeletePreset = async (id: number) => {
+  try {
+    const success = await deletePreset(id)
+
+    if (success) {
+      successMessage.value = 'Preset deleted successfully'
+      showSuccess.value = true
+    } else if (presetsError.value) {
+      errorMessage.value = presetsError.value
+      showError.value = true
+    }
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Failed to delete preset'
+    showError.value = true
+  }
+}
+
+const handleSetDefaultPreset = async (id: number) => {
+  try {
+    const success = await setDefaultPreset(id)
+
+    if (success) {
+      successMessage.value = 'Default preset updated'
+      showSuccess.value = true
+    } else if (presetsError.value) {
+      errorMessage.value = presetsError.value
+      showError.value = true
+    }
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Failed to set default preset'
+    showError.value = true
+  }
+}
+
+const handleSharePresetClick = (preset: UserPreset) => {
+  presetToShare.value = preset
+  showPresetShareDialog.value = true
+}
+
+const handleSharePreset = async (workspaceId: number) => {
+  if (!presetToShare.value) return
+
+  try {
+    sharingPreset.value = true
+
+    const success = await sharePreset(presetToShare.value.id, workspaceId)
+
+    if (success) {
+      successMessage.value = 'Preset shared successfully'
+      showSuccess.value = true
+      showPresetShareDialog.value = false
+      presetToShare.value = null
+    } else if (presetsError.value) {
+      errorMessage.value = presetsError.value
+      showError.value = true
+    }
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Failed to share preset'
+    showError.value = true
+  } finally {
+    sharingPreset.value = false
+  }
+}
+
+const handleExportPreset = async (id: number) => {
+  try {
+    await exportPreset(id)
+    successMessage.value = 'Preset exported successfully'
+    showSuccess.value = true
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Failed to export preset'
+    showError.value = true
+  }
+}
+
+const handleImportPreset = async (file: File) => {
+  try {
+    const success = await importPreset(file)
+
+    if (success) {
+      successMessage.value = 'Preset imported successfully'
+      showSuccess.value = true
+    } else if (presetsError.value) {
+      errorMessage.value = presetsError.value
+      showError.value = true
+    }
+  } catch (error: any) {
+    errorMessage.value = error.message || 'Failed to import preset'
+    showError.value = true
+  }
+}
+
+// Initialize form with default language and load presets
+onMounted(async () => {
   const defaultLang = getDefaultLanguage()
   if (defaultLang) {
     form.value.language = defaultLang.value
+  }
+
+  // Load user presets
+  await loadPresets()
+
+  // Apply default preset if exists
+  if (defaultPreset.value) {
+    await handleApplyPreset(defaultPreset.value)
   }
 })
 
