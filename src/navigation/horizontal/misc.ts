@@ -4,6 +4,13 @@ export default [
     icon: { icon: 'tabler-box-multiple' },
     children: [
       {
+        title: 'Settings',
+        icon: { icon: 'tabler-settings' },
+        to: 'settings',
+        action: 'read',
+        subject: 'Settings',
+      },
+      {
         title: 'Access Control',
         icon: { icon: 'tabler-command' },
         to: 'access-control',

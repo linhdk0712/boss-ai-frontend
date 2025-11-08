@@ -13,6 +13,13 @@ export default [
                 subject: 'Content',
             },
             {
+                title: 'Sync Generation (Legacy)',
+                to: 'content-async-index',
+                icon: { icon: 'tabler-refresh' },
+                action: 'manage',
+                subject: 'Content',
+            },
+            {
                 title: 'My Content',
                 to: 'content-list',
                 icon: { icon: 'tabler-list' },
