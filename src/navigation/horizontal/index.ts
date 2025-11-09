@@ -1,12 +1,7 @@
-import apps from './apps'
-import charts from './charts'
 import content from './content'
 import dashboard from './dashboard'
-import forms from './forms'
-import misc from './misc'
-import pages from './pages'
-import tables from './tables'
-import uiElements from './ui-elements'
+import settings from './settings'
 import type { HorizontalNavItems } from '@layouts/types'
 
-export default [...dashboard, ...content, ...apps, ...pages, ...uiElements, ...forms, ...tables, ...charts, ...misc] as HorizontalNavItems
+// Only show AI Content Generation related menus
+export default [...dashboard, ...content, ...settings] as HorizontalNavItems
