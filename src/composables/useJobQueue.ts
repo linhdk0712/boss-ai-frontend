@@ -1,5 +1,6 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useWebSocket } from '@/composables/useWebSocket'
+import { apiClient } from '@/plugins/axios'
 import type { Job, PaginationInfo } from '@/types/content'
 
 export function useJobQueue() {
@@ -41,15 +42,10 @@ export function useJobQueue() {
                         ...filters
                     })
 
-                    const response = await fetch(`http://localhost:8080/api/v1/queue/jobs?${params}`, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`,
-                            'Content-Type': 'application/json'
-                        }
-                    })
+                    const response = await apiClient.get(`/queue/jobs?${params}`)
 
-                    if (response.ok) {
-                        const data = await response.json()
+                    if (response.status === 200) {
+                        const data = response.data
 
                         if (data.errorCode === 'SUCCESS') {
                             jobs.value = data.data.content || []
@@ -150,23 +146,9 @@ export function useJobQueue() {
     const getJobDetails = async (jobId: string) => {
         detailsLoading.value = true
         try {
-            const token = localStorage.getItem('accessToken')
-            if (!token) {
-                throw new Error('No authentication token found')
-            }
+            const response = await apiClient.get(`/queue/jobs/${jobId}`)
 
-            const response = await fetch(`http://localhost:8080/api/v1/queue/jobs/${jobId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
-            }
-
-            const data = await response.json()
+            const data = response.data
 
             if (data.errorCode === 'SUCCESS') {
                 return data.data
@@ -183,24 +165,9 @@ export function useJobQueue() {
 
     const retryJob = async (jobId: string) => {
         try {
-            const token = localStorage.getItem('accessToken')
-            if (!token) {
-                throw new Error('No authentication token found')
-            }
+            const response = await apiClient.post(`/jobs/${jobId}/retry`)
 
-            const response = await fetch(`http://localhost:8080/api/v1/job-queue/jobs/${jobId}/retry`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
-            })
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
-            }
-
-            const data = await response.json()
+            const data = response.data
 
             if (data.errorCode === 'SUCCESS') {
                 return data.data
@@ -215,23 +182,12 @@ export function useJobQueue() {
 
     const downloadJobContent = async (jobId: string, format = 'txt') => {
         try {
-            const token = localStorage.getItem('accessToken')
-            if (!token) {
-                throw new Error('No authentication token found')
-            }
-
-            const response = await fetch(`http://localhost:8080/api/v1/job-queue/jobs/${jobId}/download?format=${format}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+            const response = await apiClient.get(`/jobs/${jobId}/download?format=${format}`, {
+                responseType: 'blob'
             })
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
-            }
-
             // Handle file download
-            const blob = await response.blob()
+            const blob = response.data
             const url = window.URL.createObjectURL(blob)
             const a = document.createElement('a')
             a.href = url
