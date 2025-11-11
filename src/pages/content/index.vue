@@ -6,9 +6,9 @@
         <v-col cols="12">
           <div class="d-flex align-center mb-6">
             <div>
-              <h3 class="text-h4 font-weight-bold">AI Content Generation</h3>
+              <h3 class="text-h4 font-weight-bold">{{ $t('AI Content Generation') }}</h3>
               <p class="text-subtitle-1 text-medium-emphasis mb-0">
-                Create engaging content with asynchronous AI processing
+                {{ $t('Create engaging content with AI-powered generation') }}
               </p>
             </div>
             <v-spacer />
@@ -16,20 +16,20 @@
             <PresetQuickApply :presets="presets" :loading="presetsLoading" class="me-2" @apply="handleApplyPreset"
               @manage-presets="showPresetLibrary = true" />
             <v-btn variant="outlined" prepend-icon="mdi-content-save" class="me-2" @click="showPresetSaveDialog = true">
-              Save Preset
+              {{ $t('Save Preset') }}
             </v-btn>
             <v-btn variant="outlined" prepend-icon="mdi-view-grid" class="me-2" @click="showTemplateGallery = true">
-              Templates
+              {{ $t('Templates') }}
             </v-btn>
             <v-btn color="primary" prepend-icon="mdi-history" :to="{ name: 'content-list' }" class="me-2">
-              My Content
+              {{ $t('My Content') }}
             </v-btn>
           </div>
         </v-col>
       </v-row>
       <v-row>
         <!-- Configuration Panel - Left Side -->
-        <v-col cols="12" :md="showQueue ? 3 : 4" :lg="showQueue ? 3 : 3" class="pa-3">
+        <v-col cols="12" md="4" lg="3" class="pa-3">
           <ConfigurationPanel v-model:industry="form.industry" v-model:content-type="form.contentType"
             v-model:language="form.language" v-model:tone="form.tone" v-model:target-audience="form.targetAudience"
             :disabled="isGenerating || isCreatingVideo" />
@@ -38,22 +38,21 @@
           <v-card class="tips-card mt-4" variant="tonal" color="info">
             <v-card-title class="d-flex align-center py-3">
               <v-icon class="me-2" size="20">mdi-lightbulb-outline</v-icon>
-              <span class="text-body-1 font-weight-medium">Quick Tips</span>
+              <span class="text-body-1 font-weight-medium">{{ $t('Quick Tips') }}</span>
             </v-card-title>
             <v-card-text class="py-3">
               <ul class="tips-list text-body-2">
-                <li>Be specific about your content goals</li>
-                <li>Include target keywords if needed</li>
-                <li>Specify the desired length or format</li>
-                <li>Mention your brand voice or style</li>
-                <li>Jobs are processed asynchronously for better performance</li>
+                <li>{{ $t('Be specific about your content goals') }}</li>
+                <li>{{ $t('Include target keywords if needed') }}</li>
+                <li>{{ $t('Specify the desired length or format') }}</li>
+                <li>{{ $t('Mention your brand voice or style') }}</li>
               </ul>
             </v-card-text>
           </v-card>
         </v-col>
 
         <!-- Content Generation Form - Center -->
-        <v-col :cols="showQueue ? 6 : 8" :lg="showQueue ? 6 : 9" class="pa-3">
+        <v-col cols="12" md="8" lg="9" class="pa-3">
           <AsyncContentGenerationForm v-model:content="form.content" v-model:title="form.title" :sync-generating="false"
             :async-generating="isGenerating" :error="errorMessage" :disabled="isGenerating || isCreatingVideo"
             :active-jobs="activeJobs" :completed-jobs="completedJobs" @generate="handleGenerate" />
@@ -68,14 +67,6 @@
             {{ errorMessage }}
           </v-alert>
         </v-col>
-
-        <!-- Job Queue Panel - Right Side -->
-        <v-col v-if="showQueue" cols="12" md="3" lg="3" class="pa-3">
-          <JobQueuePanel :active-jobs="activeJobs" :completed-jobs="completedJobs" :queue-length="queueLength"
-            :processing-jobs="processingJobs" :ws-connected="wsConnected" :polling-enabled="pollingEnabled"
-            @cancel-job="handleCancelJob" @retry-job="handleRetryJob" @clear-completed="clearCompletedJobs"
-            @reconnect="handleReconnect" />
-        </v-col>
       </v-row>
     </v-container>
 
@@ -85,49 +76,47 @@
       <v-card>
         <v-card-title class="d-flex align-center">
           <v-icon class="me-2">mdi-help-circle</v-icon>
-          How to Use AI Content Generation
+          {{ $t('How to Use AI Content Generation') }}
         </v-card-title>
 
         <v-card-text>
           <v-stepper v-model="helpStep" alt-labels class="elevation-0">
             <v-stepper-header>
-              <v-stepper-item :complete="helpStep > 1" :value="1" title="Configure" />
+              <v-stepper-item :complete="helpStep > 1" :value="1" :title="$t('Configure')" />
               <v-divider />
-              <v-stepper-item :complete="helpStep > 2" :value="2" title="Input" />
+              <v-stepper-item :complete="helpStep > 2" :value="2" :title="$t('Input')" />
               <v-divider />
-              <v-stepper-item :complete="helpStep > 3" :value="3" title="Generate" />
+              <v-stepper-item :complete="helpStep > 3" :value="3" :title="$t('Generate')" />
               <v-divider />
-              <v-stepper-item :value="4" title="Save" />
+              <v-stepper-item :value="4" :title="$t('Save')" />
             </v-stepper-header>
 
             <v-stepper-window>
               <v-stepper-window-item :value="1">
                 <div class="pa-4">
-                  <h3>Step 1: Configure Settings</h3>
-                  <p>Select your industry, content type, language, tone, and target audience to customize the AI
-                    generation.</p>
+                  <h3>{{ $t('Step 1: Configure Settings') }}</h3>
+                  <p>{{ $t('Select your infomation to customize the AI generation.') }}</p>
                 </div>
               </v-stepper-window-item>
 
               <v-stepper-window-item :value="2">
                 <div class="pa-4">
-                  <h3>Step 2: Input Your Ideas</h3>
-                  <p>Describe what content you want to generate. Be specific about your goals, keywords, and desired
-                    format.</p>
+                  <h3>{{ $t('Step 2: Input Your Ideas') }}</h3>
+                  <p>{{ $t('Describe what content you want to generate.') }}</p>
                 </div>
               </v-stepper-window-item>
 
               <v-stepper-window-item :value="3">
                 <div class="pa-4">
-                  <h3>Step 3: Generate Content</h3>
-                  <p>Click "Generate Content" to create AI-powered content based on your configuration and input.</p>
+                  <h3>{{ $t('Step 3: Generate Content') }}</h3>
+                  <p>{{ $t('Click "Generate Content" to create AI-powered content.') }}</p>
                 </div>
               </v-stepper-window-item>
 
               <v-stepper-window-item :value="4">
                 <div class="pa-4">
-                  <h3>Step 4: Save and Use</h3>
-                  <p>Save your generated content to your library or create videos from your content.</p>
+                  <h3>{{ $t('Step 4: Save and Use') }}</h3>
+                  <p>{{ $t('Save your generated content to your library or create videos from your content.') }}</p>
                 </div>
               </v-stepper-window-item>
             </v-stepper-window>
@@ -136,17 +125,17 @@
 
         <v-card-actions>
           <v-btn v-if="helpStep > 1" variant="text" @click="helpStep--">
-            Previous
+            {{ $t('Previous') }}
           </v-btn>
 
           <v-spacer />
 
           <v-btn v-if="helpStep < 4" color="primary" @click="helpStep++">
-            Next
+            {{ $t('Next') }}
           </v-btn>
 
           <v-btn v-else color="primary" @click="showHelp = false">
-            Got it!
+            {{ $t('Got it!') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -159,7 +148,7 @@
 
       <template #actions>
         <v-btn variant="text" @click="showError = false">
-          Close
+          {{ $t('Close') }}
         </v-btn>
       </template>
     </v-snackbar>
@@ -208,18 +197,29 @@
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import { useContentConfig } from '@/composables/useContentConfig'
 import { useAsyncContentGeneration } from '@/composables/useAsyncContentGeneration'
 import { useJobNotifications } from '@/composables/useJobNotifications'
 import { useTemplateManagement } from '@/composables/useTemplateManagement'
 import { usePresetManagement } from '@/composables/usePresetManagement'
-import type { ContentGenerationForm, ContentGenerateRequest } from '@/types/content'
+import type { ContentGenerateRequest } from '@/types/content'
+
+// Local form interface
+interface ContentGenerationForm {
+  content: string
+  industry?: string
+  contentType?: string
+  language?: string
+  tone?: string
+  targetAudience?: string
+  title?: string
+}
 import type { ContentTemplate } from '@/services/templateService'
 import type { UserPreset, CreatePresetRequest } from '@/types/preset'
 import TemplateGallery from '@/components/content/TemplateGallery.vue'
 import ConfigurationPanel from '@/components/content/ConfigurationPanel.vue'
 import AsyncContentGenerationForm from '@/components/content/AsyncContentGenerationForm.vue'
-import JobQueuePanel from '@/components/content/JobQueuePanel.vue'
 import GeneratedContentDialog from '@/components/content/GeneratedContentDialog.vue'
 import PresetSaveDialog from '@/components/content/PresetSaveDialog.vue'
 import PresetLibrary from '@/components/content/PresetLibrary.vue'
@@ -227,6 +227,7 @@ import PresetQuickApply from '@/components/content/PresetQuickApply.vue'
 import PresetShareDialog from '@/components/content/PresetShareDialog.vue'
 
 // Composables
+const { t } = useI18n()
 const { getDefaultLanguage } = useContentConfig()
 
 // Async content generation
@@ -267,8 +268,8 @@ const successMessage = ref('')
 const form = ref<ContentGenerationForm>({
   content: '',
   industry: undefined,
-  contentType: '',
-  language: 'vi',
+  contentType: undefined,
+  language: undefined,
   tone: undefined,
   targetAudience: undefined,
   title: undefined
@@ -277,7 +278,6 @@ const form = ref<ContentGenerationForm>({
 // UI state
 const showHelp = ref(false)
 const helpStep = ref(1)
-const showQueue = ref(true) // Show job queue panel
 const showContentDialog = ref(false)
 const dialogPersistent = ref(true) // Control dialog persistent behavior
 const selectedJobResult = ref<any>(null)
@@ -344,19 +344,19 @@ const handleGenerate = async () => {
   const language = form.value.language || ''
 
   if (content.trim().length === 0) {
-    errorMessage.value = 'Please enter your content ideas'
+    errorMessage.value = t('Please enter your content ideas')
     showError.value = true
     return
   }
 
   if (contentType.length === 0) {
-    errorMessage.value = 'Please select a content type from the configuration panel'
+    errorMessage.value = t('Please select a content type from the configuration panel')
     showError.value = true
     return
   }
 
   if (language.length === 0) {
-    errorMessage.value = 'Please select a language from the configuration panel'
+    errorMessage.value = t('Please select a language from the configuration panel')
     showError.value = true
     return
   }
@@ -366,8 +366,8 @@ const handleGenerate = async () => {
   const request: ContentGenerateRequest = {
     content: form.value.content,
     industry: form.value.industry,
-    contentType: form.value.contentType,
-    language: form.value.language,
+    contentType: form.value.contentType || '',
+    language: form.value.language || '',
     tone: form.value.tone,
     targetAudience: form.value.targetAudience,
     title: form.value.title
@@ -379,14 +379,14 @@ const handleGenerate = async () => {
     const jobId = await generateContentAsync(request)
 
     // Show success notification
-    successMessage.value = 'Content generation started! You can monitor progress in the job queue.'
+    successMessage.value = t('Content generation started! You will be notified when it\'s ready.')
     showSuccess.value = true
 
     // Clear form after successful submission
     form.value.content = ''
 
   } catch (error: any) {
-    errorMessage.value = error.message || 'Failed to start content generation'
+    errorMessage.value = error.message || t('Failed to start content generation')
     showError.value = true
   }
 }
@@ -395,18 +395,18 @@ const handleGenerate = async () => {
 const handleCancelJob = async (jobId: string) => {
   try {
     await cancelJob(jobId)
-    notifySystem('info', 'Job Cancelled', `Job ${jobId} has been cancelled`)
+    notifySystem('info', t('Job Cancelled'), t('Job {jobId} has been cancelled', { jobId }))
   } catch (error: any) {
-    notifySystem('error', 'Cancel Failed', error.message || 'Failed to cancel job')
+    notifySystem('error', t('Cancel Failed'), error.message || t('Failed to cancel job'))
   }
 }
 
 const handleRetryJob = async (jobId: string) => {
   try {
     const newJobId = await retryJob(jobId)
-    notifySystem('success', 'Job Retried', `Job retried with new ID: ${newJobId}`)
+    notifySystem('success', t('Job Retried'), t('Job retried with new ID: {jobId}', { jobId: newJobId }))
   } catch (error: any) {
-    notifySystem('error', 'Retry Failed', error.message || 'Failed to retry job')
+    notifySystem('error', t('Retry Failed'), error.message || t('Failed to retry job'))
   }
 }
 
@@ -419,7 +419,7 @@ const handleJobComplete = (job: any) => {
 
 const handleReconnect = () => {
   // Reconnection will be handled by the async content generation composable
-  notifySystem('info', 'Reconnecting...', 'Attempting to reconnect to real-time updates')
+  notifySystem('info', t('Reconnecting...'), t('Attempting to reconnect to real-time updates'))
 }
 
 // Template handlers
@@ -450,11 +450,11 @@ const handleTemplateApply = async (template: ContentTemplate, customParams?: Rec
       showTemplateGallery.value = false
 
       // Show success message
-      successMessage.value = `Template "${template.name}" applied successfully!`
+      successMessage.value = t('Template "{name}" applied successfully!', { name: template.name })
       showSuccess.value = true
     }
   } catch (error: any) {
-    errorMessage.value = error.message || 'Failed to apply template'
+    errorMessage.value = error.message || t('Failed to apply template')
     showError.value = true
   }
 }
@@ -471,10 +471,10 @@ const handleCreateVideo = async (content: any) => {
         contentType: 'video'
       })
 
-      notifySystem('success', 'Video Generation Started', 'Video creation job has been queued')
+      notifySystem('success', t('Video Generation Started'), t('Video creation job has been queued'))
     }
   } catch (error: any) {
-    notifySystem('error', 'Video Generation Failed', error.message || 'Failed to start video generation')
+    notifySystem('error', t('Video Generation Failed'), error.message || t('Failed to start video generation'))
   }
 }
 
@@ -544,7 +544,7 @@ const handleSavePreset = async (data: { name: string; description?: string; isDe
     const preset = await createPreset(request)
 
     if (preset) {
-      successMessage.value = `Preset "${preset.name}" saved successfully!`
+      successMessage.value = t('Preset "{name}" saved successfully!', { name: preset.name })
       showSuccess.value = true
       showPresetSaveDialog.value = false
     } else if (presetsError.value) {
@@ -552,7 +552,7 @@ const handleSavePreset = async (data: { name: string; description?: string; isDe
       showError.value = true
     }
   } catch (error: any) {
-    errorMessage.value = error.message || 'Failed to save preset'
+    errorMessage.value = error.message || t('Failed to save preset')
     showError.value = true
   } finally {
     savingPreset.value = false
@@ -573,10 +573,10 @@ const handleApplyPreset = async (preset: UserPreset) => {
     form.value.targetAudience = preset.configuration.targetAudience
     form.value.title = preset.configuration.title
 
-    successMessage.value = `Preset "${preset.name}" applied successfully!`
+    successMessage.value = t('Preset "{name}" applied successfully!', { name: preset.name })
     showSuccess.value = true
   } catch (error: any) {
-    errorMessage.value = error.message || 'Failed to apply preset'
+    errorMessage.value = error.message || t('Failed to apply preset')
     showError.value = true
   }
 }
@@ -586,14 +586,14 @@ const handleDeletePreset = async (id: number) => {
     const success = await deletePreset(id)
 
     if (success) {
-      successMessage.value = 'Preset deleted successfully'
+      successMessage.value = t('Preset deleted successfully')
       showSuccess.value = true
     } else if (presetsError.value) {
       errorMessage.value = presetsError.value
       showError.value = true
     }
   } catch (error: any) {
-    errorMessage.value = error.message || 'Failed to delete preset'
+    errorMessage.value = error.message || t('Failed to delete preset')
     showError.value = true
   }
 }
@@ -603,14 +603,14 @@ const handleSetDefaultPreset = async (id: number) => {
     const success = await setDefaultPreset(id)
 
     if (success) {
-      successMessage.value = 'Default preset updated'
+      successMessage.value = t('Default preset updated')
       showSuccess.value = true
     } else if (presetsError.value) {
       errorMessage.value = presetsError.value
       showError.value = true
     }
   } catch (error: any) {
-    errorMessage.value = error.message || 'Failed to set default preset'
+    errorMessage.value = error.message || t('Failed to set default preset')
     showError.value = true
   }
 }
@@ -629,7 +629,7 @@ const handleSharePreset = async (workspaceId: number) => {
     const success = await sharePreset(presetToShare.value.id, workspaceId)
 
     if (success) {
-      successMessage.value = 'Preset shared successfully'
+      successMessage.value = t('Preset shared successfully')
       showSuccess.value = true
       showPresetShareDialog.value = false
       presetToShare.value = null
@@ -638,7 +638,7 @@ const handleSharePreset = async (workspaceId: number) => {
       showError.value = true
     }
   } catch (error: any) {
-    errorMessage.value = error.message || 'Failed to share preset'
+    errorMessage.value = error.message || t('Failed to share preset')
     showError.value = true
   } finally {
     sharingPreset.value = false
@@ -648,10 +648,10 @@ const handleSharePreset = async (workspaceId: number) => {
 const handleExportPreset = async (id: number) => {
   try {
     await exportPreset(id)
-    successMessage.value = 'Preset exported successfully'
+    successMessage.value = t('Preset exported successfully')
     showSuccess.value = true
   } catch (error: any) {
-    errorMessage.value = error.message || 'Failed to export preset'
+    errorMessage.value = error.message || t('Failed to export preset')
     showError.value = true
   }
 }
@@ -661,25 +661,20 @@ const handleImportPreset = async (file: File) => {
     const success = await importPreset(file)
 
     if (success) {
-      successMessage.value = 'Preset imported successfully'
+      successMessage.value = t('Preset imported successfully')
       showSuccess.value = true
     } else if (presetsError.value) {
       errorMessage.value = presetsError.value
       showError.value = true
     }
   } catch (error: any) {
-    errorMessage.value = error.message || 'Failed to import preset'
+    errorMessage.value = error.message || t('Failed to import preset')
     showError.value = true
   }
 }
 
 // Initialize form with default language and load presets
 onMounted(async () => {
-  const defaultLang = getDefaultLanguage()
-  if (defaultLang) {
-    form.value.language = defaultLang.value
-  }
-
   // Load user presets
   await loadPresets()
 
@@ -693,7 +688,7 @@ onMounted(async () => {
 definePage({
   name: 'content-index',
   meta: {
-    title: 'AI Content Generation (Async)',
+    title: 'AI Content Generation',
     requiresAuth: true,
     action: 'create',
     subject: 'Content'

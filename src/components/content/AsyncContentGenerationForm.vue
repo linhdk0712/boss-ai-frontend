@@ -30,49 +30,20 @@
                     <span>Words: {{ wordCount }}</span>
                 </div>
 
-                <!-- Generation Mode Toggle -->
-                <div class="generation-mode mb-4">
-                    <v-switch v-model="asyncMode" color="primary" :disabled="disabled" hide-details>
-                        <template #label>
-                            <div class="d-flex align-center">
-                                <v-icon :icon="asyncMode ? 'mdi-lightning-bolt' : 'mdi-clock-outline'" size="16"
-                                    class="me-2" />
-                                <span class="text-body-2">
-                                    {{ asyncMode ? 'Async Mode' : 'Sync Mode' }}
-                                </span>
-                                <v-tooltip activator="parent" location="top">
-                                    {{ asyncMode
-                                        ? 'Generate content in background with real-time updates'
-                                        : 'Generate content immediately and wait for completion'
-                                    }}
-                                </v-tooltip>
-                            </div>
-                        </template>
-                    </v-switch>
-                </div>
-
-                <!-- Generate Buttons -->
+                <!-- Generate Button -->
                 <div class="generate-actions d-flex gap-2">
-                    <VBtn color="primary" :loading="syncGenerating" :disabled="!canGenerate || asyncGenerating"
+                    <VBtn color="primary" :loading="asyncGenerating" :disabled="!canGenerate"
                         @click="handleGenerate">
                         <VIcon start>mdi-auto-fix</VIcon>
-                        {{ asyncMode ? 'Queue Generation' : 'Generate Content' }}
+                        Generate Content
                     </VBtn>
 
-                    <VBtn v-if="asyncMode && hasActiveJobs" variant="outlined" color="primary" :disabled="!canGenerate"
+                    <VBtn v-if="hasActiveJobs" variant="outlined" color="primary" :disabled="!canGenerate"
                         @click="handleGenerateAnother">
                         <VIcon start>mdi-plus</VIcon>
                         Add to Queue
                     </VBtn>
                 </div>
-
-                <!-- Mode Description -->
-                <v-alert :type="asyncMode ? 'info' : 'warning'" variant="tonal" density="compact" class="mt-3">
-                    <div class="text-caption">
-                        <strong>{{ asyncMode ? 'Async Mode:' : 'Sync Mode:' }}</strong>
-                        {{ modeDescription }}
-                    </div>
-                </v-alert>
 
                 <!-- Helper message when button is disabled -->
                 <v-alert v-if="!canGenerate && content.trim().length > 0" type="info" variant="tonal" class="mt-3">
@@ -168,9 +139,6 @@ const emit = defineEmits<{
 const contentForm = ref()
 const textareaRef = ref()
 
-// Local state
-const asyncMode = ref(true) // Default to async mode
-
 // Computed properties for v-model
 const content = computed({
     get: () => props.content || '',
@@ -201,12 +169,6 @@ const recentCompletions = computed(() => {
         .sort((a, b) => (b.completedAt || 0) - (a.completedAt || 0))
 })
 
-const modeDescription = computed(() => {
-    return asyncMode.value
-        ? 'Content will be generated in the background. You can continue using the app and get notified when ready.'
-        : 'You will wait for content generation to complete before continuing.'
-})
-
 // Validation computed
 const canGenerate = computed(() => {
     const contentText = content.value || ''
@@ -232,14 +194,14 @@ const rules = {
 const handleGenerate = async () => {
     const { valid } = await contentForm.value.validate()
     if (valid) {
-        emit('generate', asyncMode.value)
+        emit('generate', true) // Always async mode
     }
 }
 
 const handleGenerateAnother = async () => {
     const { valid } = await contentForm.value.validate()
     if (valid) {
-        emit('generate', true) // Always async for "add to queue"
+        emit('generate', true) // Always async mode
     }
 }
 
@@ -333,13 +295,6 @@ onMounted(() => {
 /* Better button styling */
 :deep(.v-btn) {
     font-weight: 500;
-}
-
-/* Generation mode section */
-.generation-mode {
-    padding: 12px 16px;
-    background-color: rgba(var(--v-theme-surface-variant), 0.5);
-    border-radius: 8px;
 }
 
 /* Generate actions */

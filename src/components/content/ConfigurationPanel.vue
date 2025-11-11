@@ -30,7 +30,8 @@
         <!-- Target Audience Selection -->
         <v-select v-model="targetAudience" :items="activeTargetAudienceOptions" label="Target Audience"
           item-title="displayLabel" item-value="value" :loading="loading" clearable
-          prepend-inner-icon="mdi-account-group-outline" persistent-hint variant="outlined" density="compact" />
+          prepend-inner-icon="mdi-account-group-outline" persistent-hint variant="outlined" density="compact"
+          class="mb-3" />
       </v-form>
 
       <!-- Error Display -->
@@ -50,29 +51,28 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useContentConfig } from '@/composables/useContentConfig'
 
-// Props
+// Props - All fields are optional and undefined by default
 interface Props {
   industry?: string
-  contentType: string
-  language: string
+  contentType?: string
+  language?: string
   tone?: string
   targetAudience?: string
   disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false,
-  language: 'vi'
+  disabled: false
 })
 
-// Emits
+// Emits - All emit undefined to keep consistency
 const emit = defineEmits<{
   'update:industry': [value: string | undefined]
-  'update:contentType': [value: string]
-  'update:language': [value: string]
+  'update:contentType': [value: string | undefined]
+  'update:language': [value: string | undefined]
   'update:tone': [value: string | undefined]
   'update:targetAudience': [value: string | undefined]
 }>()
@@ -86,57 +86,43 @@ const {
   activeTargetAudienceOptions,
   loading,
   error,
-  isConfigLoaded,
-  loadAllConfigs,
-  getDefaultLanguage
+  loadAllConfigs
 } = useContentConfig()
 
-// Computed properties for v-model
+// Computed properties for v-model - All handled the same way
 const industry = computed({
   get: () => props.industry,
-  set: (value) => emit('update:industry', value)
+  set: (value: string | undefined) => emit('update:industry', value)
 })
 
 const contentType = computed({
   get: () => props.contentType,
-  set: (value) => emit('update:contentType', value)
+  set: (value: string | undefined) => emit('update:contentType', value)
 })
 
 const language = computed({
   get: () => props.language,
-  set: (value) => emit('update:language', value)
+  set: (value: string | undefined) => emit('update:language', value)
 })
 
 const tone = computed({
   get: () => props.tone,
-  set: (value) => emit('update:tone', value)
+  set: (value: string | undefined) => emit('update:tone', value)
 })
 
 const targetAudience = computed({
   get: () => props.targetAudience,
-  set: (value) => emit('update:targetAudience', value)
+  set: (value: string | undefined) => emit('update:targetAudience', value)
 })
-
-
 
 // Methods
 const clearError = () => {
   // Error will be cleared by the composable
 }
 
-// Set default language when options are loaded
-watch(isConfigLoaded, (loaded) => {
-  if (loaded && !props.language) {
-    const defaultLang = getDefaultLanguage()
-    if (defaultLang) {
-      emit('update:language', defaultLang.value)
-    }
-  }
-})
-
 // Load configuration on mount
-onMounted(() => {
-  loadAllConfigs()
+onMounted(async () => {
+  await loadAllConfigs()
 })
 </script>
 

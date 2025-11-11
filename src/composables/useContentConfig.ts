@@ -98,8 +98,9 @@ export function useContentConfig() {
      * Get default language option (Vietnamese)
      */
     const getDefaultLanguage = () => {
-        return activeLanguageOptions.value.find(option => option.value === 'vi') ||
-            activeLanguageOptions.value[0]
+        // return activeLanguageOptions.value.find(option => option.value === 'vi') ||
+        //     activeLanguageOptions.value[0]
+        return activeLanguageOptions.value[0]
     }
 
     /**
