@@ -96,6 +96,49 @@
                                     </v-chip>
                                 </template>
 
+                                <!-- Request Params Column -->
+                                <template #item.requestParams="{ item }">
+                                    <v-tooltip v-if="item.requestParams" max-width="400">
+                                        <template #activator="{ props }">
+                                            <v-chip v-bind="props" size="small" variant="tonal" color="info">
+                                                View Params
+                                            </v-chip>
+                                        </template>
+                                        <pre
+                                            class="text-caption">{{ JSON.stringify(item.requestParams, null, 2) }}</pre>
+                                    </v-tooltip>
+                                    <span v-else class="text-medium-emphasis">-</span>
+                                </template>
+
+                                <!-- Result Column -->
+                                <template #item.result="{ item }">
+                                    <v-tooltip v-if="item.result" max-width="400">
+                                        <template #activator="{ props }">
+                                            <v-chip v-bind="props" size="small" variant="tonal" color="success">
+                                                View Result
+                                            </v-chip>
+                                        </template>
+                                        <div class="text-caption" style="max-height: 300px; overflow-y: auto;">
+                                            {{ item.result.substring(0, 500) }}{{ item.result.length > 500 ? '...' : ''
+                                            }}
+                                        </div>
+                                    </v-tooltip>
+                                    <span v-else class="text-medium-emphasis">-</span>
+                                </template>
+
+                                <!-- Error Message Column -->
+                                <template #item.errorMessage="{ item }">
+                                    <v-tooltip v-if="item.errorMessage" max-width="400">
+                                        <template #activator="{ props }">
+                                            <v-chip v-bind="props" size="small" variant="tonal" color="error">
+                                                View Error
+                                            </v-chip>
+                                        </template>
+                                        <div class="text-caption">{{ item.errorMessage }}</div>
+                                    </v-tooltip>
+                                    <span v-else class="text-medium-emphasis">-</span>
+                                </template>
+
                                 <!-- Created At Column -->
                                 <template #item.createdAt="{ item }">
                                     {{ formatDate(item.createdAt) }}
@@ -179,12 +222,12 @@
                                 <v-list-item v-if="selectedJob.completedAt">
                                     <v-list-item-title>Completed At</v-list-item-title>
                                     <v-list-item-subtitle>{{ formatDate(selectedJob.completedAt)
-                                    }}</v-list-item-subtitle>
+                                        }}</v-list-item-subtitle>
                                 </v-list-item>
                                 <v-list-item>
                                     <v-list-item-title>Retry Count</v-list-item-title>
                                     <v-list-item-subtitle>{{ selectedJob.retryCount }} / {{ selectedJob.maxRetries
-                                    }}</v-list-item-subtitle>
+                                        }}</v-list-item-subtitle>
                                 </v-list-item>
                             </v-list>
                         </v-col>
@@ -227,7 +270,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
 import { useJobQueue } from '@/composables/useJobQueue'
 import type { Job } from '@/types/content'
 
@@ -250,10 +292,12 @@ const showDetailsDialog = ref(false)
 
 // Table headers
 const headers = [
-    { title: 'Job ID', key: 'jobId', sortable: true },
     { title: 'Status', key: 'status', sortable: true },
     { title: 'Priority', key: 'priority', sortable: true },
     { title: 'Content Type', key: 'contentType', sortable: true },
+    { title: 'Request Params', key: 'requestParams', sortable: false },
+    { title: 'Result', key: 'result', sortable: false },
+    { title: 'Error', key: 'errorMessage', sortable: false },
     { title: 'Created At', key: 'createdAt', sortable: true },
     { title: 'Actions', key: 'actions', sortable: false }
 ]
