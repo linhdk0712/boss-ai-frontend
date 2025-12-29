@@ -109,12 +109,13 @@ export interface UserDto {
 
 export interface ContentGenerateRequest {
     content: string
-    contentType: string
     title?: string
     tone?: string
     language?: string
     industry?: string
     targetAudience?: string
+    businessProfile?: string
+    communicationGoal?: string[]
 }
 
 export interface ContentGenerateResponse {

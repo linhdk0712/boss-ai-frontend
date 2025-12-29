@@ -84,7 +84,6 @@ export function useAsyncContentGeneration() {
             // Start the async generation process first to get the real job ID
             const queueRequest = {
                 requestParams: request,
-                contentType: request.contentType || 'article',
                 priority: 'STANDARD',
                 expirationHours: 24,
                 maxRetries: 3

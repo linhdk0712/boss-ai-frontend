@@ -21,12 +21,10 @@ export interface UserPreset {
 export interface PresetConfiguration {
     content?: string
     industry?: string
-    contentType: string
-    language: string
-    tone?: string
-    targetAudience?: string
     title?: string
     customParams?: Record<string, any>
+    communicationGoal?: string
+    businessProfile?: string
 }
 
 export interface CreatePresetRequest {

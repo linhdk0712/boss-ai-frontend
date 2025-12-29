@@ -19,10 +19,12 @@ class ContentService {
      * Uses extended timeout (5 minutes) for OpenAI API calls which can take longer
      */
     async generateContent(request: ContentGenerateRequest): Promise<BaseResponse<ContentGenerateResponse>> {
+        console.log('Mock generateContent called with request:', request)
         const response = await apiClient.post(CONTENT.GENERATE, request, {
             timeout: 300000, // 5 minutes for content generation (OpenAI can be slow)
         })
         return response.data
+
     }
 
     /**

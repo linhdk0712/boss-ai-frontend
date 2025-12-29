@@ -8,34 +8,125 @@
     <v-card-text class="py-4">
       <v-form ref="configForm">
         <!-- Industry Selection -->
-        <v-select v-model="industry" :items="activeIndustryOptions" label="Industry" item-title="displayLabel"
-          item-value="value" :loading="loading" clearable prepend-inner-icon="mdi-domain" persistent-hint
-          variant="outlined" density="compact" class="mb-3" />
+        <v-select
+          v-model="communicationGoal"
+          :items="comConfig"
+          label="Communication Goal"
+          item-title="displayLabel"
+          item-value="value"
+          :loading="loading"
+          clearable
+          prepend-inner-icon="mdi-account-group-outline"
+          persistent-hint
+          variant="outlined"
+          density="compact"
+          class="mb-3"
+          multiple
+          chips
+        />
+
+        <v-select
+          v-model="industry"
+          :items="activeIndustryOptions"
+          label="Industry"
+          item-title="displayLabel"
+          item-value="value"
+          :loading="loading"
+          clearable
+          prepend-inner-icon="mdi-account-group-outline"
+          persistent-hint
+          variant="outlined"
+          density="compact"
+          class="mb-3"
+        />
+
+        <v-select
+          v-model="businessProfile"
+          label="Business Profile"
+          clearable
+          variant="outlined"
+          density="compact"
+          class="mb-3"
+          :items="businessProfileOptions"
+          item-title="displayLabel"
+          item-value="value"
+          prepend-inner-icon="mdi-briefcase-outline"
+        />
 
         <!-- Content Type Selection -->
-        <v-select v-model="contentType" :items="activeContentTypeOptions" label="Content Type" item-title="displayLabel"
-          item-value="value" :loading="loading" clearable prepend-inner-icon="mdi-file-document-outline" persistent-hint
-          variant="outlined" density="compact" class="mb-3" />
+        <!-- <v-select
+          v-model="contentType"
+          :items="activeContentTypeOptions"
+          label="Content Type"
+          item-title="displayLabel"
+          item-value="value"
+          :loading="loading"
+          clearable
+          prepend-inner-icon="mdi-file-document-outline"
+          persistent-hint
+          variant="outlined"
+          density="compact"
+          class="mb-3"
+        /> -->
 
         <!-- Language Selection -->
-        <v-select v-model="language" :items="activeLanguageOptions" label="Language" item-title="displayLabel"
-          item-value="value" :loading="loading" clearable prepend-inner-icon="mdi-translate" persistent-hint
-          variant="outlined" density="compact" class="mb-3" />
+        <v-select
+          v-model="language"
+          :items="activeLanguageOptions"
+          label="Language"
+          item-title="displayLabel"
+          item-value="value"
+          :loading="loading"
+          clearable
+          prepend-inner-icon="mdi-translate"
+          persistent-hint
+          variant="outlined"
+          density="compact"
+          class="mb-3"
+        />
 
         <!-- Tone Selection -->
-        <v-select v-model="tone" :items="activeToneOptions" label="Tone" item-title="displayLabel" item-value="value"
-          :loading="loading" clearable prepend-inner-icon="mdi-emoticon-outline" persistent-hint variant="outlined"
-          density="compact" class="mb-3" />
+        <!-- <v-select
+          v-model="tone"
+          :items="activeToneOptions"
+          label="Tone"
+          item-title="displayLabel"
+          item-value="value"
+          :loading="loading"
+          clearable
+          prepend-inner-icon="mdi-emoticon-outline"
+          persistent-hint
+          variant="outlined"
+          density="compact"
+          class="mb-3"
+        /> -->
 
         <!-- Target Audience Selection -->
-        <v-select v-model="targetAudience" :items="activeTargetAudienceOptions" label="Target Audience"
-          item-title="displayLabel" item-value="value" :loading="loading" clearable
-          prepend-inner-icon="mdi-account-group-outline" persistent-hint variant="outlined" density="compact"
-          class="mb-3" />
+        <!-- <v-select
+          v-model="targetAudience"
+          :items="activeTargetAudienceOptions"
+          label="Target Audience"
+          item-title="displayLabel"
+          item-value="value"
+          :loading="loading"
+          clearable
+          prepend-inner-icon="mdi-account-group-outline"
+          persistent-hint
+          variant="outlined"
+          density="compact"
+          class="mb-3"
+        /> -->
       </v-form>
 
       <!-- Error Display -->
-      <v-alert v-if="error" type="error" variant="tonal" class="mt-4" closable @click:close="clearError">
+      <v-alert
+        v-if="error"
+        type="error"
+        variant="tonal"
+        class="mt-4"
+        closable
+        @click:close="clearError"
+      >
         <v-alert-title>Configuration Error</v-alert-title>
         {{ error }}
       </v-alert>
@@ -51,79 +142,94 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue'
-import { useContentConfig } from '@/composables/useContentConfig'
+import { computed, onMounted } from "vue";
+import { useContentConfig } from "@/composables/useContentConfig";
 
 // Props - All fields are optional and undefined by default
 interface Props {
-  industry?: string
-  contentType?: string
-  language?: string
-  tone?: string
-  targetAudience?: string
-  disabled?: boolean
+  industry?: string;
+  contentType?: string;
+  language?: string;
+  tone?: string;
+  targetAudience?: string;
+  disabled?: boolean;
+  communicationGoal?: string[];
+  businessProfile?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false
-})
+  disabled: false,
+});
 
 // Emits - All emit undefined to keep consistency
 const emit = defineEmits<{
-  'update:industry': [value: string | undefined]
-  'update:contentType': [value: string | undefined]
-  'update:language': [value: string | undefined]
-  'update:tone': [value: string | undefined]
-  'update:targetAudience': [value: string | undefined]
-}>()
+  "update:industry": [value: string | undefined];
+  "update:communication-goal": [value: string | undefined];
+  "update:business-profile": [value: string | undefined];
+  "update:language": [value: string | undefined];
+}>();
 
 // Composables
 const {
   activeIndustryOptions,
-  activeContentTypeOptions,
+  // activeContentTypeOptions,
   activeLanguageOptions,
-  activeToneOptions,
-  activeTargetAudienceOptions,
+  // activeToneOptions,
+  // activeTargetAudienceOptions,
   loading,
   error,
-  loadAllConfigs
-} = useContentConfig()
-
+  loadAllConfigs,
+} = useContentConfig();
+const comConfig = [
+  { value: "view", displayLabel: "View" },
+  { value: "comment", displayLabel: "Comment" },
+  { value: "save", displayLabel: "Save" },
+  { value: "booking", displayLabel: "Booking" },
+];
+const businessProfileOptions = [
+  {
+    displayLabel: "Người bán hàng & Kinh doanh cá nhân",
+    value: "individual_sales",
+  },
+  {
+    displayLabel: "Coach / Đào tạo / Chuyên gia",
+    value: "coach_expert",
+  },
+  {
+    displayLabel: "Doanh nghiệp nhỏ / Local business",
+    value: "small_business",
+  },
+];
 // Computed properties for v-model - All handled the same way
 const industry = computed({
   get: () => props.industry,
-  set: (value: string | undefined) => emit('update:industry', value)
-})
+  set: (value: string | undefined) => emit("update:industry", value),
+});
 
-const contentType = computed({
-  get: () => props.contentType,
-  set: (value: string | undefined) => emit('update:contentType', value)
-})
+const communicationGoal = computed({
+  get: () => props.communicationGoal,
+  set: (value: string | undefined) => emit("update:communication-goal", value),
+});
+
+const businessProfile = computed({
+  get: () => props.businessProfile,
+  set: (value: string | undefined) => emit("update:business-profile", value),
+});
 
 const language = computed({
   get: () => props.language,
-  set: (value: string | undefined) => emit('update:language', value)
-})
-
-const tone = computed({
-  get: () => props.tone,
-  set: (value: string | undefined) => emit('update:tone', value)
-})
-
-const targetAudience = computed({
-  get: () => props.targetAudience,
-  set: (value: string | undefined) => emit('update:targetAudience', value)
-})
+  set: (value: string | undefined) => emit("update:language", value),
+});
 
 // Methods
 const clearError = () => {
   // Error will be cleared by the composable
-}
+};
 
 // Load configuration on mount
 onMounted(async () => {
-  await loadAllConfigs()
-})
+  await loadAllConfigs();
+});
 </script>
 
 <style scoped>
