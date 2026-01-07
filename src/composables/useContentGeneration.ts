@@ -36,7 +36,6 @@ export function useContentGeneration() {
 
     const generationStats = computed((): GenerationStats | null => {
         if (!generatedContent.value) return null
-
         return {
             wordCount: generatedContent.value.wordCount,
             characterCount: generatedContent.value.characterCount,
@@ -149,7 +148,7 @@ export function useContentGeneration() {
      * Trigger video generation workflow
      */
     const triggerWorkflow = async (title?: string): Promise<any> => {
-        if (!generatedContent.value) {
+        if (!generatedContent.value || !generatedContent.value.generatedContent) {
             videoError.value = 'No content available for video generation'
             return null
         }
@@ -158,25 +157,28 @@ export function useContentGeneration() {
             creatingVideo.value = true
             videoError.value = null
 
-            const workflowRequest: ContentWorkflowRequest = {
-                content: generatedContent.value.generatedContent,
-                title: title || generatedContent.value.title,
-                contentType: lastGenerateRequest.value?.contentType || 'general',
-                industry: lastGenerateRequest.value?.industry,
-                language: lastGenerateRequest.value?.language,
-                tone: lastGenerateRequest.value?.tone,
-                targetAudience: lastGenerateRequest.value?.targetAudience,
-            }
+            // Xác định title với giá trị mặc định
+            const resolvedTitle = title || generatedContent.value.title || 'Video Content'
 
+            const workflowRequest: ContentWorkflowRequest = {
+                generatedContent: generatedContent.value.generatedContent,
+                title: resolvedTitle,
+                contentType: lastGenerateRequest.value?.contentType || 'general',
+                industry: lastGenerateRequest.value?.industry || '',
+                language: lastGenerateRequest.value?.language || 'vi',
+                tone: lastGenerateRequest.value?.tone || '',
+                targetAudience: lastGenerateRequest.value?.targetAudience || '',
+            }
+            console.log('Triggering workflow with request:', workflowRequest)
             const response = await contentService.triggerWorkflow(workflowRequest)
 
             if (response.errorCode === 'SUCCESS') {
                 // Create a mock content object for video progress tracking
                 const videoContent: ContentGenerationDto = {
-                    id: Date.now(), // Temporary ID until we get the real one from backend
+                    id: Date.now(),
                     title: workflowRequest.title || 'Video Content',
-                    generatedContent: workflowRequest.content,
-                    contentType: workflowRequest.contentType,
+                    generatedContent: workflowRequest.generatedContent,
+                    contentType: workflowRequest.contentType || 'general',
                     status: 'WORKFLOW_TRIGGERED',
                     startedAt: new Date().toISOString(),
                     // Add other required fields with default values

@@ -116,6 +116,7 @@ export interface ContentGenerateRequest {
     targetAudience?: string
     businessProfile?: string
     communicationGoal?: string[]
+    contentType?: string
 }
 
 export interface ContentGenerateResponse {
@@ -141,6 +142,7 @@ export interface ContentGenerateResponse {
     targetAudience?: string
     tone?: string
     language?: string
+
 }
 
 export interface ContentSaveRequest {
@@ -152,6 +154,7 @@ export interface ContentSaveRequest {
     language?: string
     industry?: string
     targetAudience?: string
+    content?: string
 }
 
 export interface ContentWorkflowRequest {
@@ -163,15 +166,21 @@ export interface ContentWorkflowRequest {
     language?: string
     industry?: string
     targetAudience?: string
+    content?: string
 }
 
 export interface GenerationStats {
-    totalGenerated: number
-    totalSaved: number
-    averageWordCount: number
-    mostUsedContentType: string
-    totalTokensUsed: number
-    totalCost: number
+    totalGenerated?: number
+    totalSaved?: number
+    averageWordCount?: number
+    mostUsedContentType?: string
+    totalTokensUsed?: number
+    totalCost?: number
+    wordCount?: number
+    characterCount?: number
+    tokensUsed?: number
+    generationCost?: number
+    processingTimeMs?: number
 }
 
 export interface ContentVersion {

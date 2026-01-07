@@ -40,6 +40,7 @@ class ContentService {
      * Uses extended timeout (3 minutes) for workflow operations
      */
     async triggerWorkflow(request: ContentWorkflowRequest): Promise<BaseResponse<any>> {
+        console.log('Mock triggerWorkflow called with request:', request)
         const response = await apiClient.post(CONTENT.WORKFLOW, request, {
             timeout: 180000, // 3 minutes for workflow operations
         })
